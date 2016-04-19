@@ -1,0 +1,1 @@
+alias trm="transmission-remote"

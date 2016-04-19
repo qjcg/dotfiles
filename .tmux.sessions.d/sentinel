@@ -1,0 +1,5 @@
+# See tmux(1)/COMMANDS/target-{session,window,pane} for syntax
+#new-window -t :97 -n @DESKTOP "ssh vg_desk"
+#new-window -t :98 -n @SENTINEL_V2 "ssh vg_sv2"
+new-window -t :99 -n @SENTINEL_V2 "ssh vglss"
+select-pane -t :99.0

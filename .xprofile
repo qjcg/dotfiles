@@ -1,0 +1,15 @@
+# needed so that graphical applications use correct PATH
+source ~/.bash_profile
+
+~/.local/bin/barr &
+~/.fehbg &
+
+# needed to make firefox/luakit fonts antialiased?
+/usr/bin/xset +fp /usr/share/fonts/local
+/usr/bin/xset fp rehash
+
+/usr/bin/compton -cfCbD 1 --vsync opengl --sw-opti --backend glx --glx-no-stencil &
+/usr/bin/cool-retro-term -e bash -c 'tmux attach -d || tmux new -s main' &
+/usr/bin/xbindkeys -n &
+
+/usr/bin/firefox &

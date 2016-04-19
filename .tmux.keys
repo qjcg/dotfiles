@@ -1,0 +1,40 @@
+set -g prefix C-a
+setw -g mode-keys vi
+
+unbind C-b
+
+bind C-a send-prefix
+bind -n M-right switch-client -n
+bind -n M-left switch-client -p
+bind -n C-right next
+bind -n C-left prev
+bind -r C-n next
+bind -r C-p prev
+bind "<" command-prompt "rename-session %%"
+bind ">" choose-session "move-window -t %%"
+bind '/' command-prompt -p 'Man page:','Man section:' "neww -n %1(%2) 'exec man %2 %1'"
+bind '"' split-window -v -c "#{pane_current_path}"
+bind '%' split-window -h -c "#{pane_current_path}"
+bind b command-prompt -p 'status-bg colour?' 'set status-bg %%'
+bind c new-window -c "#{pane_current_path}"
+bind C command-prompt -p 'New session name:' 'new -s %%'
+bind k confirm kill-window
+bind K choose-session 'kill-session -t %%'
+bind m setw monitor-activity
+bind M command-prompt -p "Monitor window for string:" "setw monitor-content %%"
+
+bind r source $HOME/.tmux.conf
+
+# load custom sessions
+bind S command-prompt -p 'Custom Session (ssh/monitoring/netmon/music):' 'source /home/john/.tmux.sessions.d/%%'
+
+# link/unlink
+bind l choose-session "link-window -t %%"
+bind u unlink-window
+
+# Launch various programs
+bind g neww -n john.gosset@gmail.com "mail -A gmail"
+bind R neww -n sudo "sudo -i"
+bind v neww nvim
+bind V neww -n goyo "nvim -c ':Goyo | set ft=markdown | set tw=60'"
+bind -r C-v neww nvim

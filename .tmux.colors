@@ -1,0 +1,16 @@
+set -g message-bg black
+set -g message-fg green
+set -g message-attr bright
+set -g status-fg white
+set -g status-bg default
+set -g status-attr default
+
+setw -g window-status-bg default
+setw -g window-status-fg white
+setw -g window-status-attr dim
+setw -g window-status-current-bg default
+setw -g window-status-current-fg cyan
+setw -g window-status-current-attr dim
+
+#set -t local status-bg blue
+#set -t distance status-bg red

@@ -1,0 +1,1 @@
+alias pstree='pstree -u'

@@ -1,0 +1,36 @@
+browser	"chromium %u"
+player "mplayer"
+notify-program "notify-send"
+notify-always yes
+
+reload-only-visible-feeds yes
+articlelist-format "%4i %f %D %6L %?T?;%-17T; ?%t"
+feedlist-format "%4i %n %S %10u %t %> %T"
+datetime-format "%F"
+feed-sort-order firsttag
+show-read-feeds no
+show-read-articles no
+text-width 72
+
+reload-threads 5
+
+define-filter "tag: software" "tags # \"software\""
+
+bind-key j	next
+bind-key k	prev
+bind-key j	down
+bind-key k	up
+bind-key g	home
+bind-key G	end
+bind-key s	sort
+bind-key S	rev-sort
+bind-key ^B	pageup
+bind-key ^F	pagedown
+
+macro t set-tag top
+
+color background	white	black
+color listnormal	white	black
+color listfocus	cyan	blue	bold
+color info		cyan	blue	bold
+color article		white	black

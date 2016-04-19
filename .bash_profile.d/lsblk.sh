@@ -1,0 +1,1 @@
+alias lsblk="lsblk -o NAME,FSTYPE,MOUNTPOINT,SIZE,LABEL,UUID"

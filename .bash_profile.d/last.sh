@@ -1,0 +1,1 @@
+alias last='last -a'

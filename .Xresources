@@ -1,0 +1,24 @@
+! For examples, see /usr/share/X11/app-defaults
+
+*.background: black
+*.foreground: white
+
+*.cursorColor: maroon
+*.cursorBlink: true
+Xcursor.theme: whiteglass
+Xcursor.size:  24
+
+*.scrollBar: False
+*.scrollBar_right: True
+*.scrollstyle: plain
+*.scrollColor: darkblue
+
+
+!*tripleClickWords: True
+*multiClickTime: 800
+
+
+!! FONTS
+! To add a font, put TTF file in ~/.fonts and run fc-cache -vf
+
+xscreensaver.font: xft:Terminus:regular:size=8

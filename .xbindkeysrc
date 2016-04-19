@@ -1,0 +1,36 @@
+"/usr/bin/dmenu_run -nb '#000' -sb '#96fffc' -sf '#000' -fn 'Inconsolata:size=11:weight=bold'"
+	Alt + p
+
+"sudo -E dmenu_run -p sudo -nb '#000' -sb '#96fffc' -sf '#000' -fn 'Inconsolata:size=11:weight=bold'"
+	Shift + Alt + p
+
+"/home/john/.local/bin/wallbang"
+	Alt + w
+
+
+
+
+# "Thinkpad Key"
+
+"/usr/bin/st"
+  XF86Launch1
+
+# TODO: toggle bluetooth instead of wifi
+#""
+#  XF86WLAN
+
+
+# AUDIO
+
+"/usr/bin/pamixer --increase 5"
+   XF86AudioRaiseVolume
+
+"/usr/bin/pamixer --decrease 5"
+   XF86AudioLowerVolume
+
+"/usr/bin/pamixer --toggle-mute"
+   XF86AudioMute
+
+# WIP: See http://www.len.ro/work/xubuntu-microphone-muteunmute-script/
+#"/usr/bin/pacmd set-source-mute 0 1"
+#   XF86AudioMicMute
