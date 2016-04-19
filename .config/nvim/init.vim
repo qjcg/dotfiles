@@ -92,7 +92,7 @@ if filereadable(globpath(&rtp, 'autoload/plug.vim'))
 	Plug 'junegunn/goyo.vim'
 	Plug 'junegunn/limelight.vim'
 	Plug 'tmux-plugins/vim-tmux'
-	Plug 'toyamarinyon/vim-swift.git'
+	Plug 'toyamarinyon/vim-swift'
 
 	" add plugins to &runtimepath
 	call plug#end()
