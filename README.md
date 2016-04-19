@@ -6,7 +6,8 @@ A simple git whitelisting approach to managing dotfiles.
 # Requirements
 
 - git
-- a solid understanding of how to use git branches
+- an `*` in your [`.gitignore`](.gitignore)
+- a solid understanding of how to work with git branches
 - that's it
 
 
