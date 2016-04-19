@@ -1,4 +1,4 @@
-# Whitelist Dotfiles
+# Dotfiles
 
 A simple git whitelisting approach to managing dotfiles.
 
@@ -13,11 +13,12 @@ A simple git whitelisting approach to managing dotfiles.
 
 # Usage
 
-The master branch contains generic configurations useful accross various
-systems, as well as this README.
+The `master` branch contains generic configurations useful accross various
+systems.
 
-Create branches for host-groups (e.g. desktop, server) and/or individual hosts
-as needed.
+Create other branches as needed for host (or host-group) specific
+configurations. These branches should be rebased onto the `master` branch when
+the `master` branch is updated.
 
 Simple is best.
 
@@ -27,8 +28,8 @@ Simple is best.
 The options are:
 
 - don't commit it at all (safest)
-- keep it in a private branch, and be very careful only to ever push that branch
-  to a private repo on server hardware you own, host, and fully control
+- keep it in a private branch and only ever push that branch to a private repo
+  on server hardware you own, host, and fully control
 
 
 # Submodules (optional)
