@@ -1,0 +1,4 @@
+# Use whitelisting --- all files are ignored by default.
+# To whitelist and track a file, do the following, then commit as usual:
+#   git add -f <FILE|DIR>
+*
