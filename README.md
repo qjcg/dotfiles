@@ -39,14 +39,24 @@ TODO
 
 # Workflow examples
 
-TODO
+## Starting from a new $HOME
+
+```shell
+cd
+git init
+git add remote origin https://github.com/qjcg/dotfiles
+git remote update
+git checkout -b master origin/master
+```
+
+
 
 
 # APPENDIX: Useful git commands
 
 I find the following git commands useful with this setup.
 
-```
+```shell
 # print a high-level overview of the differences between branches
 git diff --stat branch1 branch2
 
