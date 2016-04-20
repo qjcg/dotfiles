@@ -37,6 +37,11 @@ The options are:
 TODO
 
 
+# Workflow examples
+
+TODO
+
+
 # APPENDIX: Useful git commands
 
 I find the following git commands useful with this setup.
@@ -55,6 +60,6 @@ git rebase --onto master branch1 branch2 ...
 # useful after local rebasing
 git push -f origin --all
 
-# hard reset local branch1 to match remote origin/branch1
-git checkout -B branch1 origin/branch1
+# hard-reset local branch1 to match remote origin/branch1
+git branch -f branch1 origin/branch1
 ```
