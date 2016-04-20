@@ -43,8 +43,8 @@ Use the `master` branch to keep track of generic config files useful accross
 environments.
 
 You can create other branches as needed for different environments. These
-branches can be rebased onto the `master` branch when the `master` branch is
-updated.
+branches can be rebased onto or merged with the `master` branch when the
+`master` branch is updated, depending on which type of workflow you prefer.
 
 You might also want to create private branches, only ever pushed to a private
 host, never shared publicly.
