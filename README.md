@@ -39,7 +39,9 @@ TODO
 
 # Workflow examples
 
-## Starting from a new $HOME
+## Starting from a new HOME
+
+Use the dotfiles from this repo in your new HOME:
 
 ```shell
 cd
