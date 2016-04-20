@@ -41,6 +41,20 @@ TODO
 
 ## Starting from a new HOME
 
+Don't use the dotfiles from this repo, start from scratch:
+
+```shell
+# initial setup
+git init
+echo '*' > .gitignore
+git add .gitignore
+git commit -m 'Initial commit'
+
+# whitelisting a file / dir
+git add -f .bash_profile
+git commit -m 'Add .bash_profile'
+```
+
 Use the dotfiles from this repo in your new HOME:
 
 ```shell
