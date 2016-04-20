@@ -1,3 +1,5 @@
+hash sxiv 2>/dev/null || return
+
 _find_images() {
 	find "$@" -type f -regextype posix-extended -iregex '.*\.(jpg|jpeg|gif|png|bmp)$'
 }

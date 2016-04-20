@@ -1,3 +1,5 @@
+hash npm 2>/dev/null || return
+
 alias ngdo="npm doc"
 alias ngex="npm explore -g"
 alias ngin="$sudocmd npm install -g"

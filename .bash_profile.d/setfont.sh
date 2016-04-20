@@ -1,3 +1,5 @@
+hash setfont 2>/dev/null || return
+
 # Set Console Font
 cf() {
 	case "$1" in

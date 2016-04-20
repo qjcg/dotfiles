@@ -1,3 +1,5 @@
+hash sqlite3 2>/dev/null || return
+
 #sqlite3() {
 #	rlwrap=/usr/bin/rlwrap
 #	sqlite3=/usr/bin/sqlite3

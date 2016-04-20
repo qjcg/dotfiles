@@ -1,3 +1,5 @@
+hash yaourt 2>/dev/null || return
+
 alias pasee="yaourt -Ss"
 alias painn="yaourt -S"
 alias painnn="yaourt -S --noconfirm"

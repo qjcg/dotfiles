@@ -1,3 +1,5 @@
+hash pacman 2>/dev/null || return
+
 alias pactree="pactree -c"
 alias pain="$sudocmd pacman -S"
 alias pare="$sudocmd pacman -R"

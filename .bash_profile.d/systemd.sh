@@ -1,3 +1,5 @@
+hash systemctl 2>/dev/null || return
+
 # TODO: bash completion would make these aliases more useful
 alias sc="$sudocmd systemctl"
 alias scu="systemctl --user"
