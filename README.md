@@ -1,5 +1,4 @@
-$HOME with .gitignore whitelisting. No symlinks, scripts, or dependencies, just
-git.
+$HOME with git whitelisting. No symlinks, scripts, or dependencies, just git.
 
 
 # Requirements
