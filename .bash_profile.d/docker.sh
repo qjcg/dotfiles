@@ -1,3 +1,5 @@
+hash docker 2>/dev/null || return
+
 _doc_help() {
 	cat <<-END
 	doc <rmi|rrm|up>
