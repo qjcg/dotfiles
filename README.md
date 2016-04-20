@@ -48,6 +48,13 @@ git diff --stat branch1 branch2
 # rebase branch1 onto master branch (eg: after master has been updated)
 git rebase master branch1
 
+# rebase several branches onto master
+git rebase --onto master branch1 branch2 ...
+
+# force push all local branches to origin
+# useful after local rebasing
+git push -f origin --all
+
 # hard reset local branch1 to match remote origin/branch1
 git checkout -B branch1 origin/branch1
 ```
