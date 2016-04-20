@@ -1,1 +1,0 @@
-alias trm="transmission-remote"
