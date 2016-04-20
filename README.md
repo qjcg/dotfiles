@@ -73,19 +73,20 @@ git checkout -b master origin/master
 I find the following git commands useful with this setup.
 
 ```shell
-# print a high-level overview of the differences between branches
-git diff --stat branch1 branch2
-
 # rebase branch1 onto master branch (eg: after master has been updated)
 git rebase master branch1
 
-# rebase several branches onto master
-git rebase --onto master branch1 branch2 ...
+# hard-reset local branch1 to match remote origin/branch1
+git branch -f branch1 origin/branch1
+
+# hard-reset _currently-checked-out_ branch2 to match remote origin/branch2
+git checkout -B branch2 origin/branch2
 
 # force push all local branches to origin
 # useful after local rebasing
 git push -f origin --all
 
-# hard-reset local branch1 to match remote origin/branch1
-git branch -f branch1 origin/branch1
+# print a high-level overview of the differences between branches
+git diff --stat branch1 branch2
+
 ```
