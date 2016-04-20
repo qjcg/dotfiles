@@ -1,4 +1,4 @@
-$HOME with git whitelisting. No symlinks, scripts, or dependencies, just git.
+$HOME in git via whitelisting. No symlinks, scripts, or dependencies, just git.
 
 
 # Requirements
