@@ -1,1 +1,10 @@
-/home/john/s/projects/sysadmin/dotfiles/dotfiles/tmux.sessions.d/ssh
+# See tmux(1)/COMMANDS/target-{session,window,pane} for syntax
+# To get the split percentages right (-p values), use the following formula:
+#
+# p = 100 - (100 / n + 1)
+#
+# n is the number of panes left to be created.
+new-window -t :99 -n @EXAMPLE.COM "ssh host1.example.com"
+split-window -v -p 66 -t :99 "ssh host2.example.com"
+split-window -v -p 50 -t :99 "ssh host3.example.com -p 443"
+select-pane -t :99.0

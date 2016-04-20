@@ -1,1 +1,10 @@
-/home/john/s/projects/sysadmin/dotfiles/dotfiles/tmux.sessions.d/monitoring
+# See tmux(1)/COMMANDS/target-{session,window,pane} for syntax
+new-session -d -s monitoring "sleep 1"
+new-window -t monitoring:97 -n toppy-window top
+new-window -t monitoring:98 -n htoppy-window htop
+
+# display the contents of the already-existing window 98 in new pane on window
+# 97, and select new pane
+splitw -v -p 50 -t monitoring:97 htop
+selectw -t monitoring:98
+selectp -t 1

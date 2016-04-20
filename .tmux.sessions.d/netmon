@@ -1,1 +1,3 @@
-/home/john/s/projects/sysadmin/dotfiles/dotfiles/tmux.sessions.d/netmon
+# See tmux(1)/COMMANDS/target-{session,window,pane} for syntax
+new-window -t :98 -n NETHOGS "sudo nethogs wlp3s0"
+select-window -t :98
