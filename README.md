@@ -35,3 +35,19 @@ The options are:
 # Submodules (optional)
 
 TODO
+
+
+# APPENDIX: Useful git commands
+
+I find the following git commands useful with this setup.
+
+```
+# print a high-level overview of the differences between branches
+git diff --stat branch1 branch2
+
+# rebase branch1 onto master branch (eg: after master has been updated)
+git rebase master branch1
+
+# hard reset local branch1 to match remote origin/branch1
+git checkout -B branch1 origin/branch1
+```
