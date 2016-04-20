@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Concatenate modular SSH config files into ~/.ssh/config
 
 CONFDIR="$HOME/.ssh/config.d"
