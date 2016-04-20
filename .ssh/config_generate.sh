@@ -4,7 +4,8 @@
 CONFDIR="$HOME/.ssh/config.d"
 CONFFILE="$HOME/.ssh/config"
 
-rm $CONFFILE
+# remove old file, as we regenerate from $CONFDIR sources
+rm -f $CONFFILE
 
 for fullpath in $CONFDIR/*.conf ; do
 	echo -e "\n# config.d/$(basename $fullpath)\n" >> $CONFFILE
