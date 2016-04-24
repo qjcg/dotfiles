@@ -65,7 +65,7 @@ git checkout -B branch2 origin/branch2
 
 # force push all local branches to myremote
 # useful after local rebasing
-git push -f myremote --all
+git push myremote --all -f
 
 # print a high-level overview of the differences between branches
 git diff --stat branch1 branch2
