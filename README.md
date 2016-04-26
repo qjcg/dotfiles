@@ -70,6 +70,9 @@ git push myremote --all -f
 # print a high-level overview of the differences between branches
 git diff --stat branch1 branch2
 
+# another view of differences between branches
+git show-branch
+
 # list files being tracked in branch1 (add -r to descend into directories)
 git ls-tree branch1
 ```
