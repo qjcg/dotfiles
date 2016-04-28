@@ -1,6 +1,3 @@
-# needed so that graphical applications use correct PATH
-source ~/.bash_profile
-
 ~/.local/bin/barr &
 ~/.fehbg &
 
@@ -12,4 +9,4 @@ source ~/.bash_profile
 /usr/bin/cool-retro-term -e bash -c 'tmux attach -d || tmux new -s main' &
 /usr/bin/xbindkeys -n &
 
-$BROWSER &
+/usr/bin/qutebrowser &
