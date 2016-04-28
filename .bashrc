@@ -7,6 +7,6 @@ done
 
 set -o vi
 
-export BROWSER=firefox
+export BROWSER=qutebrowser
 export EDITOR=vim
 export VISUAL=vim
