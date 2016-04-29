@@ -1,3 +1,6 @@
+# ensure X11 apps (e.g. dmenu) use correct PATH
+source ~/.bash_profile
+
 ~/.local/bin/barr &
 ~/.fehbg &
 
