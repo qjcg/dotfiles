@@ -9,7 +9,7 @@ source ~/.bash_profile
 /usr/bin/xset fp rehash
 
 /usr/bin/compton -cfCbD 1 --vsync opengl --sw-opti --backend glx --glx-no-stencil &
-/usr/bin/cool-retro-term -e bash -c 'tmux attach -d || tmux new -s main' &
+/usr/bin/st -e bash -c 'tmux attach -d || tmux new -s main' &
 /usr/bin/xbindkeys -n &
 
 /usr/bin/qutebrowser &
