@@ -1,0 +1,12 @@
+application/doc;		antiword -f %s | less
+application/octet-stream;	antiword -f %s | less
+application/msword;		antiword -f %s | less
+application/x-bittorrent;	aria2c %s
+application/pdf;		zathura %s
+audio/*;			madplay -v %s
+image/*;			sxiv -afos d %s
+#text/html;			pandoc -f html -t markdown %s; nametemplate=%s.html; copiousoutput
+text/html;			elinks -dump %s; nametemplate=%s.html; copiousoutput
+text/pdf;			zathura %s
+text/plain;			fmt -w 60 %s | less
+video/*;			mpv %s
