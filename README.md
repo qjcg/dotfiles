@@ -32,7 +32,7 @@ $HOME in git via whitelisting. No symlinks, scripts, or dependencies, just git.
 ~:$ git init
 ~:$ git remote add origin https://github.com/qjcg/dotfiles
 ~:$ git remote update
-~:$ git checkout -b master origin/master
+~:$ git checkout -t origin/master [-f]
 ```
 
 
