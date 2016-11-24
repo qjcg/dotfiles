@@ -21,6 +21,9 @@ set tabstop=8			" spaces in a tab
 set wildmenu			" dmenu-style menu
 set wildmode=full
 
+" GVIM
+set guioptions-=T
+
 
 " MAPS
 " See :h keycodes
@@ -43,7 +46,7 @@ autocmd BufNewFile .gitignore 0r ~/s/templates/skeleton.gitignore
 
 
 autocmd Filetype txt,mail,markdown setlocal tw=80 spelllang=en_ca tabstop=8 expandtab shiftwidth=4 softtabstop=4
-autocmd Filetype javascript,jade,yaml,stylus,coffee,css,html,json setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
+autocmd Filetype javascript,yaml,stylus,coffee,css,html,json setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 " via http://arusahni.net/blog/2015/04/switching-to-neovim-part-2.html
 if has('nvim')
@@ -68,7 +71,7 @@ if filereadable(globpath(&rtp, 'autoload/plug.vim'))
 	Plug 'dag/vim-fish'
 	Plug 'digitaltoad/vim-jade'
 	Plug 'kchmck/vim-coffee-script'
-	Plug 'kunstmusik/csound-vim'
+	Plug 'kunstmusik/csound-repl'
 	Plug 'ledger/vim-ledger'
 	Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 	Plug 'nvie/vim-flake8', {'for': 'python'}
@@ -76,8 +79,8 @@ if filereadable(globpath(&rtp, 'autoload/plug.vim'))
 	Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 	Plug 'wavded/vim-stylus'
 	Plug 'wilsaj/chuck.vim'
-	Plug 'fatih/vim-go', {'for': 'go'}
-	Plug 'garyburd/go-explorer', {'for': 'go'}
+	Plug 'fatih/vim-go'
+	Plug 'garyburd/go-explorer'
 	Plug 'cespare/vim-toml'
 	Plug 'Matt-Deacalion/vim-systemd-syntax', {'for': 'systemd'}
 	Plug 'weakish/rcshell.vim'
