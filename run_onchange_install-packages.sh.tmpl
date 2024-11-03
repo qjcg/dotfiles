@@ -1,0 +1,11 @@
+#!/bin/sh
+# Install system packages.
+{{ if eq .chezmoi.osRelease.id "arch" }}
+sudo pacman -Sy \
+&& sudo pacman -S --needed --noconfirm {{ .packages.arch | join " " }}
+{{ end -}}
+
+{{ if eq .chezmoi.osRelease.id "ubuntu" }}
+sudo apt update \
+&& sudo apt install -y {{ .packages.ubuntu | join " " }}
+{{ end -}}

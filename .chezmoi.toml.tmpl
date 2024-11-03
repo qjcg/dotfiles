@@ -1,0 +1,61 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $fullName := promptStringOnce . "fullName" "Full name" -}}
+{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work)" -}}
+
+encryption = "age"
+
+[age]
+identity = "~/.config/chezmoi/id.txt"
+recipient = "age1zyudjx9v6z07k5d76s3zw2576fcme3nhq2wtvurlxnvznwht39zqagfa7n"
+
+
+[data]
+email = {{ $email | quote }}
+fullName = {{ $fullName | quote }}
+codeDirWork = {{ $codeDirWork | quote }}
+
+
+[data.packages]
+arch = [
+"acpi",
+"age",
+"aria2",
+"duf",
+"dust",
+"emacs-wayland",
+"go",
+"gopass",
+"htop",
+"mkosi",
+"mpv",
+"mtr",
+"neofetch",
+"nvtop",
+"ripgrep",
+"tig",
+"tree",
+"ttf-firacode-nerd",
+"ttf-go-nerd",
+"ttf-iosevka-nerd",
+"ttf-jetbrains-mono-nerd",
+"ttf-noto-nerd",
+"uv",
+"zoxide",
+]
+
+ubuntu = [
+"htop",
+]
+
+alpine = [
+]
+
+
+[data.toolGitref]
+aichat = "v0.23.0"
+earthly = "v0.8.15"
+fd = "v10.2.0"
+kubectl = "v1.31.0"
+minikube = "v1.34.0"
+ohMyPosh = "v24.0.5"
+task = "v3.39.2"

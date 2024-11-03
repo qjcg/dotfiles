@@ -1,0 +1,52 @@
+{{- if eq .chezmoi.hostname "actiniaria" }}
+["Code/light"]
+type = "git-repo"
+url = "git@github.com:qjcg/light"
+refreshPeriod = "168h"
+{{- end }}
+
+[".local/bin/aichat"]
+type = "archive-file"
+url = "https://github.com/sigoden/aichat/releases/download/{{.toolGitref.aichat}}/aichat-{{.toolGitref.aichat}}-x86_64-unknown-{{.chezmoi.os}}-musl.tar.gz"
+path = "aichat"
+exact = true
+executable = true
+
+[".local/bin/oh-my-posh"]
+type = "file"
+url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{.toolGitref.ohMyPosh}}/posh-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+exact = true
+executable = true
+
+[".local/bin/earthly"]
+type = "file"
+url = "https://github.com/earthly/earthly/releases/download/{{.toolGitref.earthly}}/earthly-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+exact = true
+executable = true
+
+[".local/bin/minikube"]
+type = "file"
+url = "https://github.com/kubernetes/minikube/releases/download/{{.toolGitref.minikube}}/minikube-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+exact = true
+executable = true
+
+[".local/bin/kubectl"]
+type = "file"
+url = "https://dl.k8s.io/release/{{.toolGitref.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
+exact = true
+executable = true
+
+# FIXME: NOT cross platform.
+[".local/bin/fd"]
+type = "archive-file"
+url = "https://github.com/sharkdp/fd/releases/download/{{.toolGitref.fd}}/fd-{{.toolGitref.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu.tar.gz"
+path = "fd-{{.toolGitref.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu/fd"
+exact = true
+executable = true
+
+[".local/bin/task"]
+type = "archive-file"
+url = "https://github.com/go-task/task/releases/download/{{.toolGitref.task}}/task_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
+path = "task"
+exact = true
+executable = true

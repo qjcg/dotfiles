@@ -1,0 +1,17 @@
+[user]
+	name = {{ .fullName }}
+	email = {{ .email }}
+
+# See https://stackoverflow.com/a/43654115
+[includeIf "gitdir:~/work/"]
+    path = ~/work/.gitconfig
+
+[init]
+	defaultBranch = main
+
+[alias]
+	st = status
+	ci = commit
+	br = branch -avv
+	ds = diff --staged
+	re = remote -v

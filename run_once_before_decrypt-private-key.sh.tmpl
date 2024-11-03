@@ -1,0 +1,8 @@
+#!/bin/sh
+# See https://www.chezmoi.io/user-guide/frequently-asked-questions/encryption/#how-do-i-configure-chezmoi-to-encrypt-files-but-only-request-a-passphrase-the-first-time-chezmoi-init-is-run
+
+if [ ! -f "${HOME}/.config/chezmoi/id.txt" ]; then
+    mkdir -p "${HOME}/.config/chezmoi"
+    chezmoi age decrypt --output "${HOME}/.config/chezmoi/id.txt" --passphrase "{{ .chezmoi.sourceDir }}/id.txt.age"
+    chmod 600 "${HOME}/.config/chezmoi/id.txt"
+fi
