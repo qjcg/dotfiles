@@ -36,6 +36,13 @@ url = "https://dl.k8s.io/release/{{.toolGitref.kubectl}}/bin/{{.chezmoi.os}}/{{.
 exact = true
 executable = true
 
+[".local/bin"]
+type = "archive"
+url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolGitref.llamafile}}/llamafile-{{.toolGitref.llamafile}}.zip"
+executable = true
+stripComponents = 2
+include = ["*/bin/*"]
+
 # FIXME: NOT cross platform.
 [".local/bin/fd"]
 type = "archive-file"
