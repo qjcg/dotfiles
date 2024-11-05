@@ -1,9 +1,13 @@
-{{- if eq .chezmoi.hostname "actiniaria" }}
+{{- if eq .chezmoi.hostname "actiniaria" -}}
+
 ["Code/light"]
 type = "git-repo"
 url = "git@github.com:qjcg/light"
 refreshPeriod = "168h"
+
 {{- end }}
+
+{{ if .installAITools -}}
 
 [".local/bin/aichat"]
 type = "archive-file"
@@ -11,6 +15,15 @@ url = "https://github.com/sigoden/aichat/releases/download/{{.toolGitref.aichat}
 path = "aichat"
 exact = true
 executable = true
+
+[".local/bin"]
+type = "archive"
+url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolGitref.llamafile}}/llamafile-{{.toolGitref.llamafile}}.zip"
+executable = true
+stripComponents = 2
+include = ["*/bin/*"]
+
+{{- end }}
 
 [".local/bin/oh-my-posh"]
 type = "file"
@@ -35,13 +48,6 @@ type = "file"
 url = "https://dl.k8s.io/release/{{.toolGitref.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
 exact = true
 executable = true
-
-[".local/bin"]
-type = "archive"
-url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolGitref.llamafile}}/llamafile-{{.toolGitref.llamafile}}.zip"
-executable = true
-stripComponents = 2
-include = ["*/bin/*"]
 
 # FIXME: NOT cross platform.
 [".local/bin/fd"]

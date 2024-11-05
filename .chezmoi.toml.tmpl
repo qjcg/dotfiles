@@ -1,6 +1,7 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $fullName := promptStringOnce . "fullName" "Full name" -}}
-{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work)" -}}
+{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work)" "~/Code/work" -}}
+{{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
 
 encryption = "age"
 
@@ -13,7 +14,7 @@ recipient = "age1zyudjx9v6z07k5d76s3zw2576fcme3nhq2wtvurlxnvznwht39zqagfa7n"
 email = {{ $email | quote }}
 fullName = {{ $fullName | quote }}
 codeDirWork = {{ $codeDirWork | quote }}
-
+installAITools = {{ $installAITools }}
 
 [data.packages]
 arch = [
