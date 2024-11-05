@@ -6,6 +6,7 @@ sudo pacman -Sy \
 {{ end -}}
 
 {{ if eq .chezmoi.osRelease.id "ubuntu" }}
+# TODO: Handle case where running as root in a container with $UID=0
 sudo apt update \
 && sudo apt install -y {{ .packages.ubuntu | join " " }}
 {{ end -}}
