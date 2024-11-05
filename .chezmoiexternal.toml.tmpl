@@ -7,6 +7,9 @@ refreshPeriod = "168h"
 
 {{- end }}
 
+
+{{ if .installExternalBinaries }}
+
 {{ if .installAITools -}}
 
 [".local/bin/aichat"]
@@ -63,3 +66,5 @@ url = "https://github.com/go-task/task/releases/download/{{.toolGitref.task}}/ta
 path = "task"
 exact = true
 executable = true
+
+{{ end }}
