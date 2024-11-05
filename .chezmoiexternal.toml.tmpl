@@ -1,6 +1,6 @@
-{{- if eq .chezmoi.hostname "actiniaria" -}}
+{{- if .cloneNonWorkRepos -}}
 
-["Code/light"]
+["{{ .codeDirNonWork }}/light"]
 type = "git-repo"
 url = "git@github.com:qjcg/light"
 refreshPeriod = "168h"

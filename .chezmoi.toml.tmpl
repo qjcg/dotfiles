@@ -1,6 +1,12 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $fullName := promptStringOnce . "fullName" "Full name" -}}
-{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work)" "~/Code/work" -}}
+
+{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work) [omit homedir prefix]" "Code/work" -}}
+{{- $codeDirNonWork := promptStringOnce . "codeDirNonWork" "Code dir (nonwork) [omit homedir prefix]" "Code/nonwork" -}}
+
+{{- $cloneWorkRepos := promptBoolOnce . "cloneWorkRepos" "Clone work git repos" false -}}
+{{- $cloneNonWorkRepos := promptBoolOnce . "cloneNonWorkRepos" "Clone NON-work git repos" false -}}
+
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
 
 encryption = "age"
@@ -13,7 +19,12 @@ recipient = "age1zyudjx9v6z07k5d76s3zw2576fcme3nhq2wtvurlxnvznwht39zqagfa7n"
 [data]
 email = {{ $email | quote }}
 fullName = {{ $fullName | quote }}
+
 codeDirWork = {{ $codeDirWork | quote }}
+codeDirNonWork = {{ $codeDirNonWork | quote }}
+
+cloneWorkRepos = {{ $cloneWorkRepos }}
+cloneNonWorkRepos = {{ $cloneNonWorkRepos }}
 installAITools = {{ $installAITools }}
 
 [data.packages]
