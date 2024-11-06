@@ -12,16 +12,17 @@ refreshPeriod = "168h"
 
 {{ if .installAITools -}}
 
+# FIXME: Not cross-platform.
 [".local/bin/aichat"]
 type = "archive-file"
-url = "https://github.com/sigoden/aichat/releases/download/{{.toolGitref.aichat}}/aichat-{{.toolGitref.aichat}}-x86_64-unknown-{{.chezmoi.os}}-musl.tar.gz"
+url = "https://github.com/sigoden/aichat/releases/download/{{.toolVersion.aichat}}/aichat-{{.toolVersion.aichat}}-x86_64-unknown-{{.chezmoi.os}}-musl.tar.gz"
 path = "aichat"
 exact = true
 executable = true
 
 [".local/bin"]
 type = "archive"
-url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolGitref.llamafile}}/llamafile-{{.toolGitref.llamafile}}.zip"
+url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolVersion.llamafile}}/llamafile-{{.toolVersion.llamafile}}.zip"
 executable = true
 stripComponents = 2
 include = ["*/bin/*"]
@@ -30,46 +31,46 @@ include = ["*/bin/*"]
 
 [".local/bin/cue"]
 type = "archive-file"
-url = "https://github.com/cue-lang/cue/releases/download/{{.toolGitref.cue}}/cue_{{.toolGitref.cue}}_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
+url = "https://github.com/cue-lang/cue/releases/download/{{.toolVersion.cue}}/cue_{{.toolVersion.cue}}_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
 path = "cue"
 exact = true
 executable = true
 
 [".local/bin/oh-my-posh"]
 type = "file"
-url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{.toolGitref.ohMyPosh}}/posh-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{.toolVersion.ohMyPosh}}/posh-{{.chezmoi.os}}-{{.chezmoi.arch}}"
 exact = true
 executable = true
 
 [".local/bin/earthly"]
 type = "file"
-url = "https://github.com/earthly/earthly/releases/download/{{.toolGitref.earthly}}/earthly-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+url = "https://github.com/earthly/earthly/releases/download/{{.toolVersion.earthly}}/earthly-{{.chezmoi.os}}-{{.chezmoi.arch}}"
 exact = true
 executable = true
 
 [".local/bin/minikube"]
 type = "file"
-url = "https://github.com/kubernetes/minikube/releases/download/{{.toolGitref.minikube}}/minikube-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+url = "https://github.com/kubernetes/minikube/releases/download/{{.toolVersion.minikube}}/minikube-{{.chezmoi.os}}-{{.chezmoi.arch}}"
 exact = true
 executable = true
 
 [".local/bin/kubectl"]
 type = "file"
-url = "https://dl.k8s.io/release/{{.toolGitref.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
+url = "https://dl.k8s.io/release/{{.toolVersion.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
 exact = true
 executable = true
 
-# FIXME: NOT cross platform.
+# FIXME: Not cross-platform.
 [".local/bin/fd"]
 type = "archive-file"
-url = "https://github.com/sharkdp/fd/releases/download/{{.toolGitref.fd}}/fd-{{.toolGitref.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu.tar.gz"
-path = "fd-{{.toolGitref.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu/fd"
+url = "https://github.com/sharkdp/fd/releases/download/{{.toolVersion.fd}}/fd-{{.toolVersion.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu.tar.gz"
+path = "fd-{{.toolVersion.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu/fd"
 exact = true
 executable = true
 
 [".local/bin/task"]
 type = "archive-file"
-url = "https://github.com/go-task/task/releases/download/{{.toolGitref.task}}/task_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
+url = "https://github.com/go-task/task/releases/download/{{.toolVersion.task}}/task_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
 path = "task"
 exact = true
 executable = true
