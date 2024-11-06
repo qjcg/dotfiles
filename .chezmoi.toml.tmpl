@@ -9,6 +9,7 @@
 
 {{- $installExternalBinaries := promptBoolOnce . "installExternalBinaries" "Install external binaries" false -}}
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
+{{- $installGo := promptBoolOnce . "installGo" "Install Go" false -}}
 
 encryption = "age"
 
@@ -28,6 +29,7 @@ cloneWorkRepos = {{ $cloneWorkRepos }}
 cloneNonWorkRepos = {{ $cloneNonWorkRepos }}
 installAITools = {{ $installAITools }}
 installExternalBinaries = {{ $installExternalBinaries }}
+installGo = {{ $installGo }}
 
 [data.packages]
 arch = [
@@ -70,6 +72,7 @@ aichat = "v0.23.0"
 cue = "v0.11.0-alpha.5"
 earthly = "v0.8.15"
 fd = "v10.2.0"
+go = "1.23.2"
 kubectl = "v1.31.0"
 llamafile = "0.8.16"
 minikube = "v1.34.0"
