@@ -1,4 +1,4 @@
-{{ if .installExternalBinaries && .installAITools }}
+{{ if and .installExternalBinaries .installAITools }}
 
 # FIXME: Not cross-platform.
 [".local/bin/aichat"]
