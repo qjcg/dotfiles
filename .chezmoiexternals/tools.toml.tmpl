@@ -1,33 +1,4 @@
-{{- if .cloneNonWorkRepos -}}
-
-["{{ .codeDirNonWork }}/light"]
-type = "git-repo"
-url = "git@github.com:qjcg/light"
-refreshPeriod = "168h"
-
-{{- end }}
-
-
 {{ if .installExternalBinaries }}
-
-{{ if .installAITools -}}
-
-# FIXME: Not cross-platform.
-[".local/bin/aichat"]
-type = "archive-file"
-url = "https://github.com/sigoden/aichat/releases/download/{{.toolVersion.aichat}}/aichat-{{.toolVersion.aichat}}-x86_64-unknown-{{.chezmoi.os}}-musl.tar.gz"
-path = "aichat"
-exact = true
-executable = true
-
-[".local/bin"]
-type = "archive"
-url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolVersion.llamafile}}/llamafile-{{.toolVersion.llamafile}}.zip"
-executable = true
-stripComponents = 2
-include = ["*/bin/*"]
-
-{{- end }}
 
 [".local/bin/cue"]
 type = "archive-file"
@@ -45,18 +16,6 @@ executable = true
 [".local/bin/earthly"]
 type = "file"
 url = "https://github.com/earthly/earthly/releases/download/{{.toolVersion.earthly}}/earthly-{{.chezmoi.os}}-{{.chezmoi.arch}}"
-exact = true
-executable = true
-
-[".local/bin/minikube"]
-type = "file"
-url = "https://github.com/kubernetes/minikube/releases/download/{{.toolVersion.minikube}}/minikube-{{.chezmoi.os}}-{{.chezmoi.arch}}"
-exact = true
-executable = true
-
-[".local/bin/kubectl"]
-type = "file"
-url = "https://dl.k8s.io/release/{{.toolVersion.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
 exact = true
 executable = true
 

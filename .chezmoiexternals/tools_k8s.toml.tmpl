@@ -1,0 +1,15 @@
+{{ if .installExternalBinaries }}
+
+[".local/bin/minikube"]
+type = "file"
+url = "https://github.com/kubernetes/minikube/releases/download/{{.toolVersion.minikube}}/minikube-{{.chezmoi.os}}-{{.chezmoi.arch}}"
+exact = true
+executable = true
+
+[".local/bin/kubectl"]
+type = "file"
+url = "https://dl.k8s.io/release/{{.toolVersion.kubectl}}/bin/{{.chezmoi.os}}/{{.chezmoi.arch}}/kubectl"
+exact = true
+executable = true
+
+{{ end }}

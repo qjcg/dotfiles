@@ -1,0 +1,18 @@
+{{ if .installExternalBinaries && .installAITools }}
+
+# FIXME: Not cross-platform.
+[".local/bin/aichat"]
+type = "archive-file"
+url = "https://github.com/sigoden/aichat/releases/download/{{.toolVersion.aichat}}/aichat-{{.toolVersion.aichat}}-x86_64-unknown-{{.chezmoi.os}}-musl.tar.gz"
+path = "aichat"
+exact = true
+executable = true
+
+[".local/bin"]
+type = "archive"
+url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolVersion.llamafile}}/llamafile-{{.toolVersion.llamafile}}.zip"
+executable = true
+stripComponents = 2
+include = ["*/bin/*"]
+
+{{- end }}
