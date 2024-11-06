@@ -28,6 +28,13 @@ include = ["*/bin/*"]
 
 {{- end }}
 
+[".local/bin/cue"]
+type = "archive-file"
+url = "https://github.com/cue-lang/cue/releases/download/{{.toolGitref.cue}}/cue_{{.toolGitref.cue}}_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
+path = "cue"
+exact = true
+executable = true
+
 [".local/bin/oh-my-posh"]
 type = "file"
 url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/{{.toolGitref.ohMyPosh}}/posh-{{.chezmoi.os}}-{{.chezmoi.arch}}"
