@@ -1,0 +1,18 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  test:
+    - task: test:ubuntu
+    - task: test:alpine
+
+  test:alpine:
+    cmds:
+      # TODO: Implement an actual test here.
+      - docker run -it --rm alpine
+
+  test:ubuntu:
+    cmds:
+      # TODO: Implement an actual test here.
+      - docker run -it --rm ubuntu
