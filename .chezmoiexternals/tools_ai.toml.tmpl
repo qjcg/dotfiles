@@ -1,5 +1,6 @@
 {{ if and .installExternalBinaries .installAITools }}
 
+# aichat
 # FIXME: Not cross-platform.
 [".local/bin/aichat"]
 type = "archive-file"
@@ -8,6 +9,7 @@ path = "aichat"
 exact = true
 executable = true
 
+# Llamafile
 [".local/bin"]
 type = "archive"
 url = "https://github.com/Mozilla-Ocho/llamafile/releases/download/{{.toolVersion.llamafile}}/llamafile-{{.toolVersion.llamafile}}.zip"
