@@ -1,8 +1,8 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $fullName := promptStringOnce . "fullName" "Full name" -}}
 
-{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work) [omit homedir prefix]" "Code/work" -}}
-{{- $codeDirNonWork := promptStringOnce . "codeDirNonWork" "Code dir (nonwork) [omit homedir prefix]" "Code/nonwork" -}}
+{{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work; omit homedir prefix)" "Code/work" -}}
+{{- $codeDirNonWork := promptStringOnce . "codeDirNonWork" "Code dir (nonwork; omit homedir prefix)" "Code/nonwork" -}}
 
 {{- $cloneWorkRepos := promptBoolOnce . "cloneWorkRepos" "Clone work git repos" false -}}
 {{- $cloneNonWorkRepos := promptBoolOnce . "cloneNonWorkRepos" "Clone NON-work git repos" false -}}
