@@ -9,7 +9,11 @@
 
 {{- $installExternalBinaries := promptBoolOnce . "installExternalBinaries" "Install external binaries" false -}}
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
+
 {{- $installGo := promptBoolOnce . "installGo" "Install Go" false -}}
+{{- $installGoVersion := promptStringOnce . "installGoVersion" "Install Go version" "1.23.3" -}}
+{{- $goPath := promptStringOnce . "goPath" "Value of GOPATH (omit homedir prefix)" ".local/go" -}}
+
 
 encryption = "age"
 
@@ -29,7 +33,11 @@ cloneWorkRepos = {{ $cloneWorkRepos }}
 cloneNonWorkRepos = {{ $cloneNonWorkRepos }}
 installAITools = {{ $installAITools }}
 installExternalBinaries = {{ $installExternalBinaries }}
+
 installGo = {{ $installGo }}
+goPath = {{ $goPath | quote }}
+goRoot = {{ printf "~/%s/go-%s" $goPath $installGoVersion | quote }}
+
 
 [data.packages]
 arch = [
@@ -72,7 +80,7 @@ aichat = "v0.23.0"
 cue = "v0.11.0-alpha.5"
 earthly = "v0.8.15"
 fd = "v10.2.0"
-go = "1.23.2"
+go = {{ $installGoVersion | quote }}
 kubectl = "v1.31.0"
 llamafile = "0.8.16"
 minikube = "v1.34.0"

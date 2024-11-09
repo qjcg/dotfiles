@@ -1,10 +1,8 @@
 {{ if .installGo }}
 
-[".local/go/"]
+["{{.goPath}}/go-{{.toolVersion.go}}"]
 type = "archive"
 url = "https://go.dev/dl/go{{.toolVersion.go}}.{{.chezmoi.os}}-{{.chezmoi.arch}}.tar.gz"
-executable = true
-stripComponents = 2
-include = ["go/bin/*"]
+stripComponents = 1
 
 {{ end }}
