@@ -3,7 +3,8 @@
 (use-package emacs
   :init
   (setenv "LC_COLLATE" "C")
-  (add-to-list 'exec-path "~/go/bin")
+  (add-to-list 'exec-path {{quote "~/.local/bin"}})
+  (add-to-list 'exec-path {{printf "~/%s/bin" .goPath | quote}})
 
   :config
   (let ((backupdir (concat user-emacs-directory "backups")))
