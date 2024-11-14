@@ -36,6 +36,7 @@ installExternalBinaries = {{ $installExternalBinaries }}
 
 installGo = {{ $installGo }}
 goPath = {{ $goPath | quote }}
+goPathWithHomePrefix = {{ printf "~/%s" $goPath | quote }}
 goRoot = {{ printf "~/%s/go-%s" $goPath $installGoVersion | quote }}
 
 
