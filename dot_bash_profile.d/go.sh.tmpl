@@ -1,7 +1,7 @@
-export GOPATH=~/{{.goPath}}
-export GOBIN=$GOPATH/bin
+export GOPATH="{{.goPathWithHomePrefix}}"
+export GOBIN="$GOPATH/bin"
 
-{{- if .installGo -}}
+{{ if .installGo -}}
 export GOROOT={{.goRoot}}
 export PATH=$GOROOT/bin:$GOBIN:$PATH
 {{else}}
