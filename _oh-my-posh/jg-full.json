@@ -1,0 +1,73 @@
+{
+    "version": 2.0,
+    "final_space": true,
+    "blocks": [
+        {
+            "segments": [
+                {
+                    "type": "session",
+                    "foreground": "#ffffff",
+                    "template": "{{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} "
+                },
+                {
+                    "type": "kubectl",
+                    "foreground": "blue",
+                    "template": "󱃾 {{.Context}}{{if .Namespace}}/<#00c2ff>{{.Namespace}}</>{{end}} "
+                },
+                {
+                    "type": "command",
+                    "foreground": "#fa9c1b",
+                    "properties": {
+                        "command": "nats context info --json | jq -r .name",
+                        "shell": "bash"
+                    },
+                    "template": "N {{ .Output }} "
+                },
+                {
+                    "type": "path",
+                    "foreground": "#15c2cb",
+                    "properties": {
+                        "style": "unique"
+                    },
+                    "template": "{{ .Path }} "
+                },
+                {
+                    "type": "git",
+                    "foreground": "#f141a8",
+                    "properties": {
+                        "branch_icon": "",
+                        "fetch_status": true
+                    },
+                    "style": "plain",
+                    "template": "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} "
+                },
+                {
+                    "type": "project",
+                    "foreground": "#5EADF2",
+                    "template": "{{if .Version}}<#F3EFF5>is</>  {{.Version}} {{end}}"
+                },
+                {
+                    "type": "go",
+                    "foreground": "cyan",
+                    "style": "plain",
+                    "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+                },
+                {
+                    "type": "python",
+                    "style": "plain",
+                    "foreground": "green",
+                    "template": "🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<#00ff9c>{{ .Venv }}</>{{ end }}{{ end }} "
+                },
+                {
+                    "type": "text",
+                    "foreground": "#ffe45e",
+                    "style": "plain",
+                    "template": "❯"
+                }
+            ],
+            "alignment": "left",
+            "type": "prompt",
+            "newline": true
+        }
+    ]
+}
