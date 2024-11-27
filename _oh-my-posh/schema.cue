@@ -243,7 +243,7 @@ var?: {
 	...
 }
 
-#segment: matchN(93, [matchIf({
+#segment: matchN(96, [matchIf({
 	type?: "project"
 	...
 }, {
@@ -599,6 +599,29 @@ var?: {
 		// The folders to look for when determining if a folder is a
 		// Flutter workspace
 		folders?: [...string] | *[".dart_tool"]
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "fortran"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Fortran workspace
+		extensions?: [...string] | *["fpm.toml", "*.f", "*.for", "*.fpp", "*.f77", "*.f90", "*.f95", "*.f03", "*.f08", "*.F", "*.FOR", "*.FPP", "*.F77", "*.F90", "*.F95", "*.F03", "*.F08"]
+		folders?: #folders
 		...
 	}
 	...
@@ -2620,11 +2643,57 @@ var?: {
 	...
 }, _) & {
 	...
+}, matchIf({
+	type?: "tauri"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Tauri project
+		extensions?: [...string] | *["package.json"]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "svelte"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Svelte project
+		extensions?: [...string] | *["package.json"]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
 }]) & {
 	// Segment Type
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	type!: "az" | "azd" | "aws" | "azfunc" | "argocd" | "angular" | "aurelia" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "command" | "connection" | "crystal" | "cds" | "cf" | "cftarget" | "cmake" | "docker" | "dotnet" | "dart" | "deno" | "elixir" | "executiontime" | "flutter" | "fossil" | "gcp" | "firebase" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "julia" | "java" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "python" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "quasar" | "root" | "ruby" | "rust" | "r" | "react" | "sapling" | "session" | "sitecore" | "spotify" | "status" | "shell" | "sysinfo" | "strava" | "svn" | "swift" | "talosctl" | "time" | "text" | "terraform" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
+	type!: "az" | "azd" | "aws" | "azfunc" | "argocd" | "angular" | "aurelia" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "command" | "connection" | "crystal" | "cds" | "cf" | "cftarget" | "cmake" | "docker" | "dotnet" | "dart" | "deno" | "elixir" | "executiontime" | "flutter" | "fossil" | "gcp" | "firebase" | "fortran" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "julia" | "java" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "python" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "quasar" | "root" | "ruby" | "rust" | "r" | "react" | "sapling" | "session" | "sitecore" | "spotify" | "status" | "shell" | "sysinfo" | "strava" | "svelte" | "svn" | "swift" | "talosctl" | "tauri" | "time" | "text" | "terraform" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
 
 	// Segment Style
 	//
