@@ -4,13 +4,13 @@ version: '3'
 
 vars:
   BASENAME: jg
-  CONFIG: '{{.BASENAME}}-full.yaml'
-  CONFIG_MIN: '{{.BASENAME}}-minimalist.yaml'
-  CONFIG_CONTEXT: '{{.BASENAME}}-context.yaml'
-  SCHEMA: schema.cue
+  CONFIG: '{{.BASENAME}}-full.toml'
+  CONFIG_MIN: '{{.BASENAME}}-minimalist.toml'
+  CONFIG_CONTEXT: '{{.BASENAME}}-context.toml'
   OMP_VERSION:
     sh: oh-my-posh --version
   SCHEMA_TAG: v{{.OMP_VERSION}}
+  SCHEMA: schema-{{.SCHEMA_TAG}}.cue
 
 
 tasks:
@@ -20,7 +20,8 @@ tasks:
       - task: vet
 
   build:
-    desc: Export from CUE to JSON configs.
+    desc: Export CUE to config files.
+    deps: [schema]
     sources:
       - "{{.BASENAME}}.cue"
       - "{{.SCHEMA}}"
@@ -28,20 +29,14 @@ tasks:
       - "{{.CONFIG}}"
       - "{{.CONFIG_MIN}}"
       - "{{.CONFIG_CONTEXT}}"
-      - '{{.CONFIG | replace ".yaml" ".json"}}'
-      - '{{.CONFIG_MIN | replace ".yaml" ".json"}}'
-      - '{{.CONFIG_CONTEXT | replace ".yaml" ".json"}}'
     cmds:
-      - cue export --expression configs.full -o {{.CONFIG}} --force
-      - cue export --expression configs.minimalist -o {{.CONFIG_MIN}} --force
-      - cue export --expression configs.context -o {{.CONFIG_CONTEXT}} --force
-      # Exporting from YAML seems to avoid "CONFIG ERROR".
-      - cue export {{.CONFIG}} -o {{.CONFIG | replace ".yaml" ".json"}} --force
-      - cue export {{.CONFIG_MIN}} -o {{.CONFIG_MIN | replace ".yaml" ".json"}} --force
-      - cue export {{.CONFIG_CONTEXT}} -o {{.CONFIG_CONTEXT | replace ".yaml" ".json"}} --force
+      - cue export --expression configs.full -o {{.CONFIG}}
+      - cue export --expression configs.minimalist -o {{.CONFIG_MIN}}
+      - cue export --expression configs.context -o {{.CONFIG_CONTEXT}}
 
   vet:
-    desc: Validate that JSON files conform to the upstream oh-my-posh schema.
+    desc: Validate that config files conform to the upstream oh-my-posh schema.
+    deps: [schema]
     cmds:
       - cue vet {{.CONFIG}} {{.SCHEMA}}
       - cue vet {{.CONFIG_MIN}} {{.SCHEMA}}
@@ -49,8 +44,11 @@ tasks:
 
   schema:
     desc: Download oh-my-posh JSON schema and convert to CUE.
+    status:
+      - test -r {{.SCHEMA}}
+      - test -s {{.SCHEMA}}
     cmds:
-      - "curl -sL {{.SCHEMA_URL}} | cue import jsonschema: - --package {{.CUE_PKG}} -o {{.SCHEMA}} --force"
+      - "curl -sL {{.SCHEMA_URL}} | cue import jsonschema: - --package {{.CUE_PKG}} -o {{.SCHEMA}}"
     vars:
       CUE_PKG: omp
       SCHEMA_URL: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/{{.SCHEMA_TAG}}/themes/schema.json
@@ -58,4 +56,4 @@ tasks:
   clean:
     desc: Remove generated files.
     cmds:
-      - rm -f *.json jg*.yaml
+      - rm -f jg*.{yaml,toml} schema*

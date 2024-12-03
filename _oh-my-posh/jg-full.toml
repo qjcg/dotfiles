@@ -1,0 +1,72 @@
+final_space = true
+version = 2.0
+
+[[blocks]]
+alignment = 'left'
+newline = true
+type = 'prompt'
+
+[[blocks.segments]]
+foreground = '#ffffff'
+style = 'plain'
+template = '{{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} '
+type = 'session'
+
+[[blocks.segments]]
+foreground = 'blue'
+style = 'plain'
+template = '󱃾 {{.Context}}{{if .Namespace}}/<#00c2ff>{{.Namespace}}</>{{end}} '
+type = 'kubectl'
+
+[[blocks.segments]]
+foreground = '#fa9c1b'
+style = 'plain'
+template = 'N {{ .Output }} '
+type = 'command'
+
+[blocks.segments.properties]
+command = 'nats context info --json | jq -r .name'
+shell = 'bash'
+
+[[blocks.segments]]
+foreground = '#15c2cb'
+style = 'plain'
+template = '{{ .Path }} '
+type = 'path'
+
+[blocks.segments.properties]
+style = 'unique'
+
+[[blocks.segments]]
+foreground = '#f141a8'
+style = 'plain'
+template = '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
+type = 'git'
+
+[blocks.segments.properties]
+branch_icon = ''
+fetch_status = true
+
+[[blocks.segments]]
+foreground = '#5EADF2'
+style = 'plain'
+template = '{{if .Version}}<#F3EFF5>is</>  {{.Version}} {{end}}'
+type = 'project'
+
+[[blocks.segments]]
+foreground = 'cyan'
+style = 'plain'
+template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}'
+type = 'go'
+
+[[blocks.segments]]
+foreground = 'green'
+style = 'plain'
+template = '🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<#00ff9c>{{ .Venv }}</>{{ end }}{{ end }} '
+type = 'python'
+
+[[blocks.segments]]
+foreground = '#ffe45e'
+style = 'plain'
+template = '❯'
+type = 'text'

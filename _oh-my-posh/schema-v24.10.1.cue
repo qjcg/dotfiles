@@ -69,11 +69,9 @@ debug_prompt?:     #extra_prompt
 //
 // https://ohmyposh.dev/docs/configuration/colors#palette
 palette="palette"?: {
-	{[=~".*" & !~"^()$"]: #color}
+	{[=~".*"]: #color}
 	...
-} | *{
-	...
-}
+} | *{}
 
 // Palettes
 //
@@ -84,13 +82,11 @@ palettes?: {
 
 	// List of palettes
 	list?: {
-		{[=~".*" & !~"^()$"]: palette}
+		{[=~".*"]: palette}
 		...
 	}
 	...
-} | *{
-	...
-}
+} | *{}
 
 // List of settings to cycle through segment by segment
 //
@@ -110,9 +106,7 @@ iterm_features?: [..."prompt_mark" | "current_dir" | "remote_host"]
 // https://ohmyposh.dev/docs/configuration/templates#config-variables
 var?: {
 	...
-} | *{
-	...
-}
+} | *{}
 
 #color: matchN(>=1, [#color_string, #palette_reference])
 
@@ -142,9 +136,7 @@ var?: {
 
 #status_formats: {
 	...
-} | *{
-	...
-}
+} | *{}
 
 #folders: [...string]
 
@@ -158,9 +150,7 @@ var?: {
 
 #mapped_branches: {
 	...
-} | *{
-	...
-}
+} | *{}
 
 #cache_duration: =~"^(none|infinite|([0-9]+(h|m|s))+)$"
 
@@ -174,9 +164,7 @@ var?: {
 	background?:           #color
 	background_templates?: #templates
 	...
-} | *{
-	...
-}
+} | *{}
 
 #block: matchN(3, [matchIf({
 	type?: "prompt"
@@ -776,18 +764,14 @@ var?: {
 		// Set the untracked files mode for a repository
 		untracked_modes?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 
 		// Ignore submodules
 		//
 		// Ignore changes to submodules when looking for changes
 		ignore_submodules?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 
 		// Ignore fetching status in these repo's
 		//
@@ -808,9 +792,7 @@ var?: {
 		// key. These get precedence over the standard icons
 		upstream_icons?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 		mapped_branches?:  #mapped_branches
 		full_branch_path?: #full_branch_path
 		native_fallback?:  #native_fallback
@@ -1103,9 +1085,7 @@ var?: {
 		// Custom context names.
 		context_aliases?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 		...
 	}
 	...
@@ -1361,9 +1341,7 @@ var?: {
 		// Custom glyph/text for specific paths
 		mapped_locations?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 
 		// Maximum Depth
 		//
@@ -1579,9 +1557,7 @@ var?: {
 		// Custom glyph/text for specific shells
 		custom_text?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 		...
 	}
 	...
@@ -2554,9 +2530,7 @@ var?: {
 		// A key, value map of Headers to send with the request
 		headers?: {
 			...
-		} | *{
-			...
-		}
+		} | *{}
 		...
 	}
 	...
@@ -2731,9 +2705,7 @@ var?: {
 	// https://ohmyposh.dev/docs/configuration/segment#properties
 	properties?: {
 		...
-	} | *{
-		...
-	}
+	} | *{}
 
 	// Allow the use of interactive prompt escape sequences
 	//
@@ -2766,11 +2738,7 @@ var?: {
 		// https://ohmyposh.dev/docs/configuration/segment#strategy
 		strategy?: "folder" | "session" | *"folder"
 		...
-	} | *{
-		...
-	}
+	} | *{}
 	...
-} | *{
-	...
-}
+} | *{}
 ...
