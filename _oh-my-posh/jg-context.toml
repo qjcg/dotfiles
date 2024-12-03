@@ -1,0 +1,54 @@
+final_space = true
+version = 2.0
+
+[[blocks]]
+alignment = 'left'
+newline = true
+type = 'prompt'
+
+[[blocks.segments]]
+foreground = 'blue'
+style = 'plain'
+template = '󱃾 {{.Context}}{{if .Namespace}}/<#00c2ff>{{.Namespace}}</>{{end}} '
+type = 'kubectl'
+
+[[blocks.segments]]
+foreground = 'green'
+style = 'plain'
+template = '🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<#00ff9c>{{ .Venv }}</>{{ end }}{{ end }} '
+type = 'python'
+
+[[blocks]]
+alignment = 'left'
+newline = true
+type = 'prompt'
+
+[[blocks.segments]]
+foreground = '#15c2cb'
+style = 'plain'
+template = '{{ .Path }} '
+type = 'path'
+
+[blocks.segments.properties]
+style = 'unique'
+
+[[blocks.segments]]
+foreground = '#f141a8'
+style = 'plain'
+template = '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
+type = 'git'
+
+[blocks.segments.properties]
+branch_icon = ''
+fetch_status = true
+
+[[blocks]]
+alignment = 'left'
+newline = true
+type = 'prompt'
+
+[[blocks.segments]]
+foreground = '#ffe45e'
+style = 'plain'
+template = '❯'
+type = 'text'

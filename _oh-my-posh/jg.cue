@@ -59,6 +59,8 @@ package omp
 #Segment: self = {
 	#segment
 
+	style: *"plain" | #segment.style
+
 	if self.powerline_symbol != _|_ {
 		style: "powerline"
 	}
@@ -103,7 +105,6 @@ package omp
 			branch_icon:  ""
 			fetch_status: true
 		}
-		style:    "plain"
 		template: "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} "
 	}
 
@@ -116,14 +117,12 @@ package omp
 	go: {
 		type:       "go"
 		foreground: #Colors.cyan
-		style:      "plain"
 		template:   "\(#Symbols.go) {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
 	}
 
 	python: {
 		let lg = #Colors.lightgreen
 		type:       "python"
-		style:      "plain"
 		foreground: #Colors.green
 		template:   "\(#Symbols.python) {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<\(lg)>{{ .Venv }}</>{{ end }}{{ end }} "
 	}
@@ -131,7 +130,6 @@ package omp
 	prompt: {
 		type:       "text"
 		foreground: #Colors.gold
-		style:      "plain"
 		template:   "\(#Symbols.triangleHeadedArrow)"
 	}
 }
