@@ -1,0 +1,51 @@
+version: 2.0
+final_space: true
+blocks:
+  - segments:
+      - type: session
+        style: plain
+        foreground: '#ffffff'
+        template: '{{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} '
+      - type: kubectl
+        style: plain
+        foreground: blue
+        template: "\U000F10FE {{.Context}}{{if .Namespace}}/<#00c2ff>{{.Namespace}}</>{{end}} "
+      - type: command
+        style: plain
+        foreground: '#fa9c1b'
+        properties:
+          command: nats context info --json | jq -r .name
+          shell: bash
+        template: 'N {{ .Output }} '
+      - type: path
+        style: plain
+        foreground: '#15c2cb'
+        properties:
+          style: unique
+        template: '{{ .Path }} '
+      - type: git
+        style: plain
+        foreground: '#f141a8'
+        properties:
+          branch_icon: 
+          fetch_status: true
+        template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
+      - type: project
+        style: plain
+        foreground: '#5EADF2'
+        template: '{{if .Version}}<#F3EFF5>is</>  {{.Version}} {{end}}'
+      - type: go
+        style: plain
+        foreground: cyan
+        template:  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+      - type: python
+        style: plain
+        foreground: green
+        template: "\U0001F40D {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<#00ff9c>{{ .Venv }}</>{{ end }}{{ end }} "
+      - type: text
+        style: plain
+        foreground: '#ffe45e'
+        template: ❯
+    alignment: left
+    type: prompt
+    newline: true

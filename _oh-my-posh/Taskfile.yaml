@@ -4,9 +4,9 @@ version: '3'
 
 vars:
   BASENAME: jg
-  CONFIG: '{{.BASENAME}}-full.toml'
-  CONFIG_MIN: '{{.BASENAME}}-minimalist.toml'
-  CONFIG_CONTEXT: '{{.BASENAME}}-context.toml'
+  CONFIG: '{{.BASENAME}}-full.yaml'
+  CONFIG_MIN: '{{.BASENAME}}-minimalist.yaml'
+  CONFIG_CONTEXT: '{{.BASENAME}}-context.yaml'
   OMP_VERSION:
     sh: oh-my-posh --version
   SCHEMA_TAG: v{{.OMP_VERSION}}
