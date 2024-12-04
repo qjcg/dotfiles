@@ -39,3 +39,6 @@ vterm_cmd() {
     done
     vterm_printf "51;E$vterm_elisp"
 }
+
+alias f="vterm_cmd find-file"
+alias d="vterm_cmd dired"
