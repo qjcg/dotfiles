@@ -6,4 +6,4 @@ hash emacs 2>/dev/null || return
 jg-emacs-osc-dir-track () {
   printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD"
 }
-PROMPT_COMMAND=jg-emacs-osc-dir-track
+PROMPT_COMMAND="${PROMPT_COMMAND%;};jg-emacs-osc-dir-track"
