@@ -1,1 +1,5 @@
 FROM alpine:3
+
+#RUN /bin/sh -c "$(wget -qO- get.chezmoi.io)" -- init --apply qjcg
+RUN echo foo > foo.txt
+ENTRYPOINT ["/bin/sh"]
