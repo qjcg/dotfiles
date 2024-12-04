@@ -35,7 +35,7 @@ tasks:
       - cue export --expression configs.context -o {{.CONFIG_CONTEXT}}
 
   vet:
-    desc: Validate that config files conform to the upstream oh-my-posh schema.
+    desc: Validate generated config files against the upstream oh-my-posh schema.
     deps: [schema]
     cmds:
       - cue vet {{.CONFIG}} {{.SCHEMA}}
@@ -45,8 +45,8 @@ tasks:
   schema:
     desc: Download oh-my-posh JSON schema and convert to CUE.
     status:
-      - test -r {{.SCHEMA}}
       - test -s {{.SCHEMA}}
+    run: once
     cmds:
       - "curl -sL {{.SCHEMA_URL}} | cue import jsonschema: - --package {{.CUE_PKG}} -o {{.SCHEMA}}"
     vars:
