@@ -19,9 +19,6 @@ package omp
 	if _newline {
 		newline: true
 	}
-	if !_newline {
-		newline: false
-	}
 }
 
 #Colors: [string]: #color
