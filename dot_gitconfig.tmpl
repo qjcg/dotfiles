@@ -2,6 +2,9 @@
 	name = {{ .fullName }}
 	email = {{ .email }}
 
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/
+
 # See https://stackoverflow.com/a/43654115
 [includeIf "gitdir:~/{{ .codeDirWork }}/"]
     path = ~/{{ .codeDirWork }}/.gitconfig
