@@ -503,6 +503,9 @@
 ;;;; vterm
 (use-package vterm
   :ensure
+  :config
+  ;; See https://github.com/akermu/emacs-libvterm?tab=readme-ov-file#how-can-i-get-the-directory-tracking-in-a-more-understandable-way
+  (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
   )
 
 ;;; Customize
