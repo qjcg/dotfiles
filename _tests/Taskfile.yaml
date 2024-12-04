@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  default: [{task: build}]
+
+  build: docker build -f Dockerfile.alpine -t qjcg/dotfiles-alpine:latest .
