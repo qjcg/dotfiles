@@ -31,3 +31,7 @@ indent_style = tab
 [Earthfile]
 indent_style = space
 indent_size = 4
+
+# Local Variables:
+# mode: toml-ts
+# End:
