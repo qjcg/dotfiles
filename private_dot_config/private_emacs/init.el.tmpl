@@ -446,6 +446,12 @@
   :hook (yaml-mode python-mode)
   )
 
+;;;; time
+(use-package time
+  :config
+  (setopt display-time-mode t)
+  (setopt display-time-format "%a %b %-e %-l:%M%p %Z")
+  )
 ;;; Navigation, Shell & Terminal
 
 ;;;; dired                                                             :builtin:
