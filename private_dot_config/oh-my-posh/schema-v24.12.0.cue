@@ -27,13 +27,17 @@ pwd?: string | *""
 // Enable Upgrade Notice
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
-upgrade_notice?: bool | *false
-
-// Enable automatic upgrades for Oh My Posh (supports
-// Windows/macOS only)
-//
-// https://ohmyposh.dev/docs/configuration/general#general-settings
-auto_upgrade?: bool | *false
+upgrade?: {
+	interval?: #cache_duration
+	source?:   "cdn" | "github" | *"cdn"
+	auto?:     bool | *false
+	notice?:   bool | *false
+	...
+} | *{
+	source: "cdn"
+	auto:   false
+	notice: false
+}
 
 // Patch PowerShell Color Bleed
 //
@@ -2667,7 +2671,7 @@ var?: {
 	// Segment Type
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	type!: "az" | "azd" | "aws" | "azfunc" | "argocd" | "angular" | "aurelia" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "command" | "connection" | "crystal" | "cds" | "cf" | "cftarget" | "cmake" | "docker" | "dotnet" | "dart" | "deno" | "elixir" | "executiontime" | "flutter" | "fossil" | "gcp" | "firebase" | "fortran" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "julia" | "java" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "python" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "quasar" | "root" | "ruby" | "rust" | "r" | "react" | "sapling" | "session" | "sitecore" | "spotify" | "status" | "shell" | "sysinfo" | "strava" | "svelte" | "svn" | "swift" | "talosctl" | "tauri" | "time" | "text" | "terraform" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
+	type!: "angular" | "argocd" | "aurelia" | "aws" | "az" | "azd" | "azfunc" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "cds" | "cf" | "cftarget" | "cmake" | "command" | "connection" | "crystal" | "dart" | "deno" | "docker" | "dotnet" | "elixir" | "executiontime" | "firebase" | "flutter" | "fortran" | "fossil" | "gcp" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "java" | "julia" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "python" | "quasar" | "r" | "react" | "root" | "ruby" | "rust" | "sapling" | "session" | "shell" | "sitecore" | "spotify" | "status" | "strava" | "svelte" | "svn" | "swift" | "sysinfo" | "talosctl" | "tauri" | "terraform" | "text" | "time" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
 
 	// Segment Style
 	//
