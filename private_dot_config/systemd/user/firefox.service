@@ -1,0 +1,10 @@
+[Unit]
+Description=Start Firefox with my preferred websites
+After=graphical-session.target
+
+[Service]
+ExecStart=/bin/sh -c 'firefox --new-window "https://webmail.drwholdings.com/owa/#path=/mail" --new-tab "https://webmail.drwholdings.com/owa/#path=/calendar"; firefox --new-window "https://www.wrike.com/workspace.htm?acc=1416928#/inbox"'
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
