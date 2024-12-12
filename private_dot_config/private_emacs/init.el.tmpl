@@ -266,6 +266,7 @@
   :bind
   (("C-c f f" . fontaine-set-preset))
 
+  ;; NOTE: To troubleshoot, see M-x list-faces-display
   :config
   (setopt fontaine-presets
 	  '(
@@ -363,14 +364,12 @@
 	     :mode-line-active-family "Iosevka Nerd Font")
 
 	    (ETBembo
-	     :default-family "ETBembo"
-	     :default-height 140
-	     :bold-family "ETBembo"
-	     :italic-family "ETBembo"
-	     :line-number-family "Iosevka Nerd Font"
-	     :mode-line-active-family "Iosevka Nerd Font"
-	     :fixed-pitch-family "Iosevka Nerd Font"
+	     :default-family "Iosevka Nerd Font"
+	     :default-height 110
+	     :fixed-pitch-serif-family "ETBembo"
+	     :fixed-pitch-serif-height 140
 	     :variable-pitch-family "ETBembo"
+	     :variable-pitch-height 140
 	     )
 
 	    (FiraCode
