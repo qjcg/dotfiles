@@ -7,6 +7,8 @@
 {{- $cloneWorkRepos := promptBoolOnce . "cloneWorkRepos" "Clone work git repos" false -}}
 {{- $cloneNonWorkRepos := promptBoolOnce . "cloneNonWorkRepos" "Clone NON-work git repos" false -}}
 
+{{- $installFonts := promptBoolOnce . "installFonts" "Install fonts" false -}}
+
 {{- $installExternalBinaries := promptBoolOnce . "installExternalBinaries" "Install external binaries" false -}}
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
 
@@ -36,6 +38,7 @@ cloneWorkRepos = {{ $cloneWorkRepos }}
 cloneNonWorkRepos = {{ $cloneNonWorkRepos }}
 installAITools = {{ $installAITools }}
 installExternalBinaries = {{ $installExternalBinaries }}
+installFonts = {{ $installFonts }}
 
 installGo = {{ $installGo }}
 goPath = {{ $goPath | quote }}
