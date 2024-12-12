@@ -1,0 +1,35 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'org-mode-abbrev-table
+  '(
+    ("daily" "* Daily 333
+
+** 3h focused work [/]
+*** TODO
+
+** 3 short tasks [/]
+*** TODO
+
+** 3 routine tasks [/]
+*** TODO
+
+
+
+* Meetings
+
+** Meeting Title
+- 
+
+* Shutdown [/]
+
+** TODO final slack/email review
+** TODO update todo list with any meeting action items
+** TODO review next day on calendar
+** TODO choose top 3 objectives for your day
+*** TODO 
+*** TODO 
+*** TODO 
+
+** TODO schedule those objectives as appointments for yourself, in the white space of your calendar
+" nil :count 3)
+   ))
+
