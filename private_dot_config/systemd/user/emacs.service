@@ -1,0 +1,10 @@
+[Unit]
+Description=Start Emacs
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/env emacs
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
