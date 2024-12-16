@@ -115,6 +115,15 @@
 ;;;; emms
 (use-package emms
   :ensure
+
+  :bind
+  (("C-c e e" . emms)
+   ("C-c e n" . emms-next)
+   ("C-c e p" . emms-previous)
+   ("C-c e s" . emms-stop)
+   ("C-c e SPC" . emms-pause)
+   )
+
   :config
   (emms-all)
   (setopt emms-player-list '(emms-player-mpv))
