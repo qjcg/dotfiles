@@ -13,7 +13,7 @@
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
 
 {{- $installGo := promptBoolOnce . "installGo" "Install Go" false -}}
-{{- $installGoVersion := promptStringOnce . "installGoVersion" "Install Go version" "1.23.3" -}}
+{{- $installGoVersion := promptStringOnce . "installGoVersion" "Install Go version" "1.23.4" -}}
 {{- $goPath := promptStringOnce . "goPath" "Value of GOPATH (omit homedir prefix)" ".local/go" -}}
 
 
@@ -98,16 +98,16 @@ alpine = [
 
 [data.toolVersion]
 aichat = "v0.24.0"
-cue = "v0.11.0"
+cue = "v0.11.1"
 delta = "0.18.2"
 earthly = "v0.8.15"
 fd = "v10.2.0"
 go = {{ $installGoVersion | quote }}
-kubectl = "v1.31.0"
+kubectl = "v1.32.0"
 llamafile = "0.8.16"
 minikube = "v1.34.0"
-ohMyPosh = "v24.12.0"
-task = "v3.40.0"
+ohMyPosh = "v24.15.1"
+task = "v3.40.1"
 
 # Local Variables:
 # mode: toml-ts
