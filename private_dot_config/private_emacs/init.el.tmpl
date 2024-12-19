@@ -120,6 +120,10 @@
   (("C-c e e" . emms)
    ("C-c e n" . emms-next)
    ("C-c e p" . emms-previous)
+   ("C-c e P" . (lambda () (interactive)
+		  "Play my preferred EMMS playlist."
+		  (emms-play-playlist (concat emms-directory "/streams-jg.emms"))))
+   ("C-c e r" . emms-random)
    ("C-c e s" . emms-stop)
    ("C-c e SPC" . emms-pause)
    )
