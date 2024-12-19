@@ -10,10 +10,10 @@
 ;; Add personal lisp dir to load-path.
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
+;; TODO: Uncomment function below once no-littering is in place.
 ;; Use no-littering dir for native compilation cache.
 ;; https://github.com/emacscollective/no-littering#native-compilation-cache
 ;;
-;; TODO: UNCOMMENT once no-littering is in place
 ;; (when (fboundp 'startup-redirect-eln-cache)
 ;;   (startup-redirect-eln-cache
 ;;    (convert-standard-filename
