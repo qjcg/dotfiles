@@ -10,6 +10,7 @@
 
     ;; etc: Config Files
     (setopt custom-theme-directory (etc "themes"))
+    (setopt emms-source-file-default-directory (etc "emms/"))
     (setq rmh-elfeed-org-files (list (etc "elfeed/rmh-elfeed.org")))
     (setq tempel-path (list (etc "tempel/templates.el")))
 
@@ -141,7 +142,7 @@
    ("C-c e p" . emms-previous)
    ("C-c e P" . (lambda () (interactive)
 		  "Play my preferred EMMS playlist."
-		  (emms-play-playlist (expand-file-name "streams-jg.emms" emms-directory))))
+		  (emms-play-playlist (expand-file-name "streams-jg.emms" emms-source-file-default-directory))))
    ("C-c e r" . emms-random)
    ("C-c e s" . emms-stop)
    ("C-c e SPC" . emms-pause)
@@ -151,12 +152,17 @@
   (emms-all)
   (setopt emms-player-list '(emms-player-mpv))
   (setopt emms-player-mpv-update-metadata t)
-  (setopt emms-source-file-default-directory (concat emms-directory "/"))
   )
 
 ;;;; elfeed
-(use-package elfeed
-  :ensure)
+(use-package elfeed :ensure)
+
+;;;; elfeed-org
+(use-package elfeed-org :ensure)
+
+;;;; elfeed-score
+(use-package elfeed-score :ensure)
+
 ;;;; time
 (use-package time
   :config
