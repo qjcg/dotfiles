@@ -1,0 +1,7 @@
+font-family = Iosevka Nerd Font
+font-size = 12
+fullscreen = true
+theme = Adventure
+window-decoration = false
+
+keybind = ctrl+a>d=toggle_window_decorations
