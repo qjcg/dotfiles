@@ -3,26 +3,30 @@ final_space: true
 blocks:
   - segments:
       - type: path
-        style: plain
         foreground: '#15c2cb'
         properties:
           style: unique
+          cache_duration: none
         template: '{{ .Path }} '
-      - type: git
         style: plain
+      - type: git
         foreground: '#f141a8'
         properties:
           branch_icon: 
+          cache_duration: none
           fetch_status: true
         template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
+        style: plain
     alignment: left
     type: prompt
     newline: true
   - segments:
       - type: text
-        style: plain
         foreground: '#ffe45e'
         template: ❯
+        properties:
+          cache_duration: none
+        style: plain
     alignment: left
     type: prompt
     newline: true

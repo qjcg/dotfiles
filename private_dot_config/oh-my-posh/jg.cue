@@ -56,6 +56,7 @@ package omp
 #Segment: self = {
 	#segment
 
+	properties: cache_duration: "none"
 	style: *"plain" | #segment.style
 
 	if self.powerline_symbol != _|_ {
