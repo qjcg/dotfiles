@@ -47,50 +47,42 @@ goRoot = {{ printf "$HOME/%s/go-%s" $goPath $installGoVersion | expandenv | quot
 
 
 [data.packages]
-arch = [
+arch_ubuntu = [
 "acpi",
-"age",
 "aria2",
-"chromium",
 "duf",
+"htop",
+"mkosi",
+"mtr",
+"mpv",
+"neofetch",
+"nvtop",
+"ripgrep",
+"tig",
+"tree",
+"zoxide",
+]
+
+arch = [
+"age",
+"chromium",
 "dust",
 "emacs-wayland",
 "firefox",
 "go",
 "gopass",
-"htop",
 "imv",
-"mkosi",
-"mpv",
-"mtr",
-"neofetch",
 "noto-fonts-cjk",
-"nvtop",
-"ripgrep",
 "swayimg",
-"tig",
-"tree",
 "ttf-firacode-nerd",
 "ttf-go-nerd",
 "ttf-iosevka-nerd",
 "ttf-jetbrains-mono-nerd",
 "ttf-noto-nerd",
 "uv",
-"zoxide",
 ]
 
 ubuntu = [
-"aria2",
-"duf",
-"htop",
-"mkosi",
-"mpv",
-"neofetch",
-"nvtop",
-"ripgrep",
-"tree",
-"tig",
-"zoxide",
 ]
 
 ubuntu_snaps = [
