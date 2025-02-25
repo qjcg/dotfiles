@@ -159,7 +159,10 @@
 (use-package elfeed :ensure)
 
 ;;;; elfeed-org
-(use-package elfeed-org :ensure)
+(use-package elfeed-org
+  :ensure
+  :config
+  (elfeed-org))
 
 ;;;; elfeed-score
 (use-package elfeed-score :ensure)
