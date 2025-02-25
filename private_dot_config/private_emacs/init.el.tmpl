@@ -297,7 +297,7 @@
 (use-package org-modern
   :ensure
   :config
-  (setopt global-org-modern-mode 1))
+  (setopt global-org-modern-mode t))
 
 ;;;; fontaine                                                             :prot:
 (use-package fontaine
@@ -421,7 +421,7 @@
 	     :default-height 110)))
 
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'Go))
-  (setopt fontaine-mode 1)
+  (setopt fontaine-mode t)
   )
 
 ;;;; ef-themes                                                            :prot:
@@ -464,14 +464,14 @@
   :ensure
   :after vertico
   :config
-  (setopt vertico-posframe-mode 1))
+  (setopt vertico-posframe-mode t))
 
 ;;;; which-key-posframe
 (use-package which-key-posframe
   :ensure
   :after which-key
   :config
-  (setopt which-key-posframe-mode 1))
+  (setopt which-key-posframe-mode t))
 
 ;;;; focus
 (use-package focus
@@ -483,7 +483,7 @@
   :ensure
   :after (ef-themes fontaine)
   :config
-  (setopt spacious-padding-mode 1)
+  (setopt spacious-padding-mode t)
   (setopt spacious-padding-subtle-mode-line t)
   )
 
@@ -491,7 +491,7 @@
 (use-package lin
   :ensure
   :config
-  (setopt lin-mode 1)
+  (setopt lin-mode t)
   )
 
 ;;;; beframe                                                              :prot:
@@ -534,10 +534,9 @@
 
 ;;;; which-key
 (use-package which-key
-  :ensure
   :config
   (setopt which-key-idle-delay 0.5)
-  (setopt which-key-mode 1))
+  (setopt which-key-mode t))
 
 ;;;; zoxide
 (use-package zoxide
