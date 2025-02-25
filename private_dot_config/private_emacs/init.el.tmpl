@@ -38,6 +38,7 @@
   (setopt scroll-bar-mode nil)
   (setopt tool-bar-mode nil)
   (setopt truncate-lines t)
+  (setopt inhibit-startup-echo-area-message user-login-name)
 
   (if (file-exists-p custom-file)
       (load custom-file))
