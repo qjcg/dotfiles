@@ -24,7 +24,7 @@
   :init
   (setenv "LC_COLLATE" "C")
   (add-to-list 'exec-path {{quote "~/.local/bin"}})
-  (add-to-list 'exec-path {{printf "~/%s/bin" .goPath | quote}})
+  (add-to-list 'exec-path {{printf "~/%s/bin" .goRoot | quote}})
 
   :config
   (setopt package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
