@@ -35,6 +35,31 @@
 
 ** TODO schedule those objectives as appointments for yourself, in the white space of your calendar
 " nil :count 2)
+    ("daily3" "* Creative Before Reactive
+
+* Daily 3
+
+** 3 tasks [0/3]
+*** TODO GSS SWOT for Oli
+*** TODO 
+*** TODO 
+
+* Meetings
+
+** MEETING TITLE
+
+* Shutdown [0/5]
+
+** TODO final slack/email review
+** TODO update todo list with any meeting action items
+** TODO review next day on calendar
+** TODO choose top 3 objectives for your day
+*** TODO 
+*** TODO 
+*** TODO 
+
+** TODO schedule those objectives as appointments for yourself, in the white space of your calendar
+" nil :count 1)
     ("daily333" "* Daily 333
 
 ** 3h focused work [/]
