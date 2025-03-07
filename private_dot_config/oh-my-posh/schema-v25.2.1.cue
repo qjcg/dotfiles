@@ -1,53 +1,49 @@
-package omp
-
 // The Oh My Posh theme definition
 //
 // https://ohmyposh.dev/docs/configuration/general
+package omp
+
 @jsonschema(schema="http://json-schema.org/draft-07/schema#")
 @jsonschema(id="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json")
 
 // Final Space
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
-final_space?: bool | *true
+final_space?: bool
 
 // Enable Cursor Positioning
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
-enable_cursor_positioning?: bool | *false
+enable_cursor_positioning?: bool
 
 // FTCS command marks for shell integration
-shell_integration?: bool | *false
+shell_integration?: bool
 
 // Enable OSC99/7/51
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
-pwd?: string | *""
+pwd?: string
 
 // Enable Upgrade Notice
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
 upgrade?: {
 	interval?: #cache_duration
-	source?:   "cdn" | "github" | *"cdn"
-	auto?:     bool | *false
-	notice?:   bool | *false
+	source?:   "cdn" | "github"
+	auto?:     bool
+	notice?:   bool
 	...
-} | *{
-	source: "cdn"
-	auto:   false
-	notice: false
 }
 
 // Patch PowerShell Color Bleed
 //
 // https://ohmyposh.dev/docs/configuration/general#general-settings
-patch_pwsh_bleed?: bool | *false
+patch_pwsh_bleed?: bool
 
 // Console Title Template
 //
 // https://ohmyposh.dev/docs/configuration/title#console-title-template
-console_title_template?: string | *"{{ .Shell }} in {{ .Folder }}"
+console_title_template?: string
 terminal_background?:    #color
 
 // Block array
@@ -72,10 +68,7 @@ debug_prompt?:     #extra_prompt
 // Palette
 //
 // https://ohmyposh.dev/docs/configuration/colors#palette
-palette="palette"?: {
-	{[=~".*"]: #color}
-	...
-} | *{}
+palette?: _#defs."/properties/palette"
 
 // Palettes
 //
@@ -86,11 +79,11 @@ palettes?: {
 
 	// List of palettes
 	list?: {
-		{[=~".*"]: palette}
+		{[=~".*"]: _#defs."/properties/palette"}
 		...
 	}
 	...
-} | *{}
+}
 
 // List of settings to cycle through segment by segment
 //
@@ -110,66 +103,14 @@ iterm_features?: [..."prompt_mark" | "current_dir" | "remote_host"]
 // https://ohmyposh.dev/docs/configuration/templates#config-variables
 var?: {
 	...
-} | *{}
+}
 
-#color: matchN(>=1, [#color_string, #palette_reference])
+// Access token
+//
+// The initial access token
+#access_token: string
 
-#color_string: =~"^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground|accent)$"
-
-#palette_reference: =~"^p:.*$"
-
-#templates: [...#segment.template]
-
-#home_enabled: bool | *false
-
-#fetch_version: bool | *true
-
-#http_timeout: int | *20
-
-#expires_in: int | *0
-
-#access_token: string | *""
-
-#refresh_token: string | *""
-
-#display_mode: "always" | "files" | "environment" | "context" | *"context"
-
-#missing_command_text: string | *""
-
-#version_url_template: string | *""
-
-#status_formats: {
-	...
-} | *{}
-
-#folders: [...string]
-
-#branch_max_length: int | *0
-
-#truncate_symbol: string | *""
-
-#native_fallback: bool | *false
-
-#full_branch_path: bool | *true
-
-#mapped_branches: {
-	...
-} | *{}
-
-#cache_duration: =~"^(none|infinite|([0-9]+(h|m|s))+)$"
-
-#filler: string
-
-#extra_prompt: {
-	// Prompt Template
-	template?:             string
-	foreground?:           #color
-	foreground_templates?: #templates
-	background?:           #color
-	background_templates?: #templates
-	...
-} | *{}
-
+// https://ohmyposh.dev/docs/configuration/block
 #block: matchN(3, [matchIf({
 	type?: "prompt"
 	...
@@ -197,7 +138,7 @@ var?: {
 	// Block overflow
 	//
 	// https://ohmyposh.dev/docs/configuration/block#overflow
-	overflow?: "break" | "hide" | *""
+	overflow?: "break" | "hide"
 	filler?:   #filler
 	...
 }, _) & {
@@ -206,27 +147,27 @@ var?: {
 	// Block type
 	//
 	// https://ohmyposh.dev/docs/configuration/block#type
-	type?: "prompt" | "rprompt" | *"prompt"
+	type?: "prompt" | "rprompt"
 
 	// Block alignment
 	//
 	// https://ohmyposh.dev/docs/configuration/block#alignment
-	alignment?: "left" | "right" | *"left"
+	alignment?: "left" | "right"
 
 	// Newline
 	//
 	// https://ohmyposh.dev/docs/configuration/block#newline
-	newline?: bool | *false
+	newline?: bool
 
 	// Leading diamond
 	//
 	// https://ohmyposh.dev/docs/configuration/block#leading-diamond
-	leading_diamond?: string | *""
+	leading_diamond?: string
 
 	// Trailing diamond
 	//
 	// https://ohmyposh.dev/docs/configuration/block#trailing-diamond
-	trailing_diamond?: string | *""
+	trailing_diamond?: string
 
 	// Segments list, prompt elements to display based on context
 	//
@@ -235,7 +176,106 @@ var?: {
 	...
 }
 
-#segment: matchN(96, [matchIf({
+// Branch template
+//
+// the temaplate to use for the branch name, supports {{ .Branch
+// }} for the branch name
+#branch_template: string
+
+// Cache duration
+//
+// The duration for which the segment will be cached. This is
+// parsed using the `time.ParseDuration` function from the Go
+// standard library (see https://pkg.go.dev/time#ParseDuration
+// for details).
+#cache_duration: =~"^(none|infinite|([0-9]+(h|m|s))+)$"
+
+#color: matchN(>=1, [#color_string, #palette_reference])
+
+// Color string
+//
+// https://ohmyposh.dev/docs/configuration/colors
+#color_string: =~"^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground|accent)$"
+
+// Display Mode
+//
+// Determines whether the segment is displayed always or only if a
+// file matching the extensions are present in the current folder
+#display_mode: "always" | "files" | "environment" | "context"
+
+// Expires in
+//
+// Access token expiration time in seconds
+#expires_in: int
+
+#extra_prompt: {
+	// Prompt Template
+	template?:             string
+	foreground?:           #color
+	foreground_templates?: #templates
+	background?:           #color
+	background_templates?: #templates
+	...
+}
+
+// Fetch Version
+//
+// Fetch the version number
+#fetch_version: bool
+
+// Filler
+//
+// Right aligned filler text, will span the remaining width.
+#filler: string
+
+// Folders
+//
+// The folders to look for when determining if a folder is a
+// workspace
+#folders: [...string]
+
+// Enable in the HOME folder
+//
+// Display the segment in the HOME folder
+#home_enabled: bool
+
+// Http request timeout
+//
+// Milliseconds to use for http request timeouts
+#http_timeout: int
+
+// Mapped Branches
+//
+// Custom glyph/text for specific branches
+#mapped_branches: {
+	...
+}
+
+// Missing command text
+//
+// The string to display when the command is not available
+#missing_command_text: string
+
+// Native Fallback
+//
+// Try to use the WSL 2 native command in a shared Windows drive
+// if the Windows executable is not found.
+#native_fallback: bool
+
+// Palette reference
+//
+// https://ohmyposh.dev/docs/configuration/colors#palette
+#palette_reference: =~"^p:.*$"
+
+// Refresh token
+//
+// The initial refresh token
+#refresh_token: string
+
+// A segment
+//
+// https://ohmyposh.dev/docs/configuration/segment
+#segment: matchN(98, [matchIf({
 	type?: "project"
 	...
 }, {
@@ -243,7 +283,7 @@ var?: {
 		// Always Enabled
 		//
 		// Always show the segment
-		always_enabled?: bool | *false
+		always_enabled?: bool
 		...
 	}
 	...
@@ -264,7 +304,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is an
 		// NPM workspace
-		extensions?: [...string] | *["package.json", "package-lock.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -278,17 +318,17 @@ var?: {
 	// Powerline Symbol
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
-	powerline_symbol?: string | *"\ue0b0"
+	powerline_symbol?: string
 
 	// Leading Powerline Symbol
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
-	leading_powerline_symbol?: string | *"\ue0d7"
+	leading_powerline_symbol?: string
 
 	// Flip the Powerline symbol vertically
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#invert-powerline
-	invert_powerline?: bool | *false
+	invert_powerline?: bool
 	...
 }, _) & {
 	...
@@ -299,12 +339,12 @@ var?: {
 	// Leading diamond
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#leading-diamond
-	leading_diamond?: string | *""
+	leading_diamond?: string
 
 	// Trailing diamond
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#trailing-diamond
-	trailing_diamond?: string | *""
+	trailing_diamond?: string
 	...
 }, _) & {
 	...
@@ -316,7 +356,7 @@ var?: {
 		// Source
 		//
 		// https://ohmyposh.dev/docs/segments/cloud/az#properties
-		source?: "first_match" | "cli" | "pwsh" | *"first_match"
+		source?: "first_match" | "cli" | "pwsh"
 		...
 	}
 	...
@@ -338,27 +378,27 @@ var?: {
 		//
 		// Show the error context when failing to retrieve the battery
 		// information
-		display_error?: bool | *false
+		display_error?: bool
 
 		// Charging Icon
 		//
 		// Text/icon to display when charging
-		charging_icon?: string | *""
+		charging_icon?: string
 
 		// discharging Dcon
 		//
 		// Text/icon to display when discharging
-		discharging_icon?: string | *""
+		discharging_icon?: string
 
 		// Charged Icon
 		//
 		// Text/icon to display when fully charged
-		charged_icon?: string | *""
+		charged_icon?: string
 
 		// Not Charging Icon
 		//
 		// Text/icon to display when on AC power
-		not_charging_icon?: string | *""
+		not_charging_icon?: string
 		...
 	}
 	...
@@ -378,19 +418,19 @@ var?: {
 		// Icon
 		//
 		// The icon representing Bazel's logo
-		icon?: string | *"\ue63a"
+		icon?: string
 
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
 		// Bazel workspace
-		extensions?: [...string] | *["*.bazel", "*.bzl", "BUILD", "WORKSPACE", ".bazelrc", ".bazelversion"]
+		extensions?: [...string]
 
 		// Folders
 		//
 		// The folders to look for when determining if a folder is a Bazel
 		// workspace
-		folders?: [...string] | *["bazel-bin", "bazel-out", "bazel-testlogs"]
+		folders?: [...string]
 		...
 	}
 	...
@@ -411,7 +451,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Buf workspace
-		extensions?: [...string] | *["buf.yaml", "buf.gen.yaml", "buf.work.yaml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -433,7 +473,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Bun workspace
-		extensions?: [...string] | *["bun.lockb"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -460,17 +500,17 @@ var?: {
 		//
 		// The shell in which to run the command in. Uses shell -c command
 		// under the hood
-		shell?: string | *"bash"
+		shell?: string
 
 		// Command
 		//
 		// the command(s) to run
-		command?: string | *""
+		command?: string
 
 		// Script
 		//
 		// A script to run
-		script?: string | *""
+		script?: string
 		...
 	}
 	...
@@ -484,10 +524,10 @@ var?: {
 		// Connection type
 		//
 		// The connection type to display
-		type?: "ethernet" | "wifi" | "cellular" | "bluetooth" | *"wifi|ethernet"
+		type?: "ethernet" | "wifi" | "cellular" | "bluetooth"
 
 		// Transfer speed unit
-		unit?: "none" | "b" | "bps" | "K" | "Kbps" | "M" | "Mbps" | "G" | "Gbps" | "T" | "Tbps" | *"none"
+		unit?: "none" | "b" | "bps" | "K" | "Kbps" | "M" | "Mbps" | "G" | "Gbps" | "T" | "Tbps"
 		...
 	}
 	...
@@ -508,7 +548,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// CMake workspace
-		extensions?: [...string] | *["*.cmake", "CMakeLists.txt"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -538,7 +578,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// .NET workspace
-		extensions?: [...string] | *["*.cs", "*.csx", "*.vb", "*.fs", "*.fsx", "*.sln", "*.slnf", "*.csproj", "*.fsproj", "*.vbproj", "global.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -553,17 +593,17 @@ var?: {
 		// Always Enabled
 		//
 		// Always show the status
-		always_enabled?: bool | *false
+		always_enabled?: bool
 
 		// Status Template
 		//
 		// The template to use for the status segment
-		status_template?: string | *"|"
+		status_template?: string
 
 		// Status Separator
 		//
 		// The separator to use between the status segments
-		status_separator?: string | *"|"
+		status_separator?: string
 		...
 	}
 	...
@@ -584,13 +624,13 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Flutter workspace
-		extensions?: [...string] | *["*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"]
+		extensions?: [...string]
 
 		// Folders
 		//
 		// The folders to look for when determining if a folder is a
 		// Flutter workspace
-		folders?: [...string] | *[".dart_tool"]
+		folders?: [...string]
 		...
 	}
 	...
@@ -612,7 +652,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Fortran workspace
-		extensions?: [...string] | *["fpm.toml", "*.f", "*.for", "*.fpp", "*.f77", "*.f90", "*.f95", "*.f03", "*.f08", "*.F", "*.FOR", "*.FPP", "*.F77", "*.F90", "*.F95", "*.F03", "*.F08"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -638,144 +678,138 @@ var?: {
 		// Display Status
 		//
 		// Display the local changes or not
-		fetch_status?: bool | *true
+		fetch_status?: bool
 
 		// Display Stash Count
 		//
 		// Display the stash count or not
-		fetch_stash_count?: bool | *false
+		fetch_stash_count?: bool
 
 		// Display Worktree Count
 		//
 		// Display the worktree count or not
-		fetch_worktree_count?: bool | *false
+		fetch_worktree_count?: bool
 
 		// Display Upstream Icon
 		//
 		// Display upstream icon or not
-		fetch_upstream_icon?: bool | *false
+		fetch_upstream_icon?: bool
 
 		// Fetch info when in a bare repo
 		//
 		// Fetch info when in a bare repo or not
-		fetch_bare_info?: bool | *false
+		fetch_bare_info?: bool
 
 		// Branch Icon
 		//
 		// The icon to use in front of the git branch name
-		branch_icon?: string | *"\ue0a0 "
+		branch_icon?: string
 
 		// Branch Identical Icon
 		//
 		// The icon to display when remote and local are identical
-		branch_identical_icon?: string | *"≡"
+		branch_identical_icon?: string
 
 		// Branch Ahead Icon
 		//
 		// The icon to display when the local branch is ahead of its
 		// remote
-		branch_ahead_icon?: string | *"↑"
+		branch_ahead_icon?: string
 
 		// Branch Behind Icon
 		//
 		// The icon to display when the local branch is behind its remote
-		branch_behind_icon?: string | *"↓"
+		branch_behind_icon?: string
 
 		// Branch Gone Icon
 		//
 		// The icon to display when there's no remote branch
-		branch_gone_icon?: string | *"≢"
+		branch_gone_icon?: string
 
 		// Commit Icon
 		//
 		// Icon/text to display before the commit context (detached HEAD)
-		commit_icon?: string | *"\uf417"
+		commit_icon?: string
 
 		// Tag Icon
 		//
 		// Icon/text to display before the tag context
-		tag_icon?: string | *"\uf412"
+		tag_icon?: string
 
 		// Rebase Icon
 		//
 		// Icon/text to display before the context when in a rebase
-		rebase_icon?: string | *"\ue728"
+		rebase_icon?: string
 
 		// Cherry-pick Icon
 		//
 		// Icon/text to display before the context when doing a
 		// cherry-pick
-		cherry_pick_icon?: string | *"\ue29b"
+		cherry_pick_icon?: string
 
 		// Revert Icon
 		//
 		// Icon/text to display before the context when doing a revert
-		revert_icon?: string | *"\uf0e2"
+		revert_icon?: string
 
 		// Merge Icon
 		//
 		// Icon/text to display before the merge context
-		merge_icon?: string | *"\ue727"
+		merge_icon?: string
 
 		// No Commits Icon
 		//
 		// Icon/text to display when there are no commits in the repo
-		no_commits_icon?: string | *"\uf594"
+		no_commits_icon?: string
 
 		// Github Icon
 		//
 		// Icon/text to display when the upstream is Github
-		github_icon?: string | *"\uf408"
+		github_icon?: string
 
 		// Gitlab Icon
 		//
 		// Icon/text to display when the upstream is Gitlab
-		gitlab_icon?: string | *"\uf296"
+		gitlab_icon?: string
 
 		// Bitbucket Icon
 		//
 		// Icon/text to display when the upstream is Bitbucket
-		bitbucket_icon?: string | *"\uf171"
+		bitbucket_icon?: string
 
 		// Azure DevOps Icon
 		//
 		// Icon/text to display when the upstream is Azure DevOps
-		azure_devops_icon?: string | *"\uebe8"
+		azure_devops_icon?: string
 
 		// CodeCommit Icon
 		//
 		// Icon/text to display when the upstream is CodeCommit
-		codecommit_icon?: string | *"\uf270"
+		codecommit_icon?: string
 
 		// Codeberg Icon
 		//
 		// Icon/text to display when the upstream is Codeberg
-		codeberg_icon?: string | *"\uf330"
+		codeberg_icon?: string
 
 		// Git Icon
 		//
 		// Icon/text to display when the upstream is not known/mapped
-		git_icon?: string | *"\ue5fb"
-
-		// Branch max length
-		//
-		// the max length for the displayed branch name where 0 implies
-		// full length
-		branch_max_length?: int | *0
+		git_icon?: string
 
 		// Untracked files mode
 		//
 		// Set the untracked files mode for a repository
 		untracked_modes?: {
 			...
-		} | *{}
+		}
 
 		// Ignore submodules
 		//
 		// Ignore changes to submodules when looking for changes
 		ignore_submodules?: {
 			...
-		} | *{}
+		}
 
 		// Ignore fetching status in these repo's
 		//
@@ -786,7 +820,7 @@ var?: {
 		// Fetch the user
 		//
 		// Fetch the current configured user for the repository
-		fetch_user?:     bool | *false
+		fetch_user?:     bool
 		status_formats?: #status_formats
 
 		// Status string formats
@@ -796,10 +830,10 @@ var?: {
 		// key. These get precedence over the standard icons
 		upstream_icons?: {
 			...
-		} | *{}
-		mapped_branches?:  #mapped_branches
-		full_branch_path?: #full_branch_path
-		native_fallback?:  #native_fallback
+		}
+		mapped_branches?: #mapped_branches
+		branch_template?: #branch_template
+		native_fallback?: #native_fallback
 		...
 	}
 	...
@@ -821,13 +855,19 @@ var?: {
 		//
 		// Parse go.mod file instead of calling out to go to improve
 		// performance.
-		parse_mod_file?: bool | *false
+		parse_mod_file?: bool
+
+		// Parse go.work file
+		//
+		// Parse go.work file instead of calling out to go to improve
+		// performance.
+		parse_go_work_file?: bool
 
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a Go
 		// workspace
-		extensions?: [...string] | *["*.go", "go.mod"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -850,13 +890,13 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Dart workspace
-		extensions?: [...string] | *["*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"]
+		extensions?: [...string]
 
 		// Folders
 		//
 		// The folders to look for when determining if a folder is a Dart
 		// workspace
-		folders?: [...string] | *[".dart_tool"]
+		folders?: [...string]
 		...
 	}
 	...
@@ -877,7 +917,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Deno workspace
-		extensions?: [...string] | *["*.js", "*.ts", "deno.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -900,7 +940,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Crystal workspace
-		extensions?: [...string] | *["*.cr", "shard.yml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -923,7 +963,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Julia workspace
-		extensions?: [...string] | *["*.jl"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -946,7 +986,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Perl workspace
-		extensions?: [...string] | *[".perl-version", "*.pl", "*.pm", "*.t"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -969,7 +1009,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// PHP workspace
-		extensions?: [...string] | *["*.php", "composer.json", "composer.lock", ".php-version"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -992,7 +1032,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Java workspace
-		extensions?: [...] | *["pom.xml", "build.gradle.kts", "build.sbt", ".java-version", ".deps.edn", "project.clj", "build.boot", "*.java", "*.class", "*.gradle", "*.jar", "*.clj", "*.cljc"]
+		extensions?: [...]
 		folders?: #folders
 		...
 	}
@@ -1015,7 +1055,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Ruby workspace
-		extensions?: [...] | *["*.rb", "Rakefile", "Gemfile"]
+		extensions?: [...]
 		folders?: #folders
 		...
 	}
@@ -1038,7 +1078,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Rust workspace
-		extensions?: [...] | *["*.rs", "Cargo.toml", "Cargo.lock"]
+		extensions?: [...]
 		folders?: #folders
 		...
 	}
@@ -1060,7 +1100,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// XMake workspace
-		extensions?: [...string] | *["xmake.lua"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1076,20 +1116,20 @@ var?: {
 		//
 		// Show the error context when failing to retrieve the kubectl
 		// information
-		display_error?: bool | *false
+		display_error?: bool
 
 		// Parse kubeconfig
 		//
 		// Parse kubeconfig files instead of calling out to kubectl to
 		// improve performance.
-		parse_kubeconfig?: bool | *true
+		parse_kubeconfig?: bool
 
 		// Context aliases
 		//
 		// Custom context names.
 		context_aliases?: {
 			...
-		} | *{}
+		}
 		...
 	}
 	...
@@ -1103,7 +1143,7 @@ var?: {
 		// Display Default User Profile
 		//
 		// Display the segment when default user or not
-		display_default?: bool | *true
+		display_default?: bool
 		...
 	}
 	...
@@ -1124,23 +1164,23 @@ var?: {
 		// Fetch Display Package Manager
 		//
 		// Assigns the Yarn or NPM icon to .PackageManagerIcon
-		fetch_package_manager?: bool | *false
+		fetch_package_manager?: bool
 
 		// Yarn Icon
 		//
 		// Icon/text to use for Yarn
-		yarn_icon?: string | *"\uf011B"
+		yarn_icon?: string
 
 		// NPM Icon
 		//
 		// Icon/text to use for NPM
-		npm_icon?: string | *"\ue71e"
+		npm_icon?: string
 
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
 		// Node workspace
-		extensions?: [...string] | *["*.js", "*.ts", "package.json", ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".vue"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1169,137 +1209,137 @@ var?: {
 		// MacOS Icon
 		//
 		// Icon/text to use for macOS
-		macos?: string | *"\uf179"
+		macos?: string
 
 		// Linux Icon
 		//
 		// Icon/text to use for Linux
-		linux?: string | *"\uf17c"
+		linux?: string
 
 		// Windows Icon
 		//
 		// Icon/text to use for Windows
-		windows?: string | *"\ue62a"
+		windows?: string
 
 		// Display Distro Name
 		//
 		// Display the distro name or icon or not
-		display_distro_name?: bool | *false
+		display_distro_name?: bool
 
 		// Alpine Icon
 		//
 		// The icon to use for Alpine
-		alpine?: string | *"\uf300"
+		alpine?: string
 
 		// Aosc Icon
 		//
 		// The icon to use for Aosc
-		aosc?: string | *"\uf301"
+		aosc?: string
 
 		// Arch Icon
 		//
 		// The icon to use for Arch
-		arch?: string | *"\uf303"
+		arch?: string
 
 		// Centos Icon
 		//
 		// The icon to use for Centos
-		centos?: string | *"\uf303"
+		centos?: string
 
 		// Coreos Icon
 		//
 		// The icon to use for Coreos
-		coreos?: string | *"\uf305"
+		coreos?: string
 
 		// Debian Icon
 		//
 		// The icon to use for Debian
-		debian?: string | *"\uf306"
+		debian?: string
 
 		// Devuan Icon
 		//
 		// The icon to use for Devuan
-		devuan?: string | *"\uf307"
+		devuan?: string
 
 		// Raspbian Icon
 		//
 		// The icon to use for Raspbian
-		raspbian?: string | *"\uf315"
+		raspbian?: string
 
 		// Elementary Icon
 		//
 		// The icon to use for Elementary
-		elementary?: string | *"\uf309"
+		elementary?: string
 
 		// Fedora Icon
 		//
 		// The icon to use for Fedora
-		fedora?: string | *"\uf30a"
+		fedora?: string
 
 		// Gentoo Icon
 		//
 		// The icon to use for Gentoo
-		gentoo?: string | *"\uf30d"
+		gentoo?: string
 
 		// Mageia Icon
 		//
 		// The icon to use for Mageia
-		mageia?: string | *"\uf310"
+		mageia?: string
 
 		// Manjaro Icon
 		//
 		// The icon to use for Manjaro
-		manjaro?: string | *"\uf312"
+		manjaro?: string
 
 		// Mint Icon
 		//
 		// The icon to use for Mint
-		mint?: string | *"\uf30e"
+		mint?: string
 
 		// Nixos Icon
 		//
 		// The icon to use for Nixos
-		nixos?: string | *"\uf313"
+		nixos?: string
 
 		// Opensuse Icon
 		//
 		// The icon to use for Opensuse
-		opensuse?: string | *"\uf314"
+		opensuse?: string
 
 		// Redhat Icon
 		//
 		// The icon to use for Redhat
-		redhat?: string | *"\uf316"
+		redhat?: string
 
 		// Sabayon Icon
 		//
 		// The icon to use for Sabayon
-		sabayon?: string | *"\uf317"
+		sabayon?: string
 
 		// Slackware Icon
 		//
 		// The icon to use for Slackware
-		slackware?: string | *"\uf319"
+		slackware?: string
 
 		// Ubuntu Icon
 		//
 		// The icon to use for Ubuntu
-		ubuntu?: string | *"\uf31b"
+		ubuntu?: string
 
 		// Rocky Icon
 		//
 		// The icon to use for Rocky
-		rocky?: string | *"\uf32b"
+		rocky?: string
 
 		// Alma Icon
 		//
 		// The icon to use for Alma
-		alma?: string | *"\uf31d"
+		alma?: string
 
 		// Android Icon
 		//
 		// The icon to use for Alma
-		android?: string | *"\uf17b"
+		android?: string
 		...
 	}
 	...
@@ -1313,7 +1353,7 @@ var?: {
 		// Folder Separator Icon
 		//
 		// The symbol to use as a separator between folders
-		folder_separator_icon?: string | *"/"
+		folder_separator_icon?: string
 
 		// Folder Separator Template
 		//
@@ -1323,57 +1363,57 @@ var?: {
 		// Home Icon
 		//
 		// The icon to display when at $HOME
-		home_icon?: string | *"~"
+		home_icon?: string
 
 		// Folder Icon
 		//
 		// The icon to use as a folder indication
-		folder_icon?: string | *".."
+		folder_icon?: string
 
 		// Windows Registry Icon
 		//
 		// The icon to display when in the Windows registry
-		windows_registry_icon?: string | *"\uf013"
+		windows_registry_icon?: string
 
 		// The Path Style
 		//
 		// How to display the current path
-		style?: "agnoster" | "agnoster_full" | "agnoster_short" | "agnoster_left" | "short" | "full" | "folder" | "mixed" | "letter" | "unique" | "powerlevel" | *"agnoster"
+		style?: "agnoster" | "agnoster_full" | "agnoster_short" | "agnoster_left" | "short" | "full" | "folder" | "mixed" | "letter" | "unique" | "powerlevel"
 
 		// Mapped Locations
 		//
 		// Custom glyph/text for specific paths
 		mapped_locations?: {
 			...
-		} | *{}
+		}
 
 		// Maximum Depth
 		//
 		// Maximum path depth to display without shortening
-		max_depth?: int | *1
+		max_depth?: int
 
 		// Maximum Width
 		//
 		// Maximum path width to display for powerlevel style
-		max_width?: int | string | *0
+		max_width?: int | string
 
 		// Enable the Mapped Locations feature
 		//
 		// Replace known locations in the path with the replacements
 		// before applying the style.
-		mapped_locations_enabled?: bool | *true
+		mapped_locations_enabled?: bool
 
 		// Mixed threshold
 		//
 		// The maximum length of a path segment that will be displayed
 		// when using mixed style.
-		mixed_threshold?: int | *4
+		mixed_threshold?: int
 
 		// Hide the root location
 		//
 		// Hides the root location, when using agnoster_short style, if it
 		// doesn't fit in the last max_depth folders.
-		hide_root_location?: bool | *false
+		hide_root_location?: bool
 
 		// Color overrides to use to cycle through and color the path per
 		// folder
@@ -1382,7 +1422,7 @@ var?: {
 		// Cycle the folder_separator_icon
 		//
 		// Colorize the folder_separator_icon as well when using a cycle.
-		cycle_folder_separator?: bool | *false
+		cycle_folder_separator?: bool
 
 		// The folder format
 		//
@@ -1407,12 +1447,12 @@ var?: {
 		// The format to use on a git root directory
 		//
 		// Golang string format to apply to the .git folder
-		gitdir_format?: string | *""
+		gitdir_format?: string
 
 		// Display the Cygwin (Linux) style path
 		//
 		// Display the Cygwin (Linux) style path using cygpath -u $PWD.
-		display_cygpath?: bool | *false
+		display_cygpath?: bool
 		...
 	}
 	...
@@ -1428,12 +1468,12 @@ var?: {
 		// Fetch Virtual Env
 		//
 		// Fetch the name of the virtualenv or not
-		fetch_virtual_env?: bool | *true
+		fetch_virtual_env?: bool
 
 		// Display Default
 		//
 		// Show the name of the virtualenv when it's default
-		display_default?:      bool | *true
+		display_default?:      bool
 		fetch_version?:        #fetch_version
 		cache_duration?:       #cache_duration
 		display_mode?:         #display_mode
@@ -1444,24 +1484,24 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Python workspace
-		extensions?: [...string] | *["*.py", "*.ipynb", "pyproject.toml", "venv.bak"]
+		extensions?: [...string]
 
 		// Folders
 		//
 		// The folders to look for when determining if a folder is a
 		// Python workspace
-		folders?: [...string] | *[".venv", "venv", "virtualenv", "venv-win", "pyenv-win"]
+		folders?: [...string]
 
 		// Folder Name Fallback
 		//
 		// Replace virtual environment names in default_venv_names list
 		// with parent folder name
-		folder_name_fallback?: bool | *"true"
+		folder_name_fallback?: bool
 
 		// Default Venv Names
 		//
 		// Names to replace when folder_name_fallback is true
-		default_venv_names?: [...string] | *[".venv", "venv"]
+		default_venv_names?: [...string]
 		...
 	}
 	...
@@ -1475,12 +1515,12 @@ var?: {
 		// Fetch Stack
 		//
 		// Fetch the current pulumi stack or not
-		fetch_stack?: bool | *false
+		fetch_stack?: bool
 
 		// Fetch About
 		//
 		// Fetch the URL and user for the current stack
-		fetch_about?: bool | *false
+		fetch_about?: bool
 		...
 	}
 	...
@@ -1501,13 +1541,13 @@ var?: {
 		//
 		// Fetch the vite and @quasar/app-vite dependency information or
 		// not
-		fetch_dependencies?: bool | *true
+		fetch_dependencies?: bool
 
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
 		// Quasar workspace
-		extensions?: [...] | *["quasar.config", "quasar.config.js"]
+		extensions?: [...]
 		folders?: #folders
 		...
 	}
@@ -1529,7 +1569,7 @@ var?: {
 		// Display Status
 		//
 		// Display the local changes or not
-		fetch_status?:    bool | *true
+		fetch_status?:    bool
 		status_formats?:  #status_formats
 		native_fallback?: #native_fallback
 		...
@@ -1545,7 +1585,7 @@ var?: {
 		// SSH Icon
 		//
 		// Text/icon to display first when in an active SSH session
-		ssh_icon?: string | *"\uf817"
+		ssh_icon?: string
 		...
 	}
 	...
@@ -1561,7 +1601,7 @@ var?: {
 		// Custom glyph/text for specific shells
 		custom_text?: {
 			...
-		} | *{}
+		}
 		...
 	}
 	...
@@ -1576,7 +1616,7 @@ var?: {
 		//
 		// Display the segment or not when the Sitecore environment name
 		// matches `default`
-		display_default?: bool | *true
+		display_default?: bool
 		...
 	}
 	...
@@ -1590,17 +1630,17 @@ var?: {
 		// Playing Icon
 		//
 		// Text/icon to show when playing
-		playing_icon?: string | *"\ue602"
+		playing_icon?: string
 
 		// Paused Icon
 		//
 		// Text/icon to show when paused
-		paused_icon?: string | *"\uf8e3"
+		paused_icon?: string
 
 		// Stopped Icon
 		//
 		// Text/icon to show when stopped
-		stopped_icon?: string | *"\uf04d"
+		stopped_icon?: string
 		...
 	}
 	...
@@ -1614,7 +1654,7 @@ var?: {
 		// Fetch Version
 		//
 		// Fetch the version number
-		fetch_version?: bool | *false
+		fetch_version?: bool
 		...
 	}
 	...
@@ -1643,7 +1683,7 @@ var?: {
 		//
 		// Format to use, follows the golang standard:
 		// https://gobyexample.com/time-formatting-parsing
-		time_format?: string | *"15:04:05"
+		time_format?: string
 		...
 	}
 	...
@@ -1657,22 +1697,22 @@ var?: {
 		// Playing Icon
 		//
 		// Text/icon to show when playing
-		playing_icon?: string | *"\ue602 "
+		playing_icon?: string
 
 		// Paused Icon
 		//
 		// Text/icon to show when paused
-		paused_icon?: string | *"\uf8e3 "
+		paused_icon?: string
 
 		// Stopped Icon
 		//
 		// Text/icon to show when stopped
-		stopped_icon?: string | *"\uf04d "
+		stopped_icon?: string
 
 		// API URL
 		//
 		// The YTMDA Remote Control API URL
-		api_url?:      string | *"http://127.0.0.1:9863"
+		api_url?:      string
 		http_timeout?: #http_timeout
 		...
 	}
@@ -1687,7 +1727,7 @@ var?: {
 		// API key
 		//
 		// The API key used for the api call (Required)
-		api_key?: string | *"."
+		api_key?: string
 
 		// location
 		//
@@ -1696,14 +1736,14 @@ var?: {
 		// <City>,<STATE>,<COUNTRY_CODE>. City name, state code and
 		// country code divided by comma. Please, refer to ISO 3166 for
 		// the state codes or country codes.
-		location?: string | *"De Bilt,NL"
+		location?: string
 
 		// units
 		//
 		// Units of measurement. Available values are standard (kelvin),
 		// metric (celsius), and imperial (fahrenheit). Default is
 		// standard
-		units?:        "standard" | "metric" | "imperial" | *"standard"
+		units?:        "standard" | "metric" | "imperial"
 		http_timeout?: #http_timeout
 		...
 	}
@@ -1726,7 +1766,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Elixir workspace
-		extensions?: [...string] | *["*.ex", "*.exs"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1741,17 +1781,17 @@ var?: {
 		// Always Enabled
 		//
 		// Always show the duration
-		always_enabled?: bool | *false
+		always_enabled?: bool
 
 		// Threshold
 		//
 		// minimum duration (milliseconds) required to enable this segment
-		threshold?: number | *500
+		threshold?: number
 
 		// Style
 		//
 		// The style in which the time will be displayed
-		style?: "austin" | "roundrock" | "dallas" | "galveston" | "galvestonms" | "houston" | "amarillo" | "round" | "lucky7" | *"austin"
+		style?: "austin" | "roundrock" | "dallas" | "galveston" | "galvestonms" | "houston" | "amarillo" | "round" | "lucky7"
 		...
 	}
 	...
@@ -1765,7 +1805,7 @@ var?: {
 		// Precision
 		//
 		// number of decimal places to show
-		precision?: int | *2
+		precision?: int
 		...
 	}
 	...
@@ -1779,32 +1819,32 @@ var?: {
 		// URL of API with Strava data
 		//
 		// Url of your api provinding a Strava activity
-		url?: string | *""
+		url?: string
 
 		// Ride icon
 		//
 		// Alternative icon for this activity type
-		ride_icon?: string | *"\uf206"
+		ride_icon?: string
 
 		// Run icon
 		//
 		// Alternative icon for this activity type
-		run_icon?: string | *"\ue213"
+		run_icon?: string
 
 		// Skiing icon
 		//
 		// Alternative icon for this activity type
-		skiing_icon?: string | *"\ue213"
+		skiing_icon?: string
 
 		// Workout icon
 		//
 		// Alternative icon for this activity type
-		workout_icon?: string | *"\ue213"
+		workout_icon?: string
 
 		// Fallback icon
 		//
 		// Fallback icon for other activity types
-		unknown_activity_icon?: string | *"\ue213"
+		unknown_activity_icon?: string
 		http_timeout?:          #http_timeout
 		access_token?:          #access_token
 		refresh_token?:         #refresh_token
@@ -1822,7 +1862,7 @@ var?: {
 		// Display Status
 		//
 		// Display the local changes or not
-		fetch_status?:    bool | *true
+		fetch_status?:    bool
 		status_formats?:  #status_formats
 		native_fallback?: #native_fallback
 		...
@@ -1845,7 +1885,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an Angular project
-		extensions?: [...string] | *["angular.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1867,7 +1907,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an Aurelia project
-		extensions?: [...string] | *["package.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1889,7 +1929,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a React project
-		extensions?: [...string] | *["package.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1911,7 +1951,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an Nx project
-		extensions?: [...string] | *["workspace.json", "nx.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1934,7 +1974,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an OCaml project
-		extensions?: [...string] | *["*.ml", "*.mli", "dune", "dune-project", "dune-workspace"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1949,7 +1989,7 @@ var?: {
 		// apikey
 		//
 		// The apikey used for the api call (Required)
-		apikey?:       string | *"."
+		apikey?:       string
 		http_timeout?: #http_timeout
 		...
 	}
@@ -1966,12 +2006,12 @@ var?: {
 		// The path to the registry key (case insensitive, must use
 		// backslashes). Ending with \ will retrieve "(Default)" key in
 		// that path.
-		path?: string | *""
+		path?: string
 
 		// Fallback value
 		//
 		// Value to display if registry value cannot be retrieved
-		fallback?: string | *""
+		fallback?: string
 		...
 	}
 	...
@@ -1999,28 +2039,26 @@ var?: {
 		// Display Status
 		//
 		// Display the local changes or not
-		fetch_status?:   bool | *false
+		fetch_status?:   bool
 		status_formats?: #status_formats
 
 		// Branch Icon
 		//
 		// The icon to use in front of the selector branch name
-		branch_icon?: string | *"\ue0a0 "
+		branch_icon?: string
 
 		// Commit Icon
 		//
 		// Icon/text to display before the selector changeset
-		commit_icon?: string | *"\uf417"
+		commit_icon?: string
 
 		// Tag Icon
 		//
 		// Icon/text to display before the seletor label
-		tag_icon?:          string | *"\uf412"
-		truncate_symbol?:   #truncate_symbol
-		branch_max_length?: #branch_max_length
-		full_branch_path?:  #full_branch_path
-		native_fallback?:   #native_fallback
-		mapped_branches?:   #mapped_branches
+		tag_icon?:        string
+		branch_template?: #branch_template
+		native_fallback?: #native_fallback
+		mapped_branches?: #mapped_branches
 		...
 	}
 	...
@@ -2034,102 +2072,102 @@ var?: {
 		// Brewfather UserID (required)
 		//
 		// Provided by Brewfather's Generate API Key settings option
-		user_id?: string | *""
+		user_id?: string
 
 		// Brewfather API Key (required)
 		//
 		// Provided by Brewfather's Generate API Key settings option
-		api_key?: string | *""
+		api_key?: string
 
 		// ID of the batch in Brewfather (required)
 		//
 		// At the end of the URL when viewing the batch on the Brewfather
 		// site
-		batch_id?: string | *""
+		batch_id?: string
 
 		// Icon to use to indicate days
 		//
 		// Appended to a number to indicate days, e.g. 25d
-		day_icon?:     string | *"d"
+		day_icon?:     string
 		http_timeout?: #http_timeout
 
 		// Temperature trend icon, very high positive change
 		//
 		// Delta between this and prior temperature reading is very high
 		// (> 4C by default), available intemplate as .TemperatureTrend
-		doubleup_icon?: string | *"↑↑"
+		doubleup_icon?: string
 
 		// Temperature trend icon, high positive change
 		//
 		// Delta between this and prior temperature reading is high (2C <
 		// delta < 4C by default), available intemplate as
 		// .TemperatureTrend
-		singleup_icon?: string | *"↑"
+		singleup_icon?: string
 
 		// Temperature trend icon, positive change
 		//
 		// Delta between this and prior temperature reading is positive
 		// (0.5C < delta < 2C by default), available intemplate as
 		// .TemperatureTrend
-		fortyfiveup_icon?: string | *"↗"
+		fortyfiveup_icon?: string
 
 		// Temperature trend icon, flat/small change
 		//
 		// Delta between this and prior temperature and this temperature
 		// reading (< +-0.5C change), available intemplate as
 		// .TemperatureTrend
-		flat_icon?: string | *"→"
+		flat_icon?: string
 
 		// Temperature trend icon, v. negative change
 		//
 		// Delta between this and prior temperature reading is negative
 		// (-0.5C > delta > -2C by default), available intemplate as
 		// .TemperatureTrend
-		fortyfivedown_icon?: string | *"↘"
+		fortyfivedown_icon?: string
 
 		// Temperature trend icon, high negative change
 		//
 		// Delta between this and prior temperature reading is large
 		// negative (-2C > delta > -4C by default), available intemplate
 		// as .TemperatureTrend
-		singledown_icon?: string | *"↓"
+		singledown_icon?: string
 
 		// Temperature trend icon, very high negative change
 		//
 		// Delta between this and prior temperature reading is very large
 		// negative (> -4C by default), available intemplate as
 		// .TemperatureTrend
-		doubledown_icon?: string | *"↓↓"
+		doubledown_icon?: string
 
 		// Icon for batch in planning
 		//
 		// Available in template as .StatusIcon
-		planning_status_icon?: string | *"\uf8ea"
+		planning_status_icon?: string
 
 		// Icon for batch being brewed
 		//
 		// Available in template as .StatusIcon
-		brewing_status_icon?: string | *"\uf7de"
+		brewing_status_icon?: string
 
 		// Icon for batch fermenting
 		//
 		// Available in template as .StatusIcon
-		fermenting_status_icon?: string | *"\uf499"
+		fermenting_status_icon?: string
 
 		// Icon for batch conditioning
 		//
 		// Available in template as .StatusIcon
-		conditioning_status_icon?: string | *"\ue372"
+		conditioning_status_icon?: string
 
 		// Icon for completed batch
 		//
 		// Available in template as .StatusIcon
-		completed_status_icon?: string | *"\uf7a5"
+		completed_status_icon?: string
 
 		// Icon for archived batch
 		//
 		// Available in template as .StatusIcon
-		archived_status_icon?: string | *"\uf187"
+		archived_status_icon?: string
 		...
 	}
 	...
@@ -2143,7 +2181,7 @@ var?: {
 		// URL
 		//
 		// The Ipify API URL
-		url?:          string | *"https://api.ipify.org"
+		url?:          string
 		http_timeout?: #http_timeout
 		...
 	}
@@ -2167,13 +2205,13 @@ var?: {
 		// Get the GHC version used by Stack. Will decrease performance.
 		// Boolean indicating whether stack ghc was used available in
 		// template as .StackGhc
-		stack_ghc_mode?: "always" | "package" | "never" | *"never"
+		stack_ghc_mode?: "always" | "package" | "never"
 
 		// Extensions
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Haskell project
-		extensions?: [...string] | *["*.hs", "*.lhs", "stack.yaml", "package.yaml", "*.cabal", "cabal.project"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2206,7 +2244,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a UI5 project
-		extensions?: [...string] | *["*ui5*.y*ml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2251,7 +2289,30 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Vala project
-		extensions?: [...string] | *["*.vala"]
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "v"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a V project
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2273,7 +2334,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Cloud Foundry project
-		extensions?: [...string] | *["manifest.yml", "mta.yaml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2289,7 +2350,7 @@ var?: {
 		//
 		// Determines whether the segment is displayed always or only if a
 		// file matching the extensions are present in the current folder
-		display_mode?: "always" | "files" | *"always"
+		display_mode?: "always" | "files"
 		...
 	}
 	...
@@ -2311,7 +2372,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Kotlin project
-		extensions?: [...string] | *["*.kt", "*.kts", "*.ktm"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2326,22 +2387,22 @@ var?: {
 		// User Info Separator
 		//
 		// Text/icon to show when playing
-		playing_icon?: string | *"\ue602"
+		playing_icon?: string
 
 		// SSH Icon
 		//
 		// Text/icon to show when stopped
-		stopped_icon?: string | *"\uf04d"
+		stopped_icon?: string
 
 		// API key
 		//
 		// The API key used for the API call (Required)
-		api_key?: string | *"."
+		api_key?: string
 
 		// username
 		//
 		// The username used for the API call (Required)
-		username?:     string | *"."
+		username?:     string
 		http_timeout?: #http_timeout
 		...
 	}
@@ -2363,13 +2424,13 @@ var?: {
 		// Preferred Executable
 		//
 		// The preferred executable to use when fetching the version.
-		preferred_executable?: "lua" | "luajit" | *"lua"
+		preferred_executable?: "lua" | "luajit"
 
 		// Extensions
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Lua project
-		extensions?: [...string] | *["*.lua", "*.rockspec"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2392,7 +2453,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Swift project
-		extensions?: [...string] | *["*.swift", "*.SWIFT"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2414,7 +2475,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a CDS project
-		extensions?: [...string] | *[".cdsrc.json", ".cdsrc-private.json", "*.cds"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2437,7 +2498,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an R project
-		extensions?: [...string] | *["*.R", "*.Rmd", "*.Rsx", "*.Rda", "*.Rd", "*.Rproj", ".Rproj.user"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2473,7 +2534,7 @@ var?: {
 		// Display Status
 		//
 		// Display the local changes or not
-		fetch_status?:    bool | *false
+		fetch_status?:    bool
 		status_formats?:  #status_formats
 		native_fallback?: #native_fallback
 		...
@@ -2491,12 +2552,12 @@ var?: {
 		// Fetch Virtual Env
 		//
 		// Fetch the name of the virtualenv or not
-		fetch_virtual_env?: bool | *true
+		fetch_virtual_env?: bool
 
 		// Display Default
 		//
 		// Show the name of the virtualenv when it's default
-		display_default?:      bool | *true
+		display_default?:      bool
 		fetch_version?:        #fetch_version
 		cache_duration?:       #cache_duration
 		display_mode?:         #display_mode
@@ -2507,7 +2568,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is a
 		// Mojo workspace
-		extensions?: [...string] | *["*.🔥", "*.mojo", "mojoproject.toml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2522,19 +2583,42 @@ var?: {
 		// URL
 		//
 		// The URL to the Nightscout API
-		url?: string | *""
+		url?: string
 
 		// Http request timeout
 		//
 		// Milliseconds to use for http request timeouts
-		http_timeout?: int | *500
+		http_timeout?: int
 
 		// Headers
 		//
 		// A key, value map of Headers to send with the request
 		headers?: {
 			...
-		} | *{}
+		}
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "nim"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Nim workspace
+		extensions?: [...]
+		folders?: #folders
 		...
 	}
 	...
@@ -2562,7 +2646,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is an
 		// PNPM workspace
-		extensions?: [...string] | *["package.json", "pnpm-lock.yaml"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2584,7 +2668,7 @@ var?: {
 		//
 		// The extensions to look for when determining if a folder is an
 		// Yarn workspace
-		extensions?: [...string] | *["package.json", "yarn.lock"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2614,7 +2698,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is an zig project
-		extensions?: [...string] | *["*.zig", "*.zon"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2637,7 +2721,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Tauri project
-		extensions?: [...string] | *["package.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2660,7 +2744,7 @@ var?: {
 		//
 		// The extensions to look for when determining if the current
 		// directory is a Svelte project
-		extensions?: [...string] | *["package.json"]
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -2671,7 +2755,7 @@ var?: {
 	// Segment Type
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	type!: "angular" | "argocd" | "aurelia" | "aws" | "az" | "azd" | "azfunc" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "cds" | "cf" | "cftarget" | "cmake" | "command" | "connection" | "crystal" | "dart" | "deno" | "docker" | "dotnet" | "elixir" | "executiontime" | "firebase" | "flutter" | "fortran" | "fossil" | "gcp" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "java" | "julia" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "python" | "quasar" | "r" | "react" | "root" | "ruby" | "rust" | "sapling" | "session" | "shell" | "sitecore" | "spotify" | "status" | "strava" | "svelte" | "svn" | "swift" | "sysinfo" | "talosctl" | "tauri" | "terraform" | "text" | "time" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
+	type!: "angular" | "argocd" | "aurelia" | "aws" | "az" | "azd" | "azfunc" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "cds" | "cf" | "cftarget" | "cmake" | "command" | "connection" | "crystal" | "dart" | "deno" | "docker" | "dotnet" | "elixir" | "executiontime" | "firebase" | "flutter" | "fortran" | "fossil" | "gcp" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "java" | "julia" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nim" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "python" | "quasar" | "r" | "react" | "root" | "ruby" | "rust" | "sapling" | "session" | "shell" | "sitecore" | "spotify" | "status" | "strava" | "svelte" | "svn" | "swift" | "sysinfo" | "talosctl" | "tauri" | "terraform" | "text" | "time" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "v" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
 
 	// Segment Style
 	//
@@ -2685,7 +2769,7 @@ var?: {
 	// Template text
 	//
 	// https://ohmyposh.dev/docs/configuration/templates
-	template?: string | *""
+	template?: _#defs."/definitions/segment/properties/template"
 
 	// Templates Logic
 	//
@@ -2696,30 +2780,30 @@ var?: {
 	// hidden
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	max_width?: int | *0
+	max_width?: int
 
 	// if the terminal width is inferior than this value, the segment
 	// will be hidden
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	min_width?: int | *0
+	min_width?: int
 
 	// Segment Properties, used to change behavior/displaying
 	//
 	// https://ohmyposh.dev/docs/configuration/segment#properties
 	properties?: {
 		...
-	} | *{}
+	}
 
 	// Allow the use of interactive prompt escape sequences
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	interactive?: bool | *false
+	interactive?: bool
 
 	// Give the segment an alias for use in templates
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	alias?: string | *""
+	alias?: string
 
 	// If specified, segment will only render in these folders
 	//
@@ -2740,9 +2824,39 @@ var?: {
 		// Cache strategy
 		//
 		// https://ohmyposh.dev/docs/configuration/segment#strategy
-		strategy?: "folder" | "session" | *"folder"
+		strategy?: "folder" | "session"
 		...
-	} | *{}
+	}
 	...
-} | *{}
+}
+
+// Status string formats
+//
+// Override the status format for a specific change. Example:
+// {"Added": "Added: %d"}
+#status_formats: {
+	...
+}
+
+// An array of templates
+#templates: [..._#defs."/definitions/segment/properties/template"]
+
+// Version Url Template
+//
+// Template that creates the URL of the version info / release
+// notes
+#version_url_template: string
+
+// Template text
+//
+// https://ohmyposh.dev/docs/configuration/templates
+_#defs: "/definitions/segment/properties/template": string
+
+// Palette
+//
+// https://ohmyposh.dev/docs/configuration/colors#palette
+_#defs: "/properties/palette": {
+	{[=~".*"]: #color}
+	...
+}
 ...

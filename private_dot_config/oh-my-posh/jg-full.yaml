@@ -1,66 +1,66 @@
 version: 2.0
 final_space: true
 blocks:
-  - segments:
+  - alignment: left
+    type: prompt
+    newline: true
+    segments:
       - type: session
+        style: plain
         foreground: '#ffffff'
         template: '{{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} '
         properties:
           cache_duration: none
-        style: plain
       - type: kubectl
+        style: plain
         foreground: blue
         template: "\U000F10FE {{.Context}}{{if .Namespace}}/<#00c2ff>{{.Namespace}}</>{{end}} "
         properties:
           cache_duration: none
-        style: plain
       - type: command
+        style: plain
         foreground: '#fa9c1b'
-        properties:
-          command: nats context info --json | jq -r .name
-          cache_duration: none
-          shell: bash
         template: 'N {{ .Output }} '
-        style: plain
-      - type: path
-        foreground: '#15c2cb'
         properties:
-          style: unique
           cache_duration: none
-        template: '{{ .Path }} '
+          command: nats context info --json | jq -r .name
+          shell: bash
+      - type: path
         style: plain
+        foreground: '#15c2cb'
+        template: '{{ .Path }} '
+        properties:
+          cache_duration: none
+          style: unique
       - type: git
+        style: plain
         foreground: '#f141a8'
+        template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
         properties:
           branch_icon: 
           cache_duration: none
           fetch_status: true
-        template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
-        style: plain
       - type: project
+        style: plain
         foreground: '#5EADF2'
         template: '{{if .Version}}<#F3EFF5>is</>  {{.Version}} {{end}}'
         properties:
           cache_duration: none
-        style: plain
       - type: go
+        style: plain
         foreground: cyan
         template:  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
         properties:
           cache_duration: none
-        style: plain
       - type: python
+        style: plain
         foreground: green
         template: "\U0001F40D {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ if .Venv }}/<#00ff9c>{{ .Venv }}</>{{ end }}{{ end }} "
         properties:
           cache_duration: none
-        style: plain
       - type: text
+        style: plain
         foreground: '#ffe45e'
         template: ❯
         properties:
           cache_duration: none
-        style: plain
-    alignment: left
-    type: prompt
-    newline: true
