@@ -1,32 +1,32 @@
 version: 2.0
 final_space: true
 blocks:
-  - segments:
+  - alignment: left
+    type: prompt
+    newline: true
+    segments:
       - type: path
-        foreground: '#15c2cb'
-        properties:
-          style: unique
-          cache_duration: none
-        template: '{{ .Path }} '
         style: plain
+        foreground: '#15c2cb'
+        template: '{{ .Path }} '
+        properties:
+          cache_duration: none
+          style: unique
       - type: git
+        style: plain
         foreground: '#f141a8'
+        template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
         properties:
           branch_icon: 
           cache_duration: none
           fetch_status: true
-        template: '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} '
-        style: plain
-    alignment: left
+  - alignment: left
     type: prompt
     newline: true
-  - segments:
+    segments:
       - type: text
+        style: plain
         foreground: '#ffe45e'
         template: ❯
         properties:
           cache_duration: none
-        style: plain
-    alignment: left
-    type: prompt
-    newline: true
