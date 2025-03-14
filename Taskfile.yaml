@@ -3,6 +3,11 @@
 version: '3'
 
 tasks:
+  default:
+    cmds:
+      - echo TODO implement tests
+    silent: true
+
   test:
     - task: test:ubuntu
     - task: test:alpine
