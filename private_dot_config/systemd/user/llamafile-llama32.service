@@ -6,6 +6,7 @@ PartOf=llamafiles.target
 [Service]
 ExecStart=/usr/bin/env Llama-3.2-1B-Instruct.Q6_K.llamafile --server --nobrowser --port 8080
 Restart=on-failure
+SyslogIdentifier=llamafile-llama3.2
 
 [Install]
 WantedBy=default.target
