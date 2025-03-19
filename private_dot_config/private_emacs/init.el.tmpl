@@ -1,38 +1,25 @@
 ;;; Emacs
 
-(use-package no-littering
-  :ensure
-  :config
-  (setopt user-emacs-directory "~/.config/emacs")
+(require 'package)
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+			 ("melpa-stable" . "https://stable.melpa.org/packages/")
+			 ("melpa" . "https://melpa.org/packages/")))
 
-  (cl-letf (((symbol-function 'etc) #'no-littering-expand-etc-file-name)
-	    ((symbol-function 'var) #'no-littering-expand-var-file-name))
-
-    ;; etc: Config Files
-    (setopt custom-theme-directory (etc "themes"))
-    (setopt emms-source-file-default-directory (etc "emms/"))
-    (setq rmh-elfeed-org-files (list (etc "elfeed/rmh-elfeed.org")))
-    (setq tempel-path (list (etc "tempel/templates.el")))
-
-    ;; var: Variable Data
-    (setopt backup-directory-alist `(("." . ,(var "backups"))))
-    (setq custom-file (var "custom.el"))
-    (setq elfeed-score-rule-stats-file (var "elfeed/score/stats.el"))
-    ))
+;; Calling BEFORE use-package is first used, to ensure Emacs knows about the installed packages before trying to load them.
+(package-initialize)
 
 (use-package emacs
+  :demand
   :init
   (setenv "LC_COLLATE" "C")
   (add-to-list 'exec-path {{quote "~/.local/bin"}})
-  (add-to-list 'exec-path {{printf "~/%s/bin" .goRoot | quote}})
+  (add-to-list 'exec-path {{printf "%s/bin" .goRoot | quote}})
+
+  (setopt user-emacs-directory "~/.config/emacs")
+  (setopt custom-file (expand-file-name "var/custom.el" user-emacs-directory))
 
   :config
-  (setopt package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-			     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-			     ("melpa" . "https://melpa.org/packages/")
-			     ("melpa-stable" . "https://stable.melpa.org/packages/")))
-
-  ;; Disable annoyances.
   (setopt inhibit-splash-screen t)
   (setopt menu-bar-mode nil)
   (setopt scroll-bar-mode nil)
@@ -44,11 +31,29 @@
       (load custom-file))
   )
 
+(use-package no-littering
+  :ensure
+  :demand
+  :config
+  (cl-letf (((symbol-function 'etc) #'no-littering-expand-etc-file-name)
+	    ((symbol-function 'var) #'no-littering-expand-var-file-name))
+
+    ;; etc: Config Files
+    (setopt custom-theme-directory (etc "themes"))
+    (setopt emms-source-file-default-directory (etc "emms/"))
+    (setq rmh-elfeed-org-files (list (etc "elfeed/rmh-elfeed.org")))
+    (setq tempel-path (list (etc "tempel/templates.el")))
+
+    ;; var: Variable Data
+    (setopt backup-directory-alist `(("." . ,(var "backups"))))
+    (setopt package-user-dir (var "elpa"))
+    (setq elfeed-score-rule-stats-file (var "elfeed/score/stats.el"))
+    ))
 
 ;;; Programming
 
 ;;;; magit
-(use-package magit :ensure)
+(use-package magit :ensure :pin nongnu)
 
 ;;;; d2-mode
 (use-package d2-mode :ensure)
@@ -206,6 +211,7 @@
 ;;;; orderless
 (use-package orderless
   :ensure
+  :pin melpa-stable
   :config
   (setopt completion-styles '(orderless basic))
   (setopt completion-category-overrides '((file (styles basic partial-completion)))))
@@ -242,6 +248,7 @@
 ;;;; denote                                                               :prot:
 (use-package denote
   :ensure
+  :pin melpa-stable
   :bind
   (("C-c n n" . denote-open-or-create))
   ("C-c n j" . denote-journal-extras-new-or-existing-entry))
