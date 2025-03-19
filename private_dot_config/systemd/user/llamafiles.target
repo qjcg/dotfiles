@@ -1,0 +1,14 @@
+[Unit]
+Description=Run llamafile services
+
+Requires=llamafile-deepseek-r1.service
+Requires=llamafile-embed-mxbai.service
+Requires=llamafile-llama32.service
+
+After=\
+	llamafile-deepseek-r1.service \
+	llamafile-embed-mxbai.service \
+	llamafile-llama32.service
+
+[Install]
+WantedBy=multi-user.target
