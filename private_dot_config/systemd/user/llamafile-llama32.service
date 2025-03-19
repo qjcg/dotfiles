@@ -1,6 +1,7 @@
 [Unit]
 Description=Llama-3.2-1B-Instruct.Q6_K.llamafile
 After=graphical-session.target
+PartOf=llamafiles.target
 
 [Service]
 ExecStart=/usr/bin/env Llama-3.2-1B-Instruct.Q6_K.llamafile --server --nobrowser --port 8080

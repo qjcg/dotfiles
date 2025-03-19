@@ -1,6 +1,7 @@
 [Unit]
 Description=mxbai-embed-large-v1-f16.llamafile
 After=graphical-session.target
+PartOf=llamafiles.target
 
 [Service]
 ExecStart=/usr/bin/env mxbai-embed-large-v1-f16.llamafile --server --nobrowser --embedding --port 8082
