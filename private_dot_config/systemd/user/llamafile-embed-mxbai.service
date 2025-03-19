@@ -6,6 +6,7 @@ PartOf=llamafiles.target
 [Service]
 ExecStart=/usr/bin/env mxbai-embed-large-v1-f16.llamafile --server --nobrowser --embedding --port 8082
 Restart=on-failure
+SyslogIdentifier=llamafile-embed-mxbai
 
 [Install]
 WantedBy=default.target
