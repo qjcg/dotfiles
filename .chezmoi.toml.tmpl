@@ -16,6 +16,7 @@
 {{- $installGoVersion := promptStringOnce . "installGoVersion" "Install Go version" "1.24.1" -}}
 {{- $goPath := promptStringOnce . "goPath" "Value of GOPATH (omit homedir prefix)" ".local/go" -}}
 
+{{- $glanceWork := promptBoolOnce . "glanceWork" "Display glance work info" false -}}
 
 encryption = "age"
 
@@ -44,6 +45,8 @@ installGo = {{ $installGo }}
 goPath = {{ $goPath | quote }}
 goPathWithHomePrefix = {{ printf "$HOME/%s" $goPath | expandenv | quote }}
 goRoot = {{ printf "$HOME/%s/go-%s" $goPath $installGoVersion | expandenv | quote }}
+
+glanceWork = {{ $glanceWork }}
 
 
 [data.packages]
