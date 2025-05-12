@@ -54,6 +54,7 @@ arch_ubuntu = [
 "acpi",
 "aria2",
 "duf",
+"fzf",
 "htop",
 "mkosi",
 "mtr",
@@ -86,7 +87,11 @@ arch = [
 "zig",
 ]
 
+# cmake and libtool{,-bin} are dependencies for emacs vterm
 ubuntu = [
+"cmake",
+"libtool",
+"libtool-bin",
 ]
 
 ubuntu_snaps = [
@@ -97,6 +102,7 @@ ubuntu_snaps = [
 
 ubuntu_snaps_classic = [
 "chezmoi",
+"emacs",
 "opentofu",
 "zig",
 ]
