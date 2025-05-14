@@ -276,7 +276,7 @@
   (("C-c SPC m" . gptel-menu)
    ("C-c SPC a" . gptel-add)
    ("C-c SPC f" . gptel-add-file)
-   ("C-c SPC r" . gptel-rewrite-menu)
+   ("C-c SPC r" . gptel-rewrite)
    ("C-c SPC t" . gptel-org-set-topic)
    ("C-c SPC s" . gptel-system-prompt)
    ("C-c SPC SPC" . gptel)
@@ -284,20 +284,24 @@
    )
   
   :config
-  (setopt gptel-model "llama3.2:latest")
+  (setopt gptel-model 'gpt-4.1)
   (setopt gptel-default-mode 'org-mode)
-  (setopt gptel-org-branching-context nil) ;; FIXME: Re-enable once error is fixed.
-  (setopt gptel-backend (gptel-make-ollama "Ollama"
-			  :host "localhost:11434"
-			  :stream t
-			  :models '("llama3.2:latest"
-				    "dolphin-mistral:latest")))
-  )
+  (setopt gptel-org-branching-context t)
+  (setopt gptel-prompt-string "* ")
+
+  (setopt gptel-backend (gptel-make-azure "drw-gpt4.1"
+                   :protocol "https"
+                   :host "azure-openai.drwcloud.com"
+		   :endpoint "/openai/deployments/gpt-4.1/chat/completions?api-version=2025-03-01-preview"
+                   :stream t
+                   :key "7c67423331a41feb323fd9ff985953e7"
+                   :models '("gpt-4.1"))))
 
 ;;;; org
 (use-package org
   :ensure
   :pin gnu)
+
 ;;;; markdown-toc
 (use-package markdown-toc :ensure)
 
