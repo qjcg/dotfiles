@@ -14,7 +14,7 @@
   :init
   (setenv "LC_COLLATE" "C")
   (add-to-list 'exec-path {{quote "~/.local/bin"}})
-  (add-to-list 'exec-path {{printf "%s/bin" .goRoot | quote}})
+  (add-to-list 'exec-path {{quote "~/go/bin"}})
 
   (setopt user-emacs-directory "~/.config/emacs")
   (setopt custom-file (expand-file-name "var/custom.el" user-emacs-directory))
