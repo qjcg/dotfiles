@@ -1,6 +1,8 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $fullName := promptStringOnce . "fullName" "Full name" -}}
 
+{{- $isWorkMachine := promptBoolOnce . "isWorkMachine" "Is this a work machine?" false -}}
+
 {{- $codeDirWork := promptStringOnce . "codeDirWork" "Code dir (work; omit homedir prefix)" "Code/work" -}}
 {{- $codeDirNonWork := promptStringOnce . "codeDirNonWork" "Code dir (nonwork; omit homedir prefix)" "Code/nonwork" -}}
 
@@ -31,6 +33,8 @@ pager = "delta"
 [data]
 email = {{ $email | quote }}
 fullName = {{ $fullName | quote }}
+
+isWorkMachine = {{ $isWorkMachine }}
 
 codeDirWork = {{ $codeDirWork | quote }}
 codeDirNonWork = {{ $codeDirNonWork | quote }}
