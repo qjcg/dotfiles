@@ -14,10 +14,6 @@
 {{- $installExternalBinaries := promptBoolOnce . "installExternalBinaries" "Install external binaries" false -}}
 {{- $installAITools := promptBoolOnce . "installAITools" "Install AI tools" false -}}
 
-{{- $installGo := promptBoolOnce . "installGo" "Install Go" false -}}
-{{- $installGoVersion := promptStringOnce . "installGoVersion" "Install Go version" "1.24.2" -}}
-{{- $goPath := promptStringOnce . "goPath" "Value of GOPATH (omit homedir prefix)" ".local/go" -}}
-
 {{- $glanceWork := promptBoolOnce . "glanceWork" "Display glance work info" false -}}
 
 encryption = "age"
@@ -44,11 +40,6 @@ cloneNonWorkRepos = {{ $cloneNonWorkRepos }}
 installAITools = {{ $installAITools }}
 installExternalBinaries = {{ $installExternalBinaries }}
 installFonts = {{ $installFonts }}
-
-installGo = {{ $installGo }}
-goPath = {{ $goPath | quote }}
-goPathWithHomePrefix = {{ printf "$HOME/%s" $goPath | expandenv | quote }}
-goRoot = {{ printf "$HOME/%s/go-%s" $goPath $installGoVersion | expandenv | quote }}
 
 glanceWork = {{ $glanceWork }}
 
@@ -122,9 +113,8 @@ delta = "0.18.2"
 duckdb = "v1.2.2"
 earthly = "v0.8.15"
 fd = "v10.2.0"
-go = {{ $installGoVersion | quote }}
 kubectl = "v1.32.3"
-llamafile = "0.9.2"
+llamafile = "0.9.3"
 minikube = "v1.35.0"
 ohMyPosh = "v25.13.0"
 task = "v3.42.1"

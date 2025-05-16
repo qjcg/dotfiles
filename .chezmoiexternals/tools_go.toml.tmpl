@@ -1,8 +1,0 @@
-{{ if .installGo }}
-
-["{{.goPath}}/go-{{.toolVersion.go}}"]
-type = "archive"
-url = "https://go.dev/dl/go{{.toolVersion.go}}.{{.chezmoi.os}}-{{.chezmoi.arch}}.tar.gz"
-stripComponents = 1
-
-{{ end }}
