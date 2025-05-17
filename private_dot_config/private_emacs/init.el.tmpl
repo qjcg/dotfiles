@@ -273,29 +273,40 @@
   :ensure
 
   :bind
-  (("C-c SPC m" . gptel-menu)
+  (("C-c SPC SPC" . gptel)
+   ("C-c RET" . gptel-send)
+
+   ("C-c SPC m" . gptel-menu)
    ("C-c SPC a" . gptel-add)
    ("C-c SPC f" . gptel-add-file)
    ("C-c SPC r" . gptel-rewrite)
    ("C-c SPC t" . gptel-org-set-topic)
    ("C-c SPC s" . gptel-system-prompt)
-   ("C-c SPC SPC" . gptel)
-   ("C-c RET" . gptel-send)
    )
   
   :config
-  (setopt gptel-model 'gpt-4.1)
   (setopt gptel-default-mode 'org-mode)
   (setopt gptel-org-branching-context t)
   (setopt gptel-prompt-string "* ")
 
+  {{ if .isWorkMachine -}}
+  (setopt gptel-model 'gpt-4.1)
   (setopt gptel-backend (gptel-make-azure "drw-gpt4.1"
-                   :protocol "https"
-                   :host "azure-openai.drwcloud.com"
-		   :endpoint "/openai/deployments/gpt-4.1/chat/completions?api-version=2025-03-01-preview"
-                   :stream t
-                   :key "7c67423331a41feb323fd9ff985953e7"
-                   :models '("gpt-4.1"))))
+			  :protocol "https"
+			  :host "azure-openai.drwcloud.com"
+			  :endpoint "/openai/deployments/gpt-4.1/chat/completions?api-version=2025-03-01-preview"
+			  :stream t
+			  :key "7c67423331a41feb323fd9ff985953e7"
+			  :models '("gpt-4.1")))
+  {{ else }}
+  ;; See https://ai.google.dev/gemini-api/docs/models#model-variations
+  (setopt gptel-model 'gemini-2.5-flash-preview-04-17)
+  (setopt gptel-backend (gptel-make-gemini "Gemini"
+			  :key "AIzaSyDrCmND1hVl2QH8tUSmlQn2EkYVaMCKNHc"
+			  :stream t
+			  :models '("gemini-2.5-flash-preview-04-17" "gemini-2.5-pro-preview-05-06")))
+  {{- end }}
+  )
 
 ;;;; org
 (use-package org
