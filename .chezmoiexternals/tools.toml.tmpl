@@ -48,4 +48,10 @@ path = "task"
 exact = true
 executable = true
 
+# FIXME: Not cross-platform.
+[".local/bin"]
+type = "archive"
+url = "https://github.com/astral-sh/uv/releases/download/{{.toolVersion.uv}}/uv-x86_64-unknown-{{.chezmoi.os}}-gnu.tar.gz"
+stripComponents = 1
+
 {{ end }}
