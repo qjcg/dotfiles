@@ -280,6 +280,8 @@
    ("C-c SPC a" . gptel-add)
    ("C-c SPC f" . gptel-add-file)
    ("C-c SPC r" . gptel-rewrite)
+   ("C-c SPC c" . gptel-mcp-connect)
+   ("C-c SPC C" . gptel-mcp-disconnect)
    ("C-c SPC t" . gptel-org-set-topic)
    ("C-c SPC s" . gptel-system-prompt)
    )
@@ -313,6 +315,8 @@
 
 ;;;; mcp.el
 (use-package mcp
+  :after package
+
   :init
   (unless (package-installed-p 'mcp)
     (package-vc-install "https://github.com/lizqwerscott/mcp.el"))
@@ -340,7 +344,10 @@
 ;;;; org
 (use-package org
   :ensure
-  :pin gnu)
+  :pin gnu
+  :config
+  (setopt org-hide-emphasis-markers t)
+  )
 
 ;;;; markdown-toc
 (use-package markdown-toc :ensure)
@@ -517,7 +524,28 @@
   )
 
 ;;;; logos                                                                :prot:
-(use-package logos :ensure)
+(use-package logos
+  :after olivetti
+  :ensure
+
+  :config
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-olivetti t)
+  (setopt logos-hide-cursor nil)
+  (setopt logos-hide-mode-line t)
+  (setopt logos-hide-header-line t)
+  (setopt logos-hide-buffer-boundaries t)
+  (setopt logos-hide-fringe t)
+  (setopt logos-variable-pitch t)
+  (setopt logos-buffer-read-only nil)
+  (setopt logos-scroll-lock nil)
+
+  :bind
+  (:map logos-focus-mode-map
+	("]" . logos-forward-page-dwim)
+	("[" . logos-backward-page-dwim)
+	)
+  )
 
 ;;;; olivetti
 (use-package olivetti
