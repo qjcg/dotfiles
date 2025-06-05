@@ -325,21 +325,11 @@
 
   :config
   (setopt mcp-hub-servers
-	'(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ".")))
-	  ("filesystemgo" . (:command "go" :args ("run" "github.com/mark3labs/mcp-filesystem-server@v0.9.0" ".")))
-          ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
-          ;;("qdrant" . (:url "http://localhost:8000/sse"))
-          ("graphlit" . (
-                         :command "npx"
-                         :args ("-y" "graphlit-mcp-server")
-                         :env (
-                               :GRAPHLIT_ORGANIZATION_ID "your-organization-id"
-                               :GRAPHLIT_ENVIRONMENT_ID "your-environment-id"
-                               :GRAPHLIT_JWT_SECRET "your-jwt-secret")
-			 ))
-	  ))
+	  '(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ".")))
+	    ("filesystemgo" . (:command "go" :args ("run" "github.com/mark3labs/mcp-filesystem-server@v0.9.0" ".")))
+            ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
+	    ))
   )
-
 
 ;;;; org
 (use-package org
