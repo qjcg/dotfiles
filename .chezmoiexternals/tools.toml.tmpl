@@ -1,12 +1,5 @@
 {{ if .installExternalBinaries }}
 
-[".local/bin/cue"]
-type = "archive-file"
-url = "https://github.com/cue-lang/cue/releases/download/{{.toolVersion.cue}}/cue_{{.toolVersion.cue}}_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
-path = "cue"
-exact = true
-executable = true
-
 [".local/bin/delta"]
 type = "archive-file"
 url = "https://github.com/dandavison/delta/releases/download/{{.toolVersion.delta}}/delta-{{.toolVersion.delta}}-x86_64-unknown-linux-gnu.tar.gz"
