@@ -308,6 +308,16 @@
 			  :stream t
 			  :key "7c67423331a41feb323fd9ff985953e7"
 			  :models '("gpt-4.1")))
+
+  (gptel-make-preset 'coding-agent
+    :description nil :backend "drw-gpt4.1" :model 'gpt-4.1 :system
+    'programming :tools
+    '("write_file" "tree" "search_files" "read_multiple_files"
+      "read_file" "move_file" "list_directory"
+      "list_allowed_directories" "get_file_info" "delete_file"
+      "create_directory" "copy_file")
+    :stream t :temperature 1.0 :max-tokens nil :use-context 'system
+    :include-reasoning t)
   {{ else }}
   ;; See https://ai.google.dev/gemini-api/docs/models#model-variations
   (setopt gptel-model 'gemini-2.5-flash-preview-04-17)
