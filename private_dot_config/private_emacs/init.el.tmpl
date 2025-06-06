@@ -259,8 +259,14 @@
   :ensure
   :pin gnu
   :bind
-  (("C-c n n" . denote-open-or-create))
-  ("C-c n j" . denote-journal-extras-new-or-existing-entry))
+  (("C-c n n" . denote-open-or-create)))
+
+(use-package denote-journal
+  :ensure
+  :pin gnu
+  :bind
+  (("C-c n j" . denote-journal-new-or-existing-entry))
+  )
 
 ;;;; consult-denote
 (use-package consult-denote
