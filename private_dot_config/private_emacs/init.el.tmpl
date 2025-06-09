@@ -15,8 +15,6 @@
   (setenv "LC_COLLATE" "C")
   (add-to-list 'exec-path {{quote "~/.local/bin"}})
   (add-to-list 'exec-path {{quote "~/go/bin"}})
-
-  (setopt user-emacs-directory "~/.config/emacs")
   (setopt custom-file (expand-file-name "var/custom.el" user-emacs-directory))
 
   :config
@@ -294,7 +292,6 @@
   
   :config
   (require 'gptel-integrations) ;; provides MCP integration.
-
   (setopt gptel-default-mode 'org-mode)
   (setopt gptel-org-branching-context t)
   (setopt gptel-prompt-string "* ")
@@ -320,11 +317,11 @@
     :include-reasoning t)
   {{ else }}
   ;; See https://ai.google.dev/gemini-api/docs/models#model-variations
-  (setopt gptel-model 'gemini-2.5-flash-preview-04-17)
+  (setopt gptel-model 'gemini-2.5-flash-preview-05-20)
   (setopt gptel-backend (gptel-make-gemini "Gemini"
 			  :key "AIzaSyDrCmND1hVl2QH8tUSmlQn2EkYVaMCKNHc"
 			  :stream t
-			  :models '("gemini-2.5-flash-preview-04-17")))
+			  :models '("gemini-2.5-flash-preview-05-20")))
   {{- end }}
   )
 
