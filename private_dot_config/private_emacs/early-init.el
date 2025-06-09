@@ -4,10 +4,9 @@
 (setopt warning-suppress-log-types '((comp) (bytecomp)))
 (setopt native-comp-async-report-warnings-errors 'silent)
 
-;; '(fullscreen . maximized) or '(fullscreen . fullscreen)
 (add-to-list 'initial-frame-alist '(fullscreen . fullscreen))
 
-;; Add personal lisp dir to load-path.
+(setopt user-emacs-directory "~/.config/emacs")
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 (require 'xdg)
@@ -15,3 +14,5 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "emacs/eln-cache" (xdg-cache-home)))))
+
+(message "early-init.el loaded!")
