@@ -99,6 +99,13 @@
   :hook ((go-mode go-ts-mode) . eglot-ensure)
   )
 
+;;;; flymake
+(use-package flymake
+  :bind
+  (("M-n" . flymake-goto-next-error)
+   ("M-p" . flymake-goto-prev-error))
+  )
+
 ;;;; age
 (use-package age
   :ensure
@@ -210,6 +217,7 @@
   :bind
   (("C-x b" . consult-buffer)
    ("C-c t t" . consult-theme)
+   ("M-s f" . consult-flymake)
    ("M-s l" . consult-line)
    ("M-s M-o" . consult-outline)
    ("M-s r" . consult-ripgrep)
