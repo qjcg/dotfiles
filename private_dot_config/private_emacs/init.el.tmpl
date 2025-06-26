@@ -307,6 +307,8 @@
 
   {{ if .isWorkMachine -}}
   (setopt gptel-model 'gpt-4.1)
+
+  ;; https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability
   (setopt gptel-backend (gptel-make-azure "drw-gpt4.1"
 			  :protocol "https"
 			  :host "azure-openai.drwcloud.com"
