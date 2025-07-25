@@ -1,90 +1,104 @@
-issues:
-  include:
-    # 12-15: Enable comment-related checks with revive.
-    - EXC0012
-    - EXC0013
-    - EXC0014
-    - EXC0015
+# Go linters config file.
+# See https://golangci-lint.run/
 
-  exclude-rules:
-    - source: "//noinspection"
-      linters: [ gocritic ]
-    - text: 'shadow: declaration of "(err|ctx)" shadows declaration at'
-      linters: [ govet ]
-
-
-linters-settings:
-  errcheck:
-    # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
-    # Such cases aren't reported by default.
-    # Default: false
-    check-type-assertions: true
-
-  govet:
-    # Enable all analyzers.
-    # Default: false
-    enable-all: true
-    # Disable analyzers by name.
-    # Run `go tool vet help` to see all analyzers.
-    # Default: []
-    disable:
-      - fieldalignment # too strict
-    # Settings per analyzer.
-    settings:
-      shadow:
-        # Whether to be strict about shadowing; can be noisy.
-        # Default: false
-        strict: true
-
-  # goimports:
-  #   local-prefixes: git.example.com # go module name, e.g.: git.example.com/foocorp/bar
-
-  gocritic:
-    # Settings passed to gocritic.
-    # The settings key is the name of a supported gocritic checker.
-    # The list of supported checkers can be find in https://go-critic.github.io/overview.
-    settings:
-      captLocal:
-        # Whether to restrict checker to params only.
-        # Default: true
-        paramsOnly: false
-      underef:
-        # Whether to skip (*x).method() calls where x is a pointer receiver.
-        # Default: true
-        skipRecvDeref: false
-
-  revive:
-    rules:
-      - name: exported
-        disabled: true # disabled since it's not always necessary to comment exported identifiers as sometimes their doc is obvious.
-
-  staticcheck:
-     # SAxxxx checks in https://staticcheck.io/docs/configuration/options/#checks
-     # Default: ["*"]
-     checks:
-       - "all"
-       # disable SA4023 because of panic in nilness check:
-       # https://github.com/dominikh/go-tools/issues/1397
-       - "-SA4023"
-
+version: "2"
 
 linters:
-  disable-all: true
+  default: none
   enable:
-    ## re-enabling the default linters
-    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
-    - gosimple # specializes in simplifying a code
-    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - bodyclose   # checks whether HTTP response body is closed successfully
+    - errcheck    # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
+    - errorlint   # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
+    - gocritic    # provides diagnostics that check for bugs, performance and style issues
+    - govet       # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - ineffassign # detects when assignments to existing variables are not used
+    - nilerr      # finds the code that returns nil even if it checks that the error is not nil
+    - noctx       # finds sending http request without context.Context
+    - revive      # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
     - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
-    - typecheck # like the front-end of a Go compiler, parses and type-checks Go code
-    - unused # checks for unused constants, variables, functions and types
-    ## enabling linters not enabled by default
-    - bodyclose # checks whether HTTP response body is closed successfully
-    - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
-    - nilerr # finds the code that returns nil even if it checks that the error is not nil
-    - noctx # finds sending http request without context.Context
-    - goimports # in addition to fixing imports, goimports also formats your code in the same style as gofmt
-    - gofumpt # checks whether code was gofumpt-ed
-    - gocritic # provides diagnostics that check for bugs, performance and style issues
-    - revive # fast, configurable, extensible, flexible, and beautiful linter for Go, drop-in replacement of golint
+    - unused      # checks for unused constants, variables, functions and types
+  settings:
+
+    errcheck:
+      # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
+      # Such cases aren't reported by default.
+      # Default: false
+      check-type-assertions: true
+
+    gocritic:
+      # Settings passed to gocritic.
+      # The settings key is the name of a supported gocritic checker.
+      # The list of supported checkers can be find in https://go-critic.github.io/overview.
+      settings:
+        # Whether to restrict checker to params only.
+        # Default: true
+        captLocal:
+          paramsOnly: false
+        underef:
+          # Whether to skip (*x).method() calls where x is a pointer receiver.
+          # Default: true
+          skipRecvDeref: false
+
+    govet:
+      # Enable all analyzers.
+      # Default: false
+      enable-all: true
+
+      # Disable analyzers by name.
+      # Run `go tool vet help` to see all analyzers.
+      # Default: []
+      disable:
+        - fieldalignment  # too strict
+
+      # Settings per analyzer.
+      settings:
+        # Whether to be strict about shadowing; can be noisy.
+        # Default: false
+        shadow:
+          strict: true
+
+    revive:
+      rules:
+        - name: exported
+          disabled: true  # disabled since it's not always necessary to comment exported identifiers as sometimes their doc is obvious.
+
+    staticcheck:
+      # SAxxxx checks in https://staticcheck.io/docs/configuration/options/#checks
+      # Default: ["*"]
+      checks:
+        - all
+
+        # disable SA4023 because of panic in nilness check:
+        # https://github.com/dominikh/go-tools/issues/1397
+        - -SA4023
+
+  exclusions:
+    generated: lax
+    presets:
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gocritic
+        source: //noinspection
+      - linters:
+          - govet
+        text: 'shadow: declaration of "(err|ctx)" shadows declaration at'
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - exchanges/coinbase
+      - exchanges/binance
+
+formatters:
+  enable:
+    - gofumpt    # checks whether code was gofumpt-ed
+    - goimports  # in addition to fixing imports, goimports also formats your code in the same style as gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
