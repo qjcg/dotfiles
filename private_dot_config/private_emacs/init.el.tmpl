@@ -97,6 +97,8 @@
 ;;;; eglot
 (use-package eglot
   :hook ((go-mode go-ts-mode) . eglot-ensure)
+  :config
+  (add-to-list 'eglot-server-programs '(cue-mode . ("cue" "lsp")))
   )
 
 ;;;; flymake
