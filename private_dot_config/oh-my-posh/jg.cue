@@ -1,7 +1,8 @@
 package omp
 
 #OMPConfig: {
-	version:     2.0
+	async:       false
+	version:     3
 	final_space: true
 	blocks!: [...#Block]
 }
@@ -56,7 +57,7 @@ package omp
 #Segment: self = {
 	#segment
 
-	properties: cache_duration: "none"
+	properties: cache_duration: *"30s" | string
 	style: *"plain" | #segment.style
 
 	if self.powerline_symbol != _|_ {
@@ -102,6 +103,11 @@ package omp
 		properties: {
 			branch_icon:  ""
 			fetch_status: true
+
+			// FIXME: Not working, git status command still runs with `-unormal` (see `oh-my-posh debug`)
+			// untracked_modes: {
+			// 	"~/src/arcadia/.*": "no"
+			// }
 		}
 		template: "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} u{{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} s{{ .Staging.String }}{{ end }} "
 	}
