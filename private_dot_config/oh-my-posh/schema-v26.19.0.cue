@@ -105,10 +105,42 @@ var?: {
 	...
 }
 
+// Custom text mappings
+//
+// https://ohmyposh.dev/docs/configuration/general#maps
+maps?: {
+	...
+}
+
+// Async loading
+async?: bool
+
+// Tooltips action
+//
+// https://ohmyposh.dev/docs/configuration/tooltips#tooltips-action
+tooltips_action?: "replace" | "extend" | "prepend"
+
+// Version
+//
+// https://ohmyposh.dev/docs/configuration/general
+version?: int
+
+// Extends
+//
+// https://ohmyposh.dev/docs/configuration/general#extends
+extends?: string
+
 // Access token
 //
 // The initial access token
 #access_token: string
+
+// Aliases
+//
+// Custom value replacement for template parts
+#aliases: {
+	...
+}
 
 // https://ohmyposh.dev/docs/configuration/block
 #block: matchN(3, [matchIf({
@@ -272,38 +304,24 @@ var?: {
 // The initial refresh token
 #refresh_token: string
 
-// A segment
+// Segment
 //
 // https://ohmyposh.dev/docs/configuration/segment
-#segment: matchN(98, [matchIf({
-	type?: "project"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Always Enabled
-		//
-		// Always show the segment
-		always_enabled?: bool
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "npm"
+#segment: matchN(100, [matchIf({
+	type?: "angular"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
 		home_enabled?:         #home_enabled
 		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
 		missing_command_text?: #missing_command_text
+		display_mode?:         #display_mode
 		version_url_template?: #version_url_template
 
 		// Extensions
 		//
-		// The extensions to look for when determining if a folder is an
-		// NPM workspace
+		// The extensions to look for when determining if the current
+		// directory is an Angular project
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -312,39 +330,38 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	style?: "powerline"
+	type?: "aurelia"
 	...
 }, {
-	// Powerline Symbol
-	//
-	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
-	powerline_symbol?: string
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		missing_command_text?: #missing_command_text
+		display_mode?:         #display_mode
+		version_url_template?: #version_url_template
 
-	// Leading Powerline Symbol
-	//
-	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
-	leading_powerline_symbol?: string
-
-	// Flip the Powerline symbol vertically
-	//
-	// https://ohmyposh.dev/docs/configuration/segment#invert-powerline
-	invert_powerline?: bool
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is an Aurelia project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
 	...
 }, _) & {
 	...
 }, matchIf({
-	style?: "diamond"
+	type?: "aws"
 	...
 }, {
-	// Leading diamond
-	//
-	// https://ohmyposh.dev/docs/configuration/segment#leading-diamond
-	leading_diamond?: string
-
-	// Trailing diamond
-	//
-	// https://ohmyposh.dev/docs/configuration/segment#trailing-diamond
-	trailing_diamond?: string
+	properties?: null | bool | number | string | [...] | {
+		// Display Default User Profile
+		//
+		// Display the segment when default user or not
+		display_default?: bool
+		...
+	}
 	...
 }, _) & {
 	...
@@ -356,7 +373,7 @@ var?: {
 		// Source
 		//
 		// https://ohmyposh.dev/docs/segments/cloud/az#properties
-		source?: "first_match" | "cli" | "pwsh"
+		source?: "cli" | "pwsh"
 		...
 	}
 	...
@@ -366,6 +383,20 @@ var?: {
 	type?: "azd"
 	...
 }, {
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "azfunc"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		...
+	}
 	...
 }, _) & {
 	...
@@ -437,6 +468,115 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "brewfather"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Brewfather UserID (required)
+		//
+		// Provided by Brewfather's Generate API Key settings option
+		user_id?: string
+
+		// Brewfather API Key (required)
+		//
+		// Provided by Brewfather's Generate API Key settings option
+		api_key?: string
+
+		// ID of the batch in Brewfather (required)
+		//
+		// At the end of the URL when viewing the batch on the Brewfather
+		// site
+		batch_id?: string
+
+		// Icon to use to indicate days
+		//
+		// Appended to a number to indicate days, e.g. 25d
+		day_icon?:     string
+		http_timeout?: #http_timeout
+
+		// Temperature trend icon, very high positive change
+		//
+		// Delta between this and prior temperature reading is very high
+		// (> 4C by default), available intemplate as .TemperatureTrend
+		doubleup_icon?: string
+
+		// Temperature trend icon, high positive change
+		//
+		// Delta between this and prior temperature reading is high (2C <
+		// delta < 4C by default), available intemplate as
+		// .TemperatureTrend
+		singleup_icon?: string
+
+		// Temperature trend icon, positive change
+		//
+		// Delta between this and prior temperature reading is positive
+		// (0.5C < delta < 2C by default), available intemplate as
+		// .TemperatureTrend
+		fortyfiveup_icon?: string
+
+		// Temperature trend icon, flat/small change
+		//
+		// Delta between this and prior temperature and this temperature
+		// reading (< +-0.5C change), available intemplate as
+		// .TemperatureTrend
+		flat_icon?: string
+
+		// Temperature trend icon, v. negative change
+		//
+		// Delta between this and prior temperature reading is negative
+		// (-0.5C > delta > -2C by default), available intemplate as
+		// .TemperatureTrend
+		fortyfivedown_icon?: string
+
+		// Temperature trend icon, high negative change
+		//
+		// Delta between this and prior temperature reading is large
+		// negative (-2C > delta > -4C by default), available intemplate
+		// as .TemperatureTrend
+		singledown_icon?: string
+
+		// Temperature trend icon, very high negative change
+		//
+		// Delta between this and prior temperature reading is very large
+		// negative (> -4C by default), available intemplate as
+		// .TemperatureTrend
+		doubledown_icon?: string
+
+		// Icon for batch in planning
+		//
+		// Available in template as .StatusIcon
+		planning_status_icon?: string
+
+		// Icon for batch being brewed
+		//
+		// Available in template as .StatusIcon
+		brewing_status_icon?: string
+
+		// Icon for batch fermenting
+		//
+		// Available in template as .StatusIcon
+		fermenting_status_icon?: string
+
+		// Icon for batch conditioning
+		//
+		// Available in template as .StatusIcon
+		conditioning_status_icon?: string
+
+		// Icon for completed batch
+		//
+		// Available in template as .StatusIcon
+		completed_status_icon?: string
+
+		// Icon for archived batch
+		//
+		// Available in template as .StatusIcon
+		archived_status_icon?: string
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "buf"
 	...
 }, {
@@ -492,6 +632,87 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "cds"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a CDS project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "cf"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Cloud Foundry project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "cftarget"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Display Mode
+		//
+		// Determines whether the segment is displayed always or only if a
+		// file matching the extensions are present in the current folder
+		display_mode?: "always" | "files"
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "cmake"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// CMake workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "command"
 	...
 }, {
@@ -534,12 +755,13 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "cmake"
+	type?: "crystal"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
 		home_enabled?:         #home_enabled
 		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
 		display_mode?:         #display_mode
 		missing_command_text?: #missing_command_text
 		version_url_template?: #version_url_template
@@ -547,7 +769,7 @@ var?: {
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
-		// CMake workspace
+		// Crystal workspace
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -556,9 +778,83 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "dart"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Dart workspace
+		extensions?: [...string]
+
+		// Folders
+		//
+		// The folders to look for when determining if a folder is a Dart
+		// workspace
+		folders?: [...string]
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "deno"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		missing_command_text?: #missing_command_text
+		display_mode?:         #display_mode
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Deno workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	style?: "diamond"
+	...
+}, {
+	// Leading diamond
+	//
+	// https://ohmyposh.dev/docs/configuration/segment#leading-diamond
+	leading_diamond?: string
+
+	// Trailing diamond
+	//
+	// https://ohmyposh.dev/docs/configuration/segment#trailing-diamond
+	trailing_diamond?: string
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "docker"
 	...
 }, {
+	properties?: null | bool | number | string | [...] | {
+		// Fetch Context
+		//
+		// Fetch the Docker context
+		fetch_context?: bool
+		display_mode?:  #display_mode
+		...
+	}
 	...
 }, _) & {
 	...
@@ -586,26 +882,56 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "status"
+	type?: "elixir"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Elixir workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "executiontime"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
 		// Always Enabled
 		//
-		// Always show the status
+		// Always show the duration
 		always_enabled?: bool
 
-		// Status Template
+		// Threshold
 		//
-		// The template to use for the status segment
-		status_template?: string
+		// minimum duration (milliseconds) required to enable this segment
+		threshold?: number
 
-		// Status Separator
+		// Style
 		//
-		// The separator to use between the status segments
-		status_separator?: string
+		// The style in which the time will be displayed
+		style?: "austin" | "roundrock" | "dallas" | "galveston" | "galvestonms" | "houston" | "amarillo" | "round" | "lucky7"
 		...
 	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "firebase"
+	...
+}, {
 	...
 }, _) & {
 	...
@@ -671,6 +997,13 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "gcp"
+	...
+}, {
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "git"
 	...
 }, {
@@ -679,11 +1012,6 @@ var?: {
 		//
 		// Display the local changes or not
 		fetch_status?: bool
-
-		// Display Stash Count
-		//
-		// Display the stash count or not
-		fetch_stash_count?: bool
 
 		// Display Worktree Count
 		//
@@ -840,6 +1168,13 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "gitversion"
+	...
+}, {
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "go"
 	...
 }, {
@@ -875,7 +1210,7 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "dart"
+	type?: "haskell"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
@@ -886,37 +1221,17 @@ var?: {
 		missing_command_text?: #missing_command_text
 		version_url_template?: #version_url_template
 
-		// Extensions
+		// Use Stack GHC
 		//
-		// The extensions to look for when determining if a folder is a
-		// Dart workspace
-		extensions?: [...string]
-
-		// Folders
-		//
-		// The folders to look for when determining if a folder is a Dart
-		// workspace
-		folders?: [...string]
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "deno"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		missing_command_text?: #missing_command_text
-		display_mode?:         #display_mode
-		version_url_template?: #version_url_template
+		// Get the GHC version used by Stack. Will decrease performance.
+		// Boolean indicating whether stack ghc was used available in
+		// template as .StackGhc
+		stack_ghc_mode?: "always" | "package" | "never"
 
 		// Extensions
 		//
-		// The extensions to look for when determining if a folder is a
-		// Deno workspace
+		// The extensions to look for when determining if the current
+		// directory is a Haskell project
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -925,92 +1240,45 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "crystal"
+	type?: "helm"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is a
-		// Crystal workspace
-		extensions?: [...string]
-		folders?: #folders
+		display_mode?: #display_mode
 		...
 	}
 	...
 }, _) & {
 	...
 }, matchIf({
-	type?: "julia"
+	type?: "http"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
+		// URL
 		//
-		// The extensions to look for when determining if a folder is a
-		// Julia workspace
-		extensions?: [...string]
-		folders?: #folders
+		// The HTTP URL you want to call, supports templates
+		url?: string
+
+		// HTTP Method
+		//
+		// The HTTP method to use
+		method?: "GET" | "POST"
 		...
 	}
 	...
 }, _) & {
 	...
 }, matchIf({
-	type?: "perl"
+	type?: "ipify"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
+		// URL
 		//
-		// The extensions to look for when determining if a folder is a
-		// Perl workspace
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "php"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is a
-		// PHP workspace
-		extensions?: [...string]
-		folders?: #folders
+		// The Ipify API URL
+		url?:          string
+		http_timeout?: #http_timeout
 		...
 	}
 	...
@@ -1040,7 +1308,28 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "ruby"
+	type?: "jujutsu"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Display Status
+		//
+		// Display the changes in the working copy
+		fetch_status?: bool
+
+		// Ignore Working Copy
+		//
+		// Don't snapshot the working copy, and don't update it
+		ignore_working_copy?: bool
+		status_formats?:      #status_formats
+		native_fallback?:     #native_fallback
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "julia"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
@@ -1054,8 +1343,8 @@ var?: {
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
-		// Ruby workspace
-		extensions?: [...]
+		// Julia workspace
+		extensions?: [...string]
 		folders?: #folders
 		...
 	}
@@ -1063,7 +1352,7 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "rust"
+	type?: "kotlin"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
@@ -1076,30 +1365,8 @@ var?: {
 
 		// Extensions
 		//
-		// The extensions to look for when determining if a folder is a
-		// Rust workspace
-		extensions?: [...]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "xmake"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is a
-		// XMake workspace
+		// The extensions to look for when determining if the current
+		// directory is a Kotlin project
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -1136,16 +1403,165 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "aws"
+	type?: "lastfm"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
-		// Display Default User Profile
+		// User Info Separator
 		//
-		// Display the segment when default user or not
-		display_default?: bool
+		// Text/icon to show when playing
+		playing_icon?: string
+
+		// SSH Icon
+		//
+		// Text/icon to show when stopped
+		stopped_icon?: string
+
+		// API key
+		//
+		// The API key used for the API call (Required)
+		api_key?: string
+
+		// username
+		//
+		// The username used for the API call (Required)
+		username?:     string
+		http_timeout?: #http_timeout
 		...
 	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "lua"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Preferred Executable
+		//
+		// The preferred executable to use when fetching the version.
+		preferred_executable?: "lua" | "luajit"
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Lua project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "mercurial"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Display Status
+		//
+		// Display the local changes or not
+		fetch_status?:    bool
+		status_formats?:  #status_formats
+		native_fallback?: #native_fallback
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "mojo"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?: #home_enabled
+
+		// Fetch Virtual Env
+		//
+		// Fetch the name of the virtualenv or not
+		fetch_virtual_env?: bool
+
+		// Display Default
+		//
+		// Show the name of the virtualenv when it's default
+		display_default?:      bool
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Mojo workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "nightscout"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// URL
+		//
+		// The URL to the Nightscout API
+		url?: string
+
+		// Http request timeout
+		//
+		// Milliseconds to use for http request timeouts
+		http_timeout?: int
+
+		// Headers
+		//
+		// A key, value map of Headers to send with the request
+		headers?: {
+			...
+		}
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "nim"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Nim workspace
+		extensions?: [...]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "nix-shell"
+	...
+}, {
 	...
 }, _) & {
 	...
@@ -1188,7 +1604,7 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "azfunc"
+	type?: "npm"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
@@ -1196,6 +1612,59 @@ var?: {
 		fetch_version?:        #fetch_version
 		display_mode?:         #display_mode
 		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is an
+		// NPM workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "nx"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		missing_command_text?: #missing_command_text
+		display_mode?:         #display_mode
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is an Nx project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "ocaml"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is an OCaml project
+		extensions?: [...string]
+		folders?: #folders
 		...
 	}
 	...
@@ -1346,6 +1815,37 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "owm"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// API key
+		//
+		// The API key used for the api call (Required)
+		api_key?: string
+
+		// location
+		//
+		// Location to use for the API call interpreted only if valid
+		// coordinates aren't given. Formatted as
+		// <City>,<STATE>,<COUNTRY_CODE>. City name, state code and
+		// country code divided by comma. Please, refer to ISO 3166 for
+		// the state codes or country codes.
+		location?: string
+
+		// units
+		//
+		// Units of measurement. Available values are standard (kelvin),
+		// metric (celsius), and imperial (fahrenheit). Default is
+		// standard
+		units?:        "standard" | "metric" | "imperial"
+		http_timeout?: #http_timeout
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "path"
 	...
 }, {
@@ -1378,7 +1878,7 @@ var?: {
 		// The Path Style
 		//
 		// How to display the current path
-		style?: "agnoster" | "agnoster_full" | "agnoster_short" | "agnoster_left" | "short" | "full" | "folder" | "mixed" | "letter" | "unique" | "powerlevel"
+		style?: "agnoster" | "agnoster_full" | "agnoster_short" | "agnoster_left" | "short" | "full" | "folder" | "mixed" | "letter" | "unique" | "powerlevel" | "fish"
 
 		// Mapped Locations
 		//
@@ -1453,6 +1953,172 @@ var?: {
 		//
 		// Display the Cygwin (Linux) style path using cygpath -u $PWD.
 		display_cygpath?: bool
+
+		// Directory Length
+		//
+		// The length of the directory name to display in fish style.
+		dir_length?: int
+
+		// Full Length Dirs
+		//
+		// Indicates how many full length directory names should be
+		// displayed in fish style.
+		full_length_dirs?: int
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "perl"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Perl workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "php"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// PHP workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "plastic"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Display Status
+		//
+		// Display the local changes or not
+		fetch_status?:   bool
+		status_formats?: #status_formats
+
+		// Branch Icon
+		//
+		// The icon to use in front of the selector branch name
+		branch_icon?: string
+
+		// Commit Icon
+		//
+		// Icon/text to display before the selector changeset
+		commit_icon?: string
+
+		// Tag Icon
+		//
+		// Icon/text to display before the seletor label
+		tag_icon?:        string
+		branch_template?: #branch_template
+		native_fallback?: #native_fallback
+		mapped_branches?: #mapped_branches
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "pnpm"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is an
+		// PNPM workspace
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	style?: "powerline"
+	...
+}, {
+	// Powerline Symbol
+	//
+	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
+	powerline_symbol?: string
+
+	// Leading Powerline Symbol
+	//
+	// https://ohmyposh.dev/docs/configuration/segment#powerline-symbol
+	leading_powerline_symbol?: string
+
+	// Flip the Powerline symbol vertically
+	//
+	// https://ohmyposh.dev/docs/configuration/segment#invert-powerline
+	invert_powerline?: bool
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "project"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Always Enabled
+		//
+		// Always show the segment
+		always_enabled?: bool
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "pulumi"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Fetch Stack
+		//
+		// Fetch the current pulumi stack or not
+		fetch_stack?: bool
+
+		// Fetch About
+		//
+		// Fetch the URL and user for the current stack
+		fetch_about?: bool
 		...
 	}
 	...
@@ -1508,25 +2174,6 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "pulumi"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Fetch Stack
-		//
-		// Fetch the current pulumi stack or not
-		fetch_stack?: bool
-
-		// Fetch About
-		//
-		// Fetch the URL and user for the current stack
-		fetch_about?: bool
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
 	type?: "quasar"
 	...
 }, {
@@ -1555,9 +2202,100 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "r"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is an R project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "react"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a React project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "root"
 	...
 }, {
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "ruby"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Ruby workspace
+		extensions?: [...]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "rust"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if a folder is a
+		// Rust workspace
+		extensions?: [...]
+		folders?: #folders
+		...
+	}
 	...
 }, _) & {
 	...
@@ -1647,165 +2385,24 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "terraform"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Fetch Version
-		//
-		// Fetch the version number
-		fetch_version?: bool
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "text"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "talosctl"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "time"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Time Format
-		//
-		// Format to use, follows the golang standard:
-		// https://gobyexample.com/time-formatting-parsing
-		time_format?: string
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "ytm"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Playing Icon
-		//
-		// Text/icon to show when playing
-		playing_icon?: string
-
-		// Paused Icon
-		//
-		// Text/icon to show when paused
-		paused_icon?: string
-
-		// Stopped Icon
-		//
-		// Text/icon to show when stopped
-		stopped_icon?: string
-
-		// API URL
-		//
-		// The YTMDA Remote Control API URL
-		api_url?:      string
-		http_timeout?: #http_timeout
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "owm"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// API key
-		//
-		// The API key used for the api call (Required)
-		api_key?: string
-
-		// location
-		//
-		// Location to use for the API call interpreted only if valid
-		// coordinates aren't given. Formatted as
-		// <City>,<STATE>,<COUNTRY_CODE>. City name, state code and
-		// country code divided by comma. Please, refer to ISO 3166 for
-		// the state codes or country codes.
-		location?: string
-
-		// units
-		//
-		// Units of measurement. Available values are standard (kelvin),
-		// metric (celsius), and imperial (fahrenheit). Default is
-		// standard
-		units?:        "standard" | "metric" | "imperial"
-		http_timeout?: #http_timeout
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "elixir"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is a
-		// Elixir workspace
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "executiontime"
+	type?: "status"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
 		// Always Enabled
 		//
-		// Always show the duration
+		// Always show the status
 		always_enabled?: bool
 
-		// Threshold
+		// Status Template
 		//
-		// minimum duration (milliseconds) required to enable this segment
-		threshold?: number
+		// The template to use for the status segment
+		status_template?: string
 
-		// Style
+		// Status Separator
 		//
-		// The style in which the time will be displayed
-		style?: "austin" | "roundrock" | "dallas" | "galveston" | "galvestonms" | "houston" | "amarillo" | "round" | "lucky7"
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "sysinfo"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Precision
-		//
-		// number of decimal places to show
-		precision?: int
+		// The separator to use between the status segments
+		status_separator?: string
 		...
 	}
 	...
@@ -1855,6 +2452,29 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
+	type?: "svelte"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Svelte project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
 	type?: "svn"
 	...
 }, {
@@ -1871,95 +2491,7 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "angular"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		missing_command_text?: #missing_command_text
-		display_mode?:         #display_mode
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is an Angular project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "aurelia"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		missing_command_text?: #missing_command_text
-		display_mode?:         #display_mode
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is an Aurelia project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "react"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a React project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "nx"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		missing_command_text?: #missing_command_text
-		display_mode?:         #display_mode
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is an Nx project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "ocaml"
+	type?: "swift"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
@@ -1973,7 +2505,184 @@ var?: {
 		// Extensions
 		//
 		// The extensions to look for when determining if the current
-		// directory is an OCaml project
+		// directory is a Swift project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "sysinfo"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Precision
+		//
+		// number of decimal places to show
+		precision?: int
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "talosctl"
+	...
+}, {
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "tauri"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Tauri project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "terraform"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Fetch Version
+		//
+		// Fetch the version number
+		fetch_version?: bool
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "text"
+	...
+}, {
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "time"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		// Time Format
+		//
+		// Format to use, follows the golang standard:
+		// https://gobyexample.com/time-formatting-parsing
+		time_format?: string
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "ui5tooling"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a UI5 project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "umbraco"
+	...
+}, {
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "unity"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		http_timeout?: #http_timeout
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "upgrade"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		cache_duration?: #cache_duration
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "v"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a V project
+		extensions?: [...string]
+		folders?: #folders
+		...
+	}
+	...
+}, _) & {
+	...
+}, matchIf({
+	type?: "vala"
+	...
+}, {
+	properties?: null | bool | number | string | [...] | {
+		home_enabled?:         #home_enabled
+		fetch_version?:        #fetch_version
+		cache_duration?:       #cache_duration
+		display_mode?:         #display_mode
+		missing_command_text?: #missing_command_text
+		version_url_template?: #version_url_template
+
+		// Extensions
+		//
+		// The extensions to look for when determining if the current
+		// directory is a Vala project
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -2032,534 +2741,12 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "plastic"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Display Status
-		//
-		// Display the local changes or not
-		fetch_status?:   bool
-		status_formats?: #status_formats
-
-		// Branch Icon
-		//
-		// The icon to use in front of the selector branch name
-		branch_icon?: string
-
-		// Commit Icon
-		//
-		// Icon/text to display before the selector changeset
-		commit_icon?: string
-
-		// Tag Icon
-		//
-		// Icon/text to display before the seletor label
-		tag_icon?:        string
-		branch_template?: #branch_template
-		native_fallback?: #native_fallback
-		mapped_branches?: #mapped_branches
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "brewfather"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Brewfather UserID (required)
-		//
-		// Provided by Brewfather's Generate API Key settings option
-		user_id?: string
-
-		// Brewfather API Key (required)
-		//
-		// Provided by Brewfather's Generate API Key settings option
-		api_key?: string
-
-		// ID of the batch in Brewfather (required)
-		//
-		// At the end of the URL when viewing the batch on the Brewfather
-		// site
-		batch_id?: string
-
-		// Icon to use to indicate days
-		//
-		// Appended to a number to indicate days, e.g. 25d
-		day_icon?:     string
-		http_timeout?: #http_timeout
-
-		// Temperature trend icon, very high positive change
-		//
-		// Delta between this and prior temperature reading is very high
-		// (> 4C by default), available intemplate as .TemperatureTrend
-		doubleup_icon?: string
-
-		// Temperature trend icon, high positive change
-		//
-		// Delta between this and prior temperature reading is high (2C <
-		// delta < 4C by default), available intemplate as
-		// .TemperatureTrend
-		singleup_icon?: string
-
-		// Temperature trend icon, positive change
-		//
-		// Delta between this and prior temperature reading is positive
-		// (0.5C < delta < 2C by default), available intemplate as
-		// .TemperatureTrend
-		fortyfiveup_icon?: string
-
-		// Temperature trend icon, flat/small change
-		//
-		// Delta between this and prior temperature and this temperature
-		// reading (< +-0.5C change), available intemplate as
-		// .TemperatureTrend
-		flat_icon?: string
-
-		// Temperature trend icon, v. negative change
-		//
-		// Delta between this and prior temperature reading is negative
-		// (-0.5C > delta > -2C by default), available intemplate as
-		// .TemperatureTrend
-		fortyfivedown_icon?: string
-
-		// Temperature trend icon, high negative change
-		//
-		// Delta between this and prior temperature reading is large
-		// negative (-2C > delta > -4C by default), available intemplate
-		// as .TemperatureTrend
-		singledown_icon?: string
-
-		// Temperature trend icon, very high negative change
-		//
-		// Delta between this and prior temperature reading is very large
-		// negative (> -4C by default), available intemplate as
-		// .TemperatureTrend
-		doubledown_icon?: string
-
-		// Icon for batch in planning
-		//
-		// Available in template as .StatusIcon
-		planning_status_icon?: string
-
-		// Icon for batch being brewed
-		//
-		// Available in template as .StatusIcon
-		brewing_status_icon?: string
-
-		// Icon for batch fermenting
-		//
-		// Available in template as .StatusIcon
-		fermenting_status_icon?: string
-
-		// Icon for batch conditioning
-		//
-		// Available in template as .StatusIcon
-		conditioning_status_icon?: string
-
-		// Icon for completed batch
-		//
-		// Available in template as .StatusIcon
-		completed_status_icon?: string
-
-		// Icon for archived batch
-		//
-		// Available in template as .StatusIcon
-		archived_status_icon?: string
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "ipify"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// URL
-		//
-		// The Ipify API URL
-		url?:          string
-		http_timeout?: #http_timeout
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "haskell"
+	type?: "xmake"
 	...
 }, {
 	properties?: null | bool | number | string | [...] | {
 		home_enabled?:         #home_enabled
 		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Use Stack GHC
-		//
-		// Get the GHC version used by Stack. Will decrease performance.
-		// Boolean indicating whether stack ghc was used available in
-		// template as .StackGhc
-		stack_ghc_mode?: "always" | "package" | "never"
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Haskell project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "helm"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		display_mode?: #display_mode
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "ui5tooling"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a UI5 project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "unity"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		http_timeout?: #http_timeout
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "upgrade"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		cache_duration?: #cache_duration
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "vala"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Vala project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "v"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a V project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "cf"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Cloud Foundry project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "cftarget"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Display Mode
-		//
-		// Determines whether the segment is displayed always or only if a
-		// file matching the extensions are present in the current folder
-		display_mode?: "always" | "files"
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "kotlin"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Kotlin project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "lastfm"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// User Info Separator
-		//
-		// Text/icon to show when playing
-		playing_icon?: string
-
-		// SSH Icon
-		//
-		// Text/icon to show when stopped
-		stopped_icon?: string
-
-		// API key
-		//
-		// The API key used for the API call (Required)
-		api_key?: string
-
-		// username
-		//
-		// The username used for the API call (Required)
-		username?:     string
-		http_timeout?: #http_timeout
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "lua"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Preferred Executable
-		//
-		// The preferred executable to use when fetching the version.
-		preferred_executable?: "lua" | "luajit"
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Lua project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "swift"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Swift project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "cds"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a CDS project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "r"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is an R project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "gcp"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "firebase"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "gitversion"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "mercurial"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// Display Status
-		//
-		// Display the local changes or not
-		fetch_status?:    bool
-		status_formats?:  #status_formats
-		native_fallback?: #native_fallback
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "mojo"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?: #home_enabled
-
-		// Fetch Virtual Env
-		//
-		// Fetch the name of the virtualenv or not
-		fetch_virtual_env?: bool
-
-		// Display Default
-		//
-		// Show the name of the virtualenv when it's default
-		display_default?:      bool
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
 		display_mode?:         #display_mode
 		missing_command_text?: #missing_command_text
 		version_url_template?: #version_url_template
@@ -2567,85 +2754,7 @@ var?: {
 		// Extensions
 		//
 		// The extensions to look for when determining if a folder is a
-		// Mojo workspace
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "nightscout"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		// URL
-		//
-		// The URL to the Nightscout API
-		url?: string
-
-		// Http request timeout
-		//
-		// Milliseconds to use for http request timeouts
-		http_timeout?: int
-
-		// Headers
-		//
-		// A key, value map of Headers to send with the request
-		headers?: {
-			...
-		}
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "nim"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is a
-		// Nim workspace
-		extensions?: [...]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "umbraco"
-	...
-}, {
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "pnpm"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if a folder is an
-		// PNPM workspace
+		// XMake workspace
 		extensions?: [...string]
 		folders?: #folders
 		...
@@ -2676,9 +2785,32 @@ var?: {
 }, _) & {
 	...
 }, matchIf({
-	type?: "nix-shell"
+	type?: "ytm"
 	...
 }, {
+	properties?: null | bool | number | string | [...] | {
+		// Playing Icon
+		//
+		// Text/icon to show when playing
+		playing_icon?: string
+
+		// Paused Icon
+		//
+		// Text/icon to show when paused
+		paused_icon?: string
+
+		// Stopped Icon
+		//
+		// Text/icon to show when stopped
+		stopped_icon?: string
+
+		// API URL
+		//
+		// The YTMDA Remote Control API URL
+		api_url?:      string
+		http_timeout?: #http_timeout
+		...
+	}
 	...
 }, _) & {
 	...
@@ -2705,57 +2837,11 @@ var?: {
 	...
 }, _) & {
 	...
-}, matchIf({
-	type?: "tauri"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Tauri project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
-}, matchIf({
-	type?: "svelte"
-	...
-}, {
-	properties?: null | bool | number | string | [...] | {
-		home_enabled?:         #home_enabled
-		fetch_version?:        #fetch_version
-		cache_duration?:       #cache_duration
-		display_mode?:         #display_mode
-		missing_command_text?: #missing_command_text
-		version_url_template?: #version_url_template
-
-		// Extensions
-		//
-		// The extensions to look for when determining if the current
-		// directory is a Svelte project
-		extensions?: [...string]
-		folders?: #folders
-		...
-	}
-	...
-}, _) & {
-	...
 }]) & {
 	// Segment Type
 	//
 	// https://ohmyposh.dev/docs/configuration/segment
-	type!: "angular" | "argocd" | "aurelia" | "aws" | "az" | "azd" | "azfunc" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "cds" | "cf" | "cftarget" | "cmake" | "command" | "connection" | "crystal" | "dart" | "deno" | "docker" | "dotnet" | "elixir" | "executiontime" | "firebase" | "flutter" | "fortran" | "fossil" | "gcp" | "git" | "gitversion" | "go" | "haskell" | "helm" | "ipify" | "java" | "julia" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nim" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "python" | "quasar" | "r" | "react" | "root" | "ruby" | "rust" | "sapling" | "session" | "shell" | "sitecore" | "spotify" | "status" | "strava" | "svelte" | "svn" | "swift" | "sysinfo" | "talosctl" | "tauri" | "terraform" | "text" | "time" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "v" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
+	type!: "angular" | "argocd" | "aurelia" | "aws" | "az" | "azd" | "azfunc" | "battery" | "bazel" | "brewfather" | "buf" | "bun" | "carbonintensity" | "cds" | "cf" | "cftarget" | "cmake" | "command" | "connection" | "crystal" | "dart" | "deno" | "docker" | "dotnet" | "elixir" | "executiontime" | "firebase" | "flutter" | "fortran" | "fossil" | "gcp" | "git" | "gitversion" | "go" | "haskell" | "helm" | "http" | "ipify" | "java" | "jujutsu" | "julia" | "kotlin" | "kubectl" | "lastfm" | "lua" | "mercurial" | "mojo" | "mvn" | "nbgv" | "nightscout" | "nim" | "nix-shell" | "node" | "npm" | "nx" | "ocaml" | "os" | "owm" | "path" | "perl" | "php" | "plastic" | "pnpm" | "project" | "pulumi" | "python" | "quasar" | "r" | "react" | "root" | "ruby" | "rust" | "sapling" | "session" | "shell" | "sitecore" | "spotify" | "status" | "strava" | "svelte" | "svn" | "swift" | "sysinfo" | "talosctl" | "tauri" | "terraform" | "text" | "time" | "ui5tooling" | "umbraco" | "unity" | "upgrade" | "v" | "vala" | "wakatime" | "winreg" | "withings" | "xmake" | "yarn" | "ytm" | "zig"
 
 	// Segment Style
 	//
