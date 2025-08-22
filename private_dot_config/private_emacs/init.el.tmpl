@@ -373,6 +373,9 @@
 ;;;; ox-gfm
 (use-package ox-gfm :ensure)
 
+;;;; ox-typst
+(use-package ox-typst :ensure)
+
 ;;;; todotxt-mode
 (use-package todotxt-mode :ensure)
 
@@ -624,6 +627,16 @@
   :ensure
   :hook (yaml-mode python-mode)
   )
+
+
+;;;; templ-ts-mode
+(use-package templ-ts-mode :ensure :pin melpa-stable)
+
+;;;; workroom
+
+(use-package workroom
+  :ensure
+  :pin nongnu)
 
 ;;; Navigation, Shell & Terminal
 
