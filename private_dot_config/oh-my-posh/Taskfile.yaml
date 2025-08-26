@@ -38,9 +38,7 @@ tasks:
     desc: Validate generated config files against the upstream oh-my-posh schema.
     deps: [schema]
     cmds:
-      - cue vet {{.CONFIG}} {{.SCHEMA}}
-      - cue vet {{.CONFIG_MIN}} {{.SCHEMA}}
-      - cue vet {{.CONFIG_CONTEXT}} {{.SCHEMA}}
+      - cue vet {{.SCHEMA}} {{.BASENAME}}*.yaml
 
   schema:
     desc: Download oh-my-posh JSON schema and convert to CUE.
