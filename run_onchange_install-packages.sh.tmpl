@@ -18,4 +18,8 @@ sudo snap install {{.}}
 sudo snap install --classic {{.}}
 {{ end }}
 
+{{ range .packages.goInstall }}
+go install {{.}}
+{{ end }}
+
 {{ end -}}
