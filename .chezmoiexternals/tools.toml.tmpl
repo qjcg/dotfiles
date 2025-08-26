@@ -34,13 +34,6 @@ path = "fd-{{.toolVersion.fd}}-x86_64-unknown-{{.chezmoi.os}}-gnu/fd"
 exact = true
 executable = true
 
-[".local/bin/task"]
-type = "archive-file"
-url = "https://github.com/go-task/task/releases/download/{{.toolVersion.task}}/task_{{.chezmoi.os}}_{{.chezmoi.arch}}.tar.gz"
-path = "task"
-exact = true
-executable = true
-
 # FIXME: Not cross-platform.
 [".local/bin"]
 type = "archive"
