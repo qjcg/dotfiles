@@ -1,4 +1,11 @@
 ;;-*-coding: utf-8;-*-
+(define-abbrev-table 'go-mode-abbrev-table
+  '(
+    ("iferr" "if err != nil {
+}
+" nil :count 5)
+   ))
+
 (define-abbrev-table 'org-mode-abbrev-table
   '(
     ("daily135" "* Daily 135
