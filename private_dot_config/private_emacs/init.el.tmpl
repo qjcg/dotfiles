@@ -301,21 +301,21 @@
    ("C-c SPC C" . gptel-mcp-disconnect)
    ("C-c SPC t" . gptel-org-set-topic)
    ("C-c SPC s" . gptel-system-prompt)
+   ("C-c SPC p" . gptel--preset)
    )
   
   :config
   (require 'gptel-integrations) ;; provides MCP integration.
   (setopt gptel-default-mode 'org-mode)
   (setopt gptel-org-branching-context t)
-  (setopt gptel-prompt-string "* ")
 
   {{ if .isWorkMachine -}}
   (setopt gptel-model 'gpt-4.1)
 
   ;; https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#model-summary-table-and-region-availability
+  ;; For the current list of available models, see https://drw-azureai.drwcloud.com/models
   (setopt gptel-backend (gptel-make-azure "drw-gpt4.1"
-			  :protocol "https"
-			  :host "azure-openai.drwcloud.com"
+			  :host "drw-azureai.drwcloud.com"
 			  :endpoint "/openai/deployments/gpt-4.1/chat/completions?api-version=2025-03-01-preview"
 			  :stream t
 			  :key "7c67423331a41feb323fd9ff985953e7"
@@ -323,11 +323,7 @@
 
   (gptel-make-preset 'coding-agent
     :description nil :backend "drw-gpt4.1" :model 'gpt-4.1 :system
-    'programming :tools
-    '("write_file" "tree" "search_files" "read_multiple_files"
-      "read_file" "move_file" "list_directory"
-      "list_allowed_directories" "get_file_info" "delete_file"
-      "create_directory" "copy_file")
+    'programming :tools '()
     :stream t :temperature 1.0 :max-tokens nil :use-context 'system
     :include-reasoning t)
   {{ else }}
