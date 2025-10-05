@@ -1028,6 +1028,12 @@ extends?: string
 		// Fetch info when in a bare repo or not
 		fetch_bare_info?: bool
 
+		// Disable with Jujutsu
+		//
+		// Disable the git segment when there's a .jj directory in the
+		// parent file path
+		disable_with_jj?: bool
+
 		// Branch Icon
 		//
 		// The icon to use in front of the git branch name
