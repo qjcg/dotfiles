@@ -6,7 +6,7 @@ vars:
   OUT: mods.yml
 
 tasks:
-  default: [{task: export}]
+  default: [{task: test}]
   export: cue export --out yaml --outfile {{.OUT}} --force
   clean: rm -f {{.OUT}}
-  test: mods 'what is this file?' < mods.cue
+  test: go test -v
