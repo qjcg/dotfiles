@@ -1,3 +1,6 @@
-hash cargo 2>/dev/null || return
+hash ~/.cargo/bin/cargo 2>/dev/null || return
 
-export PATH="$PATH:$HOME/.cargo/bin"
+source ~/.cargo/env
+
+eval "$(rustup completions bash cargo)"
+eval "$(rustup completions bash rustup)"
