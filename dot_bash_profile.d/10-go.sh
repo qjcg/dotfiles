@@ -1,3 +1,3 @@
 export GOPATH="$HOME/go"
 export GOBIN="$GOPATH/bin"
-export PATH="$GOBIN:$PATH"
+idempotent_add_to_path prepend "$GOBIN"

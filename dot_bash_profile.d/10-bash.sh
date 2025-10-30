@@ -1,1 +1,2 @@
-export PATH=~/.local/bin:$PATH
+idempotent_add_to_path prepend ~/.local/bin
+
