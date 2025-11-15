@@ -9,10 +9,21 @@
 (setopt user-emacs-directory "~/.config/emacs")
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-(require 'xdg)
+(require 'xdg) ;; FIXME: handle package not installed
 (when (fboundp 'startup-redirect-eln-cache)
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "emacs/eln-cache" (xdg-cache-home)))))
 
-(message "early-init.el loaded!")
+;; The lines below fix an issue where some packages in load-path were
+;; sourced from from ~/.emacs.d/elpa, and others from
+;; ~/.config/emacs/var/elpa (i.e. seemingly a race between package.el and
+;; no-littering.el at startup).
+(setq package-enable-at-startup nil)
+(setq package-user-dir (expand-file-name "~/.config/emacs/var/elpa"))
+(setq no-littering-etc-directory (expand-file-name "etc/" user-emacs-directory))
+(setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
+(require 'no-littering) ;; FIXME: handle package not installed
+
+(when init-file-debug
+  (message "early-init.el loaded!"))
