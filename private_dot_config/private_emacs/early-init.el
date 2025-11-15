@@ -20,7 +20,7 @@
 ;; ~/.config/emacs/var/elpa (i.e. seemingly a race between package.el and
 ;; no-littering.el at startup).
 (setq package-enable-at-startup nil)
-(setq package-user-dir (expand-file-name "~/.config/emacs/var/elpa"))
+(setq package-user-dir (expand-file-name "var/elpa" user-emacs-directory))
 (setq no-littering-etc-directory (expand-file-name "etc/" user-emacs-directory))
 (setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
 
