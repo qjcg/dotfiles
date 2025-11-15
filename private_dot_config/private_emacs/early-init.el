@@ -23,7 +23,6 @@
 (setq package-user-dir (expand-file-name "~/.config/emacs/var/elpa"))
 (setq no-littering-etc-directory (expand-file-name "etc/" user-emacs-directory))
 (setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
-(require 'no-littering) ;; FIXME: handle package not installed
 
 (when init-file-debug
   (message "early-init.el loaded!"))
