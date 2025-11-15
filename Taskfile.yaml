@@ -6,7 +6,8 @@ tasks:
   default:
     cmds:
       - echo TODO implement tests
-    silent: true
+
+  ai: go run github.com/charmbracelet/crush@latest
 
   test:
     - task: test:ubuntu
@@ -21,3 +22,7 @@ tasks:
     cmds:
       # TODO: Implement an actual test here.
       - docker run -it --rm ubuntu
+
+  test:emacs:
+    cmds:
+      - echo 'TODO test:emacs'
