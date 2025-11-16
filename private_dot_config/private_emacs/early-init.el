@@ -5,11 +5,11 @@
 (setopt native-comp-async-report-warnings-errors 'silent)
 
 ;; ELN Cache
-(require 'xdg) ;; FIXME: handle package not installed
+(require 'xdg)
 (when (fboundp 'startup-redirect-eln-cache)
   (startup-redirect-eln-cache
    (convert-standard-filename
-    (expand-file-name  "emacs/eln-cache" (xdg-cache-home)))))
+    (expand-file-name "emacs/eln-cache" (xdg-cache-home)))))
 
 ;; Package Loading
 ;; The lines below fix an issue where some packages in load-path were
