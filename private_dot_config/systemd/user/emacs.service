@@ -1,9 +1,12 @@
 [Unit]
-Description=Emacs
+Description=Emacs: The extensible, self-documenting text editor (daemon)
 After=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/env emacs
+Type=forking
+Environment=EMACS_CLIENT=/usr/bin/emacsclient
+ExecStart=/usr/bin/emacs --daemon
+ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
 Restart=on-failure
 
 [Install]
