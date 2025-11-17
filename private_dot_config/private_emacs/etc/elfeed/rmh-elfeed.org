@@ -52,6 +52,9 @@
 ***** [[https://planetgolang.dev/index.xml][Planet Golang]]
 ***** [[https://threedots.tech/index.xml][Three Dots Labs]] :architecture:
 ***** [[https://gotime.fm/rss][Go Time]] :podcasts:
+***** [[https://golangweekly.com/rss/][Golang Weekly]]                                                  :newsletter:
+***** [[https://go.libhunt.com/newsletter/feed][Awesome Go Weekly]]                                              :newsletter:
+***** [[https://appliedgo.net/index.xml][Applied Go]]                                                     :newsletter:
 
 **** Rust :rust:
 ***** [[https://blog.rust-lang.org/feed.xml][Rust Blog]]
