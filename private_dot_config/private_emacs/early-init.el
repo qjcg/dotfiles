@@ -22,7 +22,7 @@
 (setq no-littering-etc-directory (expand-file-name "etc/" user-emacs-directory))
 (setq no-littering-var-directory (expand-file-name "var/" user-emacs-directory))
 
-;; Fullscreen
+;; Initial frame settings
 (add-to-list 'initial-frame-alist '(fullscreen . fullscreen))
 
 (when init-file-debug
