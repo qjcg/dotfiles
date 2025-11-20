@@ -4,7 +4,7 @@
 (setopt warning-suppress-log-types '((comp) (bytecomp)))
 (setopt native-comp-async-report-warnings-errors 'silent)
 
-;; ELN Cache
+;; Put eln cache data in a standard place (xdg-cache-home).
 (require 'xdg)
 (when (fboundp 'startup-redirect-eln-cache)
   (startup-redirect-eln-cache
