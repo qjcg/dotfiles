@@ -7,46 +7,41 @@
   See [[http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/][Read Your RSS Feeds in Emacs with ElFeed]]
 
 ** Kaizen                                                            :kaizen:
-*** [[https://zenhabits.net/feed/][Zen Habits]]                                                   :simplicity:
-*** [[https://www.raptitude.com/feed/][Raptitude]]
+*** [[https://www.raptitude.com/feed/][Raptitude]]                                                    :content_full:
 
 ** Tech                                                                :tech:
 
 *** Leadership                                                   :leadership:
-**** [[https://leadership.garden/rss/][Leadership Garden]]
+**** [[https://leadership.garden/rss/][Leadership Garden]]                                            :content_full:
 **** [[https://newsletter.leadership.garden/rss/][Leadership Garden Newsletter]]
-*** [[https://www.phoronix.com/rss.php][Phoronix]] :content_preview:
-*** [[https://www.oreilly.com/feed/four-short-links/feed.atom][Four Short Links]]
-*** [[https://hnrss.org/frontpage][Hacker News (Front Page Firehose)]]                              :firehose:
-
+*** [[https://phoronix.retromultiplayer.com/phoronix-rss-augmented.xml][Phoronix Augmented]]                                            :content_full:
+*** [[https://hnrss.org/frontpage][Hacker News (Front Page Firehose)]]               :firehose:content_linkonly:
+*** [[https://hnrss.org/best][Hacker News (Best)]]                                       :content_linkonly:
 *** Funny
 **** [[https://xkcd.com/atom.xml][XKCD]]                                                            :comics:
 
 *** FSF                                                                 :fsf:
-**** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]
-**** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]
-
-*** OS                                                                   :os:
-**** [[http://planet.nixos.org/atom.xml][Planet NixOS]]                                                     :nixos:
-**** [[https://guix.info/feeds/blog.atom][Guix Blog]]                                                         :guix:
+**** [[https://static.fsf.org/fsforg/rss/news.xml][FSF News]]                                                  :content_preview:
+**** [[https://static.fsf.org/fsforg/rss/blogs.xml][FSF Blogs]]                                                :content_linkonly:
 
 *** Programming                                                 :programming:
 
-**** [[http://lambda-the-ultimate.org/rss.xml][Lambda the Ultimate]]
-**** [[https://developers.redhat.com/blog/feed/atom/][RedHat Developers]]
-**** [[http://syndication.thedailywtf.com/TheDailyWtf][TheDailyWTF]]                                                      :funny:
-**** [[https://esoteric.codes/rss][esoteric.codes]]
+**** [[http://lambda-the-ultimate.org/rss.xml][Lambda the Ultimate]]                                       :content_preview:
+**** [[https://developers.redhat.com/blog/feed/atom/][RedHat Developers]]                                            :content_full:
+**** [[http://syndication.thedailywtf.com/TheDailyWtf][TheDailyWTF]]                                            :funny:content_full:
+**** [[https://esoteric.codes/rss][esoteric.codes]]                                            :content_preview:
 
 **** Go                                                                  :go:
-***** [[https://go.dev/blog/feed.atom][Go Blog]]
-***** [[https://www.ardanlabs.com/blog/index.xml][Ardan Labs Blog]]
+***** [[https://go.dev/blog/feed.atom][Go Blog]]                                                      :content_full:
+***** [[https://www.ardanlabs.com/blog/index.xml][Ardan Labs Blog]]                                           :content_preview:
 ***** https://golangcode.com/index.xml
-***** https://appliedgo.net/index.xml
+***** https://appliedgo.net/index.xml                           :content_preview:
 ***** https://www.linxlabs.com/category/golang/atom
 ***** http://goz.hexacosa.net/index.rss
 ***** [[https://dave.cheney.net/category/golang/atom][Dave Cheney]]                 :personal:
       Dave Cheney
 ***** [[https://research.swtch.com/feed.atom][Russ Cox]]                         :personal:
+***** [[https://eli.thegreenplace.net/feeds/all.atom.xml][Eli Bendersky]]                                                    :personal:
 ***** [[https://mariadesouza.com/category/golang/atom][All Things Tech / Maria DeSouza]]
 ***** [[https://blog.gopheracademy.com/index.xml][Gopher Academy]]
 ***** [[https://planetgolang.dev/index.xml][Planet Golang]]
