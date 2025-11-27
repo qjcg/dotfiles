@@ -30,7 +30,7 @@
 **** [[https://developers.redhat.com/blog/feed/atom/][RedHat Developers]]                                            :content_full:
 **** [[http://syndication.thedailywtf.com/TheDailyWtf][TheDailyWTF]]                                            :funny:content_full:
 **** [[https://esoteric.codes/rss][esoteric.codes]]                                            :content_preview:
-
+**** [[https://shujisado.org/feed/][Open Source Guy (Shuji Sado)]]
 **** Go                                                                  :go:
 ***** [[https://go.dev/blog/feed.atom][Go Blog]]                                                      :content_full:
 ***** [[https://www.ardanlabs.com/blog/index.xml][Ardan Labs Blog]]                                           :content_preview:
