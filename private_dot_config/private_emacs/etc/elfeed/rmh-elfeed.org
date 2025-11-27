@@ -30,7 +30,8 @@
 **** [[https://developers.redhat.com/blog/feed/atom/][RedHat Developers]]                                            :content_full:
 **** [[http://syndication.thedailywtf.com/TheDailyWtf][TheDailyWTF]]                                            :funny:content_full:
 **** [[https://esoteric.codes/rss][esoteric.codes]]                                            :content_preview:
-**** [[https://shujisado.org/feed/][Open Source Guy (Shuji Sado)]]
+**** [[https://shujisado.org/feed/][Open Source Guy (Shuji Sado)]]                                     :personal:
+**** [[https://venam.net/blog/feed.xml][Venam's Blog]]                                                     :personal:
 **** Go                                                                  :go:
 ***** [[https://go.dev/blog/feed.atom][Go Blog]]                                                      :content_full:
 ***** [[https://www.ardanlabs.com/blog/index.xml][Ardan Labs Blog]]                                           :content_preview:
@@ -65,7 +66,7 @@
 ***** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]]
 ***** [[http://www.howardabrams.com/index.xml][Howard Abrams]]
 ***** [[https://irreal.org/blog/?feed=rss2][Irreal]]
-
+***** [[https://kristofferbalintona.me/index.xml][Kristoffer Balintona]]
 **** Machine Learning                                       :machinelearning:
 ***** [[https://machinelearningmastery.com/feed/][Machine Learning Mastery / Jason Brownlee]]
 ***** [[https://openai.com/blog/rss.xml][OpenAI Blog]]
