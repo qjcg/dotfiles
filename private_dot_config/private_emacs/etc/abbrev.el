@@ -6,6 +6,30 @@
 " nil :count 5)
    ))
 
+(define-abbrev-table 'go-ts-mode-abbrev-table
+  '(
+    ("goyektask" "import (
+	\"flag\"
+	\"fmt\"
+
+	\"github.com/goyek/goyek/v3\"
+	\"github.com/goyek/x/cmd\"
+)
+
+var lintCmdVersion = flag.String(\"l\", \"v2.6.2\", \"golangci-lint release version\")
+
+var golint = goyek.Define(goyek.Task{
+	Name:  \"golint\",
+	Usage: \"golangci-lint run --fix\",
+	Action: func(a *goyek.A) {
+		c := fmt.Sprintf(\"GOTOOLCHAIN=go1.25.4 go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@%s run --fix\", *lintCmdVersion)
+		cmd.Exec(a, c)
+		a.Log(\"Ran Go linter!\")
+	},
+})
+" nil :count 0)
+   ))
+
 (define-abbrev-table 'org-mode-abbrev-table
   '(
     ("daily135" "* Daily 135
