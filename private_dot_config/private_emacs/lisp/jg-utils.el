@@ -54,4 +54,4 @@ TODO: Use a test-double for dns-query.
 	  (it "greets DNS"
 	      (expect (jg-greet-dns "example.com") :to-equal "HELLO 127.0.0.1")))
 
-(provide 'utils)
+(provide 'jg-utils)
