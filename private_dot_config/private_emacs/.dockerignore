@@ -1,0 +1,7 @@
+lisp/init/encrypted_*
+etc/emms/encrypted_*
+.claude/
+Taskfile.yaml
+Dockerfile
+.dockerignore
+.git/

@@ -1,0 +1,28 @@
+version: '3'
+
+vars:
+  # The snap wrapper requires a display; use the underlying binary for batch mode.
+  EMACS: '{{.EMACS | default "/snap/emacs/current/usr/bin/emacs-30.2"}}'
+  EMACS_DIR: '{{.HOME}}/.config/emacs'
+
+tasks:
+  test-boot:
+    desc: Smoke-test — load the deployed Emacs config in batch mode
+    cmds:
+      - echo "Running Emacs boot test against {{.EMACS_DIR}} ..."
+      - >
+        {{.EMACS}} --batch
+        --load "{{.EMACS_DIR}}/early-init.el"
+        --load "{{.EMACS_DIR}}/init.el"
+        2>&1
+      - echo "Boot test passed."
+
+  build-container:
+    desc: Build the Docker image for container boot testing
+    cmds:
+        - docker build -f ./testdata/alpine.dockerfile --build-arg BASE_IMAGE -t emacs-config-boot-test .
+
+  test-boot-container:
+    desc: Build container image and run the Emacs boot test inside it
+    deps:
+      - build-container
