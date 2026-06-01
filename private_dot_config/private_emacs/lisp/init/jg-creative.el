@@ -34,6 +34,7 @@
 
 (use-package todotxt-mode :ensure)
 (use-package pdf-tools :ensure :pin nongnu)
+(use-package life-calendar :ensure :pin melpa-stable)
 
 (provide 'jg-creative)
 ;;; jg-creative.el ends here

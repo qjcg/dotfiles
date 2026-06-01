@@ -1,4 +1,4 @@
-;;; jg-web-media.el --- Web, browsers, multimedia -*- lexical-binding: t; -*-
+;;; jg-media.el --- Reading & multimedia -*- lexical-binding: t; -*-
 
 (use-package elpher :ensure :pin melpa-stable)
 
@@ -25,17 +25,6 @@
 (use-package elfeed-org :ensure :config (elfeed-org))
 (use-package elfeed-score :ensure :pin melpa-stable)
 
-(use-package time
-  :config
-  (setopt display-time-mode t)
-  (setopt display-time-format "%a %b %-e %-l:%M%p %Z")
-  (setopt world-clock-time-format "%A %B %e %l:%M %p %Z")
-  (setopt world-clock-list '(("America/Vancouver" "Vancouver")
-			     ("America/Chicago" "Chicago")
-			     ("America/Montreal" "Montreal")
-			     ("Europe/London" "London")
-			     ("Asia/Singapore" "Singapore"))))
-
 (use-package nov :ensure :pin melpa-stable)
 
 (use-package slack
@@ -59,12 +48,5 @@
                (("@" . slack-message-embed-mention)
                 ("#" . slack-message-embed-channel)))))
 
-(use-package alert
-  :ensure :pin melpa-stable
-  :init (setq alert-default-style 'notifications)
-  :commands (alert))
-
-(use-package life-calendar :ensure :pin melpa-stable)
-
-(provide 'jg-web-media)
-;;; jg-web-media.el ends here
+(provide 'jg-media)
+;;; jg-media.el ends here

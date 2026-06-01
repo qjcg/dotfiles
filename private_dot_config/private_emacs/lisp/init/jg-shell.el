@@ -1,4 +1,4 @@
-;;; jg-navigation.el --- Navigation, shell, terminal -*- lexical-binding: t; -*-
+;;; jg-shell.el --- Shell, terminal, navigation -*- lexical-binding: t; -*-
 
 (use-package dired
   :config (setopt dired-listing-switches "-alh"))
@@ -57,5 +57,5 @@
   :config
   (add-to-list 'ghostel-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
 
-(provide 'jg-navigation)
-;;; jg-navigation.el ends here
+(provide 'jg-shell)
+;;; jg-shell.el ends here

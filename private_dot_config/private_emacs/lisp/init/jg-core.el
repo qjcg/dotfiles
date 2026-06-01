@@ -1,10 +1,10 @@
-;;; jg-emacs.el --- Core Emacs config -*- lexical-binding: t; -*-
+;;; jg-core.el --- Core Emacs config -*- lexical-binding: t; -*-
 
 (use-package emacs
   :demand
   :init
   (setenv "LC_COLLATE" "C")
-  (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
   :config
   (setopt inhibit-splash-screen t)
   (setopt menu-bar-mode nil)
@@ -37,11 +37,30 @@
     (setopt backup-directory-alist `(("." . ,(var "backups"))))
     (setq elfeed-score-rule-stats-file (var "elfeed/score/stats.el"))))
 
-(use-package esup :ensure :pin melpa-stable)
-(use-package with-editor :ensure :pin melpa-stable)
-(use-package gherkin-mode)
-(use-package txtar-mode)
-(use-package utils :after buttercup)
+(use-package age
+  :ensure :pin melpa-stable :demand t
+  :config
+  (setopt age-default-identity "~/.config/chezmoi/id.txt")
+  (setopt age-default-recipient '("age1zyudjx9v6z07k5d76s3zw2576fcme3nhq2wtvurlxnvznwht39zqagfa7n"))
+  (age-file-enable))
 
-(provide 'jg-emacs)
-;;; jg-emacs.el ends here
+(use-package time
+  :config
+  (setopt display-time-mode t)
+  (setopt display-time-format "%a %b %-e %-l:%M%p %Z")
+  (setopt world-clock-time-format "%A %B %e %l:%M %p %Z")
+  (setopt world-clock-list '(("America/Vancouver" "Vancouver")
+			     ("America/Chicago" "Chicago")
+			     ("America/Montreal" "Montreal")
+			     ("Europe/London" "London")
+			     ("Asia/Singapore" "Singapore"))))
+
+(use-package alert
+  :ensure :pin melpa-stable
+  :init (setq alert-default-style 'notifications)
+  :commands (alert))
+
+(use-package esup :ensure :pin melpa-stable)
+
+(provide 'jg-core)
+;;; jg-core.el ends here

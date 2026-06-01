@@ -2,6 +2,7 @@
 
 (use-package magit :ensure :pin nongnu)
 (use-package magit-section :ensure :pin melpa-stable)
+(use-package with-editor :ensure :pin melpa-stable)
 (use-package d2-mode :ensure :pin melpa-stable)
 
 (use-package cue-mode
@@ -72,13 +73,6 @@
          (go-mode . flymake-golangci-load)
 	 (go-ts-mode . flymake-golangci-load)))
 
-(use-package age
-  :ensure :pin melpa-stable :demand t
-  :config
-  (setopt age-default-identity "~/.config/chezmoi/id.txt")
-  (setopt age-default-recipient '("age1zyudjx9v6z07k5d76s3zw2576fcme3nhq2wtvurlxnvznwht39zqagfa7n"))
-  (age-file-enable))
-
 (use-package editorconfig
   :ensure :pin melpa-stable
   :config (setopt editorconfig-mode t))
@@ -91,6 +85,9 @@
 (use-package kdl-mode :ensure)
 (use-package buttercup :ensure :pin nongnu)
 (use-package bats-mode :ensure)
+(use-package gherkin-mode)
+(use-package txtar-mode)
+(use-package utils :after buttercup)
 
 (provide 'jg-programming)
 ;;; jg-programming.el ends here
