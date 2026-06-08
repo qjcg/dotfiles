@@ -60,7 +60,6 @@ house.")
 - Cite references or authoritative sources when available."))
 
 (use-package gptel-agent
-  :disabled
   :vc (:url "https://github.com/karthink/gptel-agent" :rev :newest)
   :config (gptel-agent-update))
 
