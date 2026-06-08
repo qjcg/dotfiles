@@ -163,10 +163,5 @@ house.")
 (use-package agent-shell :ensure :pin melpa-stable)
 (use-package acp :ensure :pin melpa-stable)
 
-(use-package cui :ensure
-  :config
-  (require 'jg-ai-backends)
-  )
-
 (provide 'jg-ai)
 ;;; jg-ai.el ends here
