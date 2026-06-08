@@ -69,7 +69,7 @@ house.")
   :config
   (setq mcp-hub-servers
 	'(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ".")))
-	  ("filesystemgo" . (:command "go" :args ("run" "github.com/mark3labs/mcp-filesystem-server@v0.10.1" ".")))
+	  ("filesystemgo" . (:command "go" :args ("run" "github.com/mark3labs/mcp-filesystem-server@v0.11.1" ".")))
           ("fetch" . (:command "uvx" :args ("mcp-server-fetch"))))))
 
 (use-package agent-shell :ensure :pin melpa-stable)
