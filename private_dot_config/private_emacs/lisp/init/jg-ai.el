@@ -14,13 +14,68 @@
          ("C-c SPC C" . gptel-mcp-disconnect)
          ("C-c SPC t" . gptel-org-set-topic)
          ("C-c SPC s" . gptel-system-prompt)
-         ("C-c SPC p" . gptel--preset))
+         ("C-c SPC p" . gptel--preset)
+
+	 :map gptel-mode-map
+	 ((
+	   ("C-c SPC m" . gptel-menu)
+	   ("C-c d" . my/gptel-save-to-denote)
+	   )))
+
   :config
   (require 'gptel-integrations)
   (setopt gptel-default-mode 'org-mode)
   (setopt gptel-org-branching-context t)
   (setopt gptel-highlight-mode t)
   (setq gptel--known-backends nil)
+
+  (defun my/gptel-save-to-denote (destination &optional title keywords)
+    "Save the current gptel buffer to a denote file.
+
+DESTINATION is either `new' (create a new note) or `journal'
+(append to today's journal entry).  When called interactively,
+prompt for the destination.  TITLE and KEYWORDS are used only
+when creating a new note."
+    (interactive
+     (let ((dest (intern
+                  (completing-read "Save to: "
+                                   '("new" "journal")
+                                   nil t nil nil "journal"))))
+       (if (eq dest 'new)
+           (list dest (denote-title-prompt) (denote-keywords-prompt))
+	 (list dest))))
+    (unless (bound-and-true-p gptel-mode)
+      (user-error "Not in a gptel buffer"))
+    (let ((content (buffer-substring-no-properties (point-min) (point-max))))
+      (pcase destination
+	('new
+	 (denote title keywords 'org)
+	 (goto-char (point-max))
+	 (insert "\n* Conversation\n\n" content)
+	 (save-buffer)
+	 (message "Saved gptel buffer to new note %s" (buffer-file-name)))
+	('journal
+	 (my/gptel--append-to-journal content)))))
+
+  (defun my/gptel--append-to-journal (content)
+    "Append CONTENT to today's denote journal entry, creating it if needed."
+    (let ((heading (format-time-string "** GPTel conversation (%H:%M)")))
+      (cond
+       ;; Preferred: denote-journal package
+       ((fboundp 'denote-journal-new-or-existing-entry)
+	(denote-journal-new-or-existing-entry)
+	(goto-char (point-max))
+	(insert "\n" heading "\n\n" content "\n")
+	(save-buffer))
+       ;; Older denote-journal-extras API
+       ((fboundp 'denote-journal-extras-new-or-existing-entry)
+	(denote-journal-extras-new-or-existing-entry)
+	(goto-char (point-max))
+	(insert "\n" heading "\n\n" content "\n")
+	(save-buffer))
+       (t
+	(user-error "denote-journal is not available")))
+      (message "Appended gptel buffer to today's journal")))
 
   (require 'jg-ai-backends)
 
