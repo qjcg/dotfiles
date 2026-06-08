@@ -29,8 +29,38 @@
   (setopt gptel-highlight-mode t)
   (setq gptel--known-backends nil)
 
+  (defun my/gptel--demote-org-content (content base-level)
+    "Return CONTENT with all org headings demoted to be under BASE-LEVEL.
+A top-level heading in CONTENT becomes level BASE-LEVEL+1, etc."
+    (with-temp-buffer
+      (insert content)
+      (goto-char (point-min))
+      (let ((prefix (make-string base-level ?*)))
+        (while (re-search-forward "^\\(\\*+\\)\\( \\|$\\)" nil t)
+          (replace-match (concat prefix (match-string 1) (match-string 2))
+                         t t)))
+      (buffer-string)))
+
+  (defun my/gptel--goto-or-make-heading (heading)
+    "Move point to end of subtree under top-level HEADING, creating it if absent.
+Returns the level of HEADING."
+    (goto-char (point-min))
+    (if (re-search-forward (format "^\\* %s\\s-*$" (regexp-quote heading)) nil t)
+        (progn
+          (org-end-of-subtree t t)
+          ;; ensure trailing newline
+          (unless (bolp) (insert "\n")))
+      (goto-char (point-max))
+      (unless (bolp) (insert "\n"))
+      (insert "* " heading "\n"))
+    1)
+
   (defun my/gptel-save-to-denote (destination &optional title keywords)
     "Save the current gptel buffer to a denote file.
+
+All conversations are stored under a top-level \"* gptel conversations\"
+heading (created if missing).  Org content from the gptel buffer is
+demoted so its headings nest correctly beneath it.
 
 DESTINATION is either `new' (create a new note) or `journal'
 (append to today's journal entry).  When called interactively,
@@ -50,32 +80,35 @@ when creating a new note."
       (pcase destination
 	('new
 	 (denote title keywords 'org)
-	 (goto-char (point-max))
-	 (insert "\n* Conversation\n\n" content)
+	 (my/gptel--insert-conversation content)
 	 (save-buffer)
 	 (message "Saved gptel buffer to new note %s" (buffer-file-name)))
 	('journal
 	 (my/gptel--append-to-journal content)))))
 
+  (defun my/gptel--insert-conversation (content)
+    "Insert CONTENT under the \"* gptel conversations\" heading.
+A timestamped second-level heading wraps the demoted conversation."
+    (let* ((top "gptel conversations")
+           (sub (format-time-string "** Conversation (%Y-%m-%d %H:%M)"))
+           (base-level (my/gptel--goto-or-make-heading top))
+           ;; conversation content demoted to sit beneath the `sub' heading
+           (demoted (my/gptel--demote-org-content content (1+ base-level))))
+      (insert sub "\n\n" demoted)
+      (unless (bolp) (insert "\n"))))
+
   (defun my/gptel--append-to-journal (content)
     "Append CONTENT to today's denote journal entry, creating it if needed."
-    (let ((heading (format-time-string "** GPTel conversation (%H:%M)")))
-      (cond
-       ;; Preferred: denote-journal package
-       ((fboundp 'denote-journal-new-or-existing-entry)
-	(denote-journal-new-or-existing-entry)
-	(goto-char (point-max))
-	(insert "\n" heading "\n\n" content "\n")
-	(save-buffer))
-       ;; Older denote-journal-extras API
-       ((fboundp 'denote-journal-extras-new-or-existing-entry)
-	(denote-journal-extras-new-or-existing-entry)
-	(goto-char (point-max))
-	(insert "\n" heading "\n\n" content "\n")
-	(save-buffer))
-       (t
-	(user-error "denote-journal is not available")))
-      (message "Appended gptel buffer to today's journal")))
+    (cond
+     ((fboundp 'denote-journal-new-or-existing-entry)
+      (denote-journal-new-or-existing-entry))
+     ((fboundp 'denote-journal-extras-new-or-existing-entry)
+      (denote-journal-extras-new-or-existing-entry))
+     (t
+      (user-error "denote-journal is not available")))
+    (my/gptel--insert-conversation content)
+    (save-buffer)
+    (message "Appended gptel buffer to today's journal"))
 
   (require 'jg-ai-backends)
 
