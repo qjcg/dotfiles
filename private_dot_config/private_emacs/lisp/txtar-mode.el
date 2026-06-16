@@ -3,7 +3,7 @@
 ;; Keywords: languages tools testscript
 ;; Package-Requires: ((emacs "26.1"))
 
-;; SPDX-License-Identifier: MIT
+;; SPDX-License-Identifier: GPL-3.0-only
 
 ;;; Commentary:
 
