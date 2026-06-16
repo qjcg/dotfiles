@@ -192,7 +192,7 @@ Reference: https://docs.earthbuild.dev/docs/earthfile
   (setq-local indent-tabs-mode nil))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\`Earthfile\\(?:\\.[^/]*\\)?\\'" . earthfile-mode))
+(add-to-list 'auto-mode-alist '("Earthfile\\(?:\\.[^/]*\\)?\\'" . earthfile-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.earth\\'" . earthfile-mode))
 
