@@ -78,7 +78,7 @@
   :config (setopt editorconfig-mode t))
 
 (use-package yaml-ts-mode :mode "\\.ya?ml\\'")
-(use-package earthfile-mode :ensure)
+(use-package earthfile-mode)
 (use-package systemd :ensure :pin nongnu)
 (use-package templ-ts-mode :ensure :pin melpa-stable)
 (use-package zig-mode :ensure :pin nongnu)
