@@ -79,7 +79,7 @@
   "Earthly-specific commands.")
 
 (defconst earthfile--control-flow
-  '("ELSE" "END" "FINALLY" "FOR" "IF" "TRY" "WAIT")
+  '("ELSE" "END" "FINALLY" "FOR" "IF" "IN" "TRY" "WAIT")
   "Control flow keywords.")
 
 (defconst earthfile--clause-keywords
@@ -88,6 +88,9 @@
 
 (defconst earthfile-font-lock-keywords
   `(
+    ;; ── Lowercase `in' is an error (must be uppercase IN) ──
+    ("\\<in\\>" . font-lock-warning-face)
+
     ;; ── Comments (line comments, no block comments in Earthfiles) ──
     ("^[[:space:]]*#.*" . font-lock-comment-face)
 
