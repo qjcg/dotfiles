@@ -2,3 +2,4 @@
 \#*\#
 /.agent-shell/
 .envrc
+*.elc
