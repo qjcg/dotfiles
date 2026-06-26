@@ -342,7 +342,11 @@ Reference: https://cucumber.io/docs/gherkin/reference
 
   ;; Imenu (M-g i or counsel-imenu) — jump to any Feature/Scenario by name
   (setq-local imenu-generic-expression gherkin--imenu-generic-expression)
-  (setq-local imenu-case-fold-search nil))
+  (setq-local imenu-case-fold-search nil)
+
+  ;; Org-style cycling: TAB folds/unfolds current heading, S-TAB cycles entire buffer.
+  (setq-local outline-minor-mode-cycle t)
+  (outline-minor-mode 1))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.feature\\'" . gherkin-mode))
