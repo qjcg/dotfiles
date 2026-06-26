@@ -156,9 +156,17 @@ house.")
   :init (require 'mcp-hub)
   :config
   (setq mcp-hub-servers
-	'(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ".")))
+	'(("emacs" . (:command "socat" :args ("-" "UNIX-CONNECT:$HOME/.config/emacs/var/emacs-mcp-server.sock")))
+	  ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ".")))
 	  ("filesystemgo" . (:command "go" :args ("run" "github.com/mark3labs/mcp-filesystem-server@v0.11.1" ".")))
           ("fetch" . (:command "uvx" :args ("mcp-server-fetch"))))))
+
+(use-package mcp-server
+  :vc (:url "https://github.com/rhblind/emacs-mcp-server" :rev :last-release)
+  :hook ((emacs-startup-hook) . mcp-server-start-unix)
+  :custom
+  (mcp-server-socket-directory (expand-file-name "var/" user-emacs-directory))
+  )
 
 (use-package agent-shell :ensure :pin melpa-stable)
 (use-package acp :ensure :pin melpa-stable)
