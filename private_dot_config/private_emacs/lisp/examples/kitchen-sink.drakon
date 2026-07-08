@@ -1,0 +1,50 @@
+diagram Order processing
+
+Receive order:
+    input web form
+        order payload
+
+    validate order
+
+    if valid?
+        yes:
+            reserve inventory
+            goto Payment
+
+        no:
+            show validation errors
+            goto Exit
+
+Payment:
+    total = sum(order.items)
+
+    charge card
+
+    if approved?
+        yes:
+            mark order paid
+            goto Fulfillment
+
+        no:
+            release inventory
+            goto Exit
+
+Fulfillment:
+    for each item in order.items
+        pick item
+        pack item
+
+    output Send by email
+        receipt to customer
+
+    parallel start Shipping notification worker
+    timer shipment deadline
+    pause 30 seconds
+    call Create shipment
+
+    create shipment
+    goto Exit
+
+Exit:
+    write audit log
+    end

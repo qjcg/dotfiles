@@ -1,0 +1,44 @@
+diagram Troubleshoot outage
+
+Main:
+    receive alert
+
+    if outage confirmed?
+        no:
+            close alert
+            end
+
+        yes:
+            page on-call
+
+    if payments affected?
+        no:
+            assign low-priority task
+            end
+
+        yes:
+            escalate incident
+
+    select affected system
+        core:
+            restart core service
+
+        database:
+            fail over database
+
+        network:
+            reroute traffic
+
+        default:
+            wake up developers
+
+    loop retry
+        wait 30 seconds
+
+        if healthy now?
+            yes:
+                resolve incident
+                end
+
+            no:
+                goto retry

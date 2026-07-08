@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1530" viewBox="0 0 1100 1530">
+<style>text{font-family:monospace;font-size:14px;dominant-baseline:middle;fill:#111}.label{font-family:sans-serif;font-size:13px}.title{font-size:18px;font-weight:bold}</style>
+<rect x="16" y="16" width="1068" height="1498" rx="0" fill="#d9f3f7" stroke="#111"/>
+<rect x="436" y="48" width="229" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text class="title" x="550" y="67" text-anchor="middle">Troubleshoot outage</text>
+<line x1="550" y1="86" x2="550" y2="102" stroke="#111" stroke-width="3"/>
+<line x1="550" y1="102" x2="550" y2="124" stroke="#111" stroke-width="3"/>
+<rect x="455" y="124" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="153" text-anchor="middle">receive alert</text>
+<line x1="550" y1="182" x2="550" y2="204" stroke="#111" stroke-width="3"/>
+<polygon points="475,204 625,204 645,233 625,262 475,262 455,233" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="233" text-anchor="middle">outage confirmed?</text>
+<text class="label" x="558" y="276" text-anchor="start">Yes</text>
+<line x1="550" y1="262" x2="550" y2="284" stroke="#111" stroke-width="3"/>
+<text class="label" x="653" y="219" text-anchor="start">No</text>
+<line x1="645" y1="233" x2="810" y2="233" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="233" x2="810" y2="284" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="262" x2="550" y2="284" stroke="#111" stroke-width="3"/>
+<rect x="455" y="284" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="313" text-anchor="middle">page on-call</text>
+<line x1="810" y1="262" x2="810" y2="284" stroke="#111" stroke-width="3"/>
+<rect x="715" y="284" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="810" y="313" text-anchor="middle">close alert</text>
+<line x1="810" y1="342" x2="810" y2="364" stroke="#111" stroke-width="3"/>
+<rect x="747" y="364" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="810" y="383" text-anchor="middle">End</text>
+<line x1="550" y1="342" x2="550" y2="424" stroke="#111" stroke-width="3"/>
+<line x1="810" y1="402" x2="810" y2="424" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="424" x2="550" y2="424" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="424" x2="550" y2="446" stroke="#111" stroke-width="3"/>
+<polygon points="475,446 625,446 645,475 625,504 475,504 455,475" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="475" text-anchor="middle">payments affected?</text>
+<text class="label" x="558" y="518" text-anchor="start">Yes</text>
+<line x1="550" y1="504" x2="550" y2="526" stroke="#111" stroke-width="3"/>
+<text class="label" x="653" y="461" text-anchor="start">No</text>
+<line x1="645" y1="475" x2="810" y2="475" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="475" x2="810" y2="526" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="504" x2="550" y2="526" stroke="#111" stroke-width="3"/>
+<rect x="455" y="526" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="555" text-anchor="middle">escalate incident</text>
+<line x1="810" y1="504" x2="810" y2="526" stroke="#111" stroke-width="3"/>
+<rect x="715" y="526" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="810" y="546" text-anchor="middle">assign low-priority</text>
+<text x="810" y="564" text-anchor="middle">task</text>
+<line x1="810" y1="584" x2="810" y2="606" stroke="#111" stroke-width="3"/>
+<rect x="747" y="606" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="810" y="625" text-anchor="middle">End</text>
+<line x1="550" y1="584" x2="550" y2="666" stroke="#111" stroke-width="3"/>
+<line x1="810" y1="644" x2="810" y2="666" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="666" x2="550" y2="666" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="666" x2="550" y2="688" stroke="#111" stroke-width="3"/>
+<polygon points="475,688 645,688 625,746 455,746" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="717" text-anchor="middle">affected system</text>
+<line x1="550" y1="746" x2="550" y2="757" stroke="#111" stroke-width="3"/>
+<line x1="205" y1="757" x2="895" y2="757" stroke="#111" stroke-width="1.6"/>
+<line x1="205" y1="757" x2="205" y2="768" stroke="#111" stroke-width="1.6"/>
+<polygon points="110,768 300,768 300,790 205,810 110,790" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="205" y="779" text-anchor="middle">core</text>
+<line x1="205" y1="810" x2="205" y2="832" stroke="#111" stroke-width="3"/>
+<rect x="110" y="832" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="205" y="861" text-anchor="middle">restart core service</text>
+<line x1="435" y1="757" x2="435" y2="768" stroke="#111" stroke-width="1.6"/>
+<polygon points="340,768 530,768 530,790 435,810 340,790" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="435" y="779" text-anchor="middle">database</text>
+<line x1="435" y1="810" x2="435" y2="832" stroke="#111" stroke-width="3"/>
+<rect x="340" y="832" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="435" y="861" text-anchor="middle">fail over database</text>
+<line x1="665" y1="757" x2="665" y2="768" stroke="#111" stroke-width="1.6"/>
+<polygon points="570,768 760,768 760,790 665,810 570,790" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="665" y="779" text-anchor="middle">network</text>
+<line x1="665" y1="810" x2="665" y2="832" stroke="#111" stroke-width="3"/>
+<rect x="570" y="832" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="665" y="861" text-anchor="middle">reroute traffic</text>
+<line x1="895" y1="757" x2="895" y2="768" stroke="#111" stroke-width="1.6"/>
+<polygon points="800,768 990,768 990,790 895,810 800,790" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="895" y="779" text-anchor="middle">default</text>
+<line x1="895" y1="810" x2="895" y2="832" stroke="#111" stroke-width="3"/>
+<rect x="800" y="832" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="895" y="861" text-anchor="middle">wake up developers</text>
+<line x1="205" y1="890" x2="205" y2="912" stroke="#111" stroke-width="1.6"/>
+<line x1="435" y1="890" x2="435" y2="912" stroke="#111" stroke-width="1.6"/>
+<line x1="665" y1="890" x2="665" y2="912" stroke="#111" stroke-width="1.6"/>
+<line x1="895" y1="890" x2="895" y2="912" stroke="#111" stroke-width="1.6"/>
+<line x1="205" y1="912" x2="895" y2="912" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="912" x2="550" y2="934" stroke="#111" stroke-width="3"/>
+<line x1="550" y1="934" x2="550" y2="956" stroke="#111" stroke-width="3"/>
+<rect x="455" y="956" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="985" text-anchor="middle">loop retry</text>
+<line x1="550" y1="1014" x2="550" y2="1036" stroke="#111" stroke-width="3"/>
+<rect x="455" y="1036" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="1065" text-anchor="middle">wait 30 seconds</text>
+<line x1="550" y1="1094" x2="550" y2="1116" stroke="#111" stroke-width="3"/>
+<polygon points="475,1116 625,1116 645,1145 625,1174 475,1174 455,1145" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="1145" text-anchor="middle">healthy now?</text>
+<text class="label" x="558" y="1188" text-anchor="start">Yes</text>
+<line x1="550" y1="1174" x2="550" y2="1196" stroke="#111" stroke-width="3"/>
+<text class="label" x="653" y="1131" text-anchor="start">No</text>
+<line x1="645" y1="1145" x2="810" y2="1145" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="1145" x2="810" y2="1196" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="1174" x2="550" y2="1196" stroke="#111" stroke-width="3"/>
+<rect x="455" y="1196" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="1225" text-anchor="middle">resolve incident</text>
+<line x1="550" y1="1254" x2="550" y2="1276" stroke="#111" stroke-width="3"/>
+<rect x="487" y="1276" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="550" y="1295" text-anchor="middle">End</text>
+<line x1="810" y1="1174" x2="810" y2="1196" stroke="#111" stroke-width="3"/>
+<polygon points="715,1216 810,1196 905,1216 905,1238 715,1238" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="810" y="1227" text-anchor="middle">retry</text>
+<line x1="550" y1="1314" x2="550" y2="1336" stroke="#111" stroke-width="3"/>
+<line x1="810" y1="1238" x2="810" y2="1336" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="1336" x2="550" y2="1336" stroke="#111" stroke-width="1.6"/>
+<polygon points="450,1374 450,1358 650,1358 650,1374 630,1390 470,1390" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="1374" text-anchor="middle">end loop</text>
+</svg>

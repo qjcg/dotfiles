@@ -1,0 +1,13 @@
+// Demonstrates all element types added for drakonwidget parity.
+diagram New Icon Types
+
+Start the sequence
+ctrlstart Control block begins
+process Configure pipeline
+    secondary label here
+simpleinput Receive data from left
+simpleoutput Emit data to right
+comment This is a note
+duration 200ms
+ctrlend Control block ends
+end

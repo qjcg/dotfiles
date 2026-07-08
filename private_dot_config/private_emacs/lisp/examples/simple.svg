@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="564" viewBox="0 0 1100 564">
+<style>text{font-family:monospace;font-size:14px;dominant-baseline:middle;fill:#111}.label{font-family:sans-serif;font-size:13px}.title{font-size:18px;font-weight:bold}</style>
+<rect x="16" y="16" width="1068" height="532" rx="0" fill="#d9f3f7" stroke="#111"/>
+<rect x="455" y="48" width="190" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text class="title" x="550" y="67" text-anchor="middle">Simple Flow</text>
+<line x1="550" y1="86" x2="550" y2="102" stroke="#111" stroke-width="3"/>
+<line x1="550" y1="102" x2="550" y2="124" stroke="#111" stroke-width="3"/>
+<rect x="455" y="124" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="153" text-anchor="middle">check the config</text>
+<line x1="550" y1="182" x2="550" y2="204" stroke="#111" stroke-width="3"/>
+<polygon points="475,204 625,204 645,233 625,262 475,262 455,233" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="550" y="233" text-anchor="middle">valid config?</text>
+<text class="label" x="558" y="276" text-anchor="start">Yes</text>
+<line x1="550" y1="262" x2="550" y2="284" stroke="#111" stroke-width="3"/>
+<text class="label" x="653" y="219" text-anchor="start">No</text>
+<line x1="645" y1="233" x2="810" y2="233" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="233" x2="810" y2="284" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="262" x2="550" y2="284" stroke="#111" stroke-width="3"/>
+<rect x="455" y="284" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="550" y="313" text-anchor="middle">run the process</text>
+<line x1="810" y1="262" x2="810" y2="284" stroke="#111" stroke-width="3"/>
+<polygon points="715,284 877,284 905,313 877,342 715,342" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="810" y="304" text-anchor="middle">error: invalid</text>
+<text x="810" y="322" text-anchor="middle">config</text>
+<line x1="550" y1="342" x2="550" y2="364" stroke="#111" stroke-width="3"/>
+<line x1="810" y1="342" x2="810" y2="364" stroke="#111" stroke-width="1.6"/>
+<line x1="810" y1="364" x2="550" y2="364" stroke="#111" stroke-width="1.6"/>
+<line x1="550" y1="364" x2="550" y2="386" stroke="#111" stroke-width="3"/>
+<rect x="487" y="386" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="550" y="405" text-anchor="middle">End</text>
+</svg>

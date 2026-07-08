@@ -1,0 +1,9 @@
+diagram Simple Flow
+
+check the config
+if valid?
+    yes:
+        run the process
+    no:
+        output error: invalid config
+end

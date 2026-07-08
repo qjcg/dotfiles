@@ -85,6 +85,7 @@
 (use-package kdl-mode :ensure)
 (use-package buttercup :ensure :pin nongnu)
 (use-package bats-mode :ensure)
+(use-package drakon-mode)
 (use-package gherkin-mode)
 (use-package txtar-mode)
 (use-package utils :after buttercup)

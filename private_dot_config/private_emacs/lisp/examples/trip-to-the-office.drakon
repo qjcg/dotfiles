@@ -1,0 +1,21 @@
+diagram Trip to the office
+
+Get to the bus:
+    walk outside
+    lock the door
+    walk to the bus stop
+    wait for the bus
+    goto Bus trip
+
+Bus trip:
+    get on the bus
+    buy a ticket
+    find a seat
+    ride until your stop
+    leave the bus
+    goto Get in the office
+
+Get in the office:
+    walk to the office
+    enter the building
+    end

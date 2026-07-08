@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1046" height="706" viewBox="0 0 1046 706">
+<style>text{font-family:monospace;font-size:14px;dominant-baseline:middle;fill:#111}.label{font-family:sans-serif;font-size:13px}.title{font-size:18px;font-weight:bold}</style>
+<rect x="16" y="16" width="1014" height="674" rx="0" fill="#d9f3f7" stroke="#111"/>
+<rect x="74" y="48" width="218" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text class="title" x="183" y="67" text-anchor="middle">Trip to the office</text>
+<line x1="183" y1="86" x2="183" y2="102" stroke="#111" stroke-width="3"/>
+<line x1="183" y1="102" x2="863" y2="102" stroke="#111" stroke-width="1.6"/>
+<line x1="183" y1="102" x2="183" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="88,118 278,118 278,140 183,160 88,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="129" text-anchor="middle">Get to the bus</text>
+<line x1="183" y1="160" x2="183" y2="182" stroke="#111" stroke-width="3"/>
+<rect x="88" y="182" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="211" text-anchor="middle">walk outside</text>
+<line x1="183" y1="240" x2="183" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="88" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="291" text-anchor="middle">lock the door</text>
+<line x1="183" y1="320" x2="183" y2="342" stroke="#111" stroke-width="3"/>
+<rect x="88" y="342" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="371" text-anchor="middle">walk to the bus stop</text>
+<line x1="183" y1="400" x2="183" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="88" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="451" text-anchor="middle">wait for the bus</text>
+<line x1="183" y1="480" x2="183" y2="582" stroke="#111" stroke-width="3"/>
+<polygon points="88,602 183,582 278,602 278,624 88,624" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="613" text-anchor="middle">Bus trip</text>
+<line x1="523" y1="102" x2="523" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="428,118 618,118 618,140 523,160 428,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="523" y="129" text-anchor="middle">Bus trip</text>
+<line x1="523" y1="160" x2="523" y2="182" stroke="#111" stroke-width="3"/>
+<rect x="428" y="182" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="523" y="211" text-anchor="middle">get on the bus</text>
+<line x1="523" y1="240" x2="523" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="428" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="523" y="291" text-anchor="middle">buy a ticket</text>
+<line x1="523" y1="320" x2="523" y2="342" stroke="#111" stroke-width="3"/>
+<rect x="428" y="342" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="523" y="371" text-anchor="middle">find a seat</text>
+<line x1="523" y1="400" x2="523" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="428" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="523" y="451" text-anchor="middle">ride until your stop</text>
+<line x1="523" y1="480" x2="523" y2="502" stroke="#111" stroke-width="3"/>
+<rect x="428" y="502" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="523" y="531" text-anchor="middle">leave the bus</text>
+<line x1="523" y1="560" x2="523" y2="582" stroke="#111" stroke-width="3"/>
+<polygon points="428,602 523,582 618,602 618,624 428,624" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="523" y="613" text-anchor="middle">Get in the office</text>
+<line x1="863" y1="102" x2="863" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="768,118 958,118 958,140 863,160 768,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="863" y="129" text-anchor="middle">Get in the office</text>
+<line x1="863" y1="160" x2="863" y2="182" stroke="#111" stroke-width="3"/>
+<rect x="768" y="182" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="863" y="211" text-anchor="middle">walk to the office</text>
+<line x1="863" y1="240" x2="863" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="768" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="863" y="291" text-anchor="middle">enter the building</text>
+<line x1="863" y1="320" x2="863" y2="584" stroke="#111" stroke-width="3"/>
+<rect x="800" y="584" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="863" y="603" text-anchor="middle">End</text>
+</svg>

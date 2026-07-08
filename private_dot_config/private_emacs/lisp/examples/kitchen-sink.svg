@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1726" height="1080" viewBox="0 0 1726 1080">
+<style>text{font-family:monospace;font-size:14px;dominant-baseline:middle;fill:#111}.label{font-family:sans-serif;font-size:13px}.title{font-size:18px;font-weight:bold}</style>
+<rect x="16" y="16" width="1694" height="1048" rx="0" fill="#d9f3f7" stroke="#111"/>
+<rect x="85" y="48" width="196" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text class="title" x="183" y="67" text-anchor="middle">Order processing</text>
+<line x1="183" y1="86" x2="183" y2="102" stroke="#111" stroke-width="3"/>
+<line x1="183" y1="102" x2="1383" y2="102" stroke="#111" stroke-width="1.6"/>
+<line x1="183" y1="102" x2="183" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="88,118 278,118 278,140 183,160 88,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="129" text-anchor="middle">Receive order</text>
+<line x1="183" y1="160" x2="183" y2="182" stroke="#111" stroke-width="3"/>
+<polygon points="88,182 250,182 278,211 250,240 250,240 88,240" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="202" text-anchor="middle">web form</text>
+<text x="183" y="220" text-anchor="middle">order payload</text>
+<line x1="183" y1="240" x2="183" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="88" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="291" text-anchor="middle">validate order</text>
+<line x1="183" y1="320" x2="183" y2="342" stroke="#111" stroke-width="3"/>
+<polygon points="108,342 258,342 278,371 258,400 108,400 88,371" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="371" text-anchor="middle">valid?</text>
+<text class="label" x="191" y="414" text-anchor="start">Yes</text>
+<line x1="183" y1="400" x2="183" y2="422" stroke="#111" stroke-width="3"/>
+<text class="label" x="286" y="357" text-anchor="start">No</text>
+<line x1="278" y1="371" x2="383" y2="371" stroke="#111" stroke-width="1.6"/>
+<line x1="383" y1="371" x2="383" y2="422" stroke="#111" stroke-width="1.6"/>
+<line x1="183" y1="400" x2="183" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="88" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="183" y="451" text-anchor="middle">reserve inventory</text>
+<line x1="183" y1="480" x2="183" y2="502" stroke="#111" stroke-width="3"/>
+<polygon points="88,522 183,502 278,522 278,544 88,544" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="183" y="533" text-anchor="middle">Payment</text>
+<line x1="383" y1="400" x2="383" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="288" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="383" y="442" text-anchor="middle">show validation</text>
+<text x="383" y="460" text-anchor="middle">errors</text>
+<line x1="383" y1="480" x2="383" y2="502" stroke="#111" stroke-width="3"/>
+<polygon points="288,522 383,502 478,522 478,544 288,544" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="383" y="533" text-anchor="middle">Exit</text>
+<line x1="183" y1="544" x2="183" y2="566" stroke="#111" stroke-width="3"/>
+<line x1="383" y1="544" x2="383" y2="566" stroke="#111" stroke-width="1.6"/>
+<line x1="383" y1="566" x2="183" y2="566" stroke="#111" stroke-width="1.6"/>
+<line x1="583" y1="102" x2="583" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="488,118 678,118 678,140 583,160 488,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="583" y="129" text-anchor="middle">Payment</text>
+<line x1="583" y1="160" x2="583" y2="182" stroke="#111" stroke-width="3"/>
+<rect x="488" y="182" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<line x1="488" y1="211" x2="678" y2="211" stroke="#111" stroke-width="1.6"/>
+<text x="583" y="196" text-anchor="middle">total</text>
+<text x="583" y="225" text-anchor="middle">sum(order.items)</text>
+<line x1="583" y1="240" x2="583" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="488" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="583" y="291" text-anchor="middle">charge card</text>
+<line x1="583" y1="320" x2="583" y2="342" stroke="#111" stroke-width="3"/>
+<polygon points="508,342 658,342 678,371 658,400 508,400 488,371" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="583" y="371" text-anchor="middle">approved?</text>
+<text class="label" x="591" y="414" text-anchor="start">Yes</text>
+<line x1="583" y1="400" x2="583" y2="422" stroke="#111" stroke-width="3"/>
+<text class="label" x="686" y="357" text-anchor="start">No</text>
+<line x1="678" y1="371" x2="783" y2="371" stroke="#111" stroke-width="1.6"/>
+<line x1="783" y1="371" x2="783" y2="422" stroke="#111" stroke-width="1.6"/>
+<line x1="583" y1="400" x2="583" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="488" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="583" y="451" text-anchor="middle">mark order paid</text>
+<line x1="583" y1="480" x2="583" y2="502" stroke="#111" stroke-width="3"/>
+<polygon points="488,522 583,502 678,522 678,544 488,544" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="583" y="533" text-anchor="middle">Fulfillment</text>
+<line x1="783" y1="400" x2="783" y2="422" stroke="#111" stroke-width="3"/>
+<rect x="688" y="422" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="783" y="451" text-anchor="middle">release inventory</text>
+<line x1="783" y1="480" x2="783" y2="502" stroke="#111" stroke-width="3"/>
+<polygon points="688,522 783,502 878,522 878,544 688,544" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="783" y="533" text-anchor="middle">Exit</text>
+<line x1="583" y1="544" x2="583" y2="566" stroke="#111" stroke-width="3"/>
+<line x1="783" y1="544" x2="783" y2="566" stroke="#111" stroke-width="1.6"/>
+<line x1="783" y1="566" x2="583" y2="566" stroke="#111" stroke-width="1.6"/>
+<line x1="983" y1="102" x2="983" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="888,118 1078,118 1078,140 983,160 888,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="129" text-anchor="middle">Fulfillment</text>
+<line x1="983" y1="160" x2="983" y2="182" stroke="#111" stroke-width="3"/>
+<polygon points="883,211 903,182 1063,182 1083,211 1083,240 883,240" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="202" text-anchor="middle">for each item in</text>
+<text x="983" y="220" text-anchor="middle">order.items</text>
+<line x1="983" y1="240" x2="983" y2="262" stroke="#111" stroke-width="3"/>
+<rect x="888" y="262" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="983" y="291" text-anchor="middle">pick item</text>
+<line x1="983" y1="320" x2="983" y2="342" stroke="#111" stroke-width="3"/>
+<rect x="888" y="342" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="983" y="371" text-anchor="middle">pack item</text>
+<polygon points="883,438 883,422 1083,422 1083,438 1063,454 903,454" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="438" text-anchor="middle">end for</text>
+<line x1="983" y1="454" x2="983" y2="476" stroke="#111" stroke-width="3"/>
+<polygon points="888,476 1050,476 1078,505 1050,534 888,534" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="496" text-anchor="middle">Send by email</text>
+<text x="983" y="514" text-anchor="middle">receipt to customer</text>
+<line x1="983" y1="534" x2="983" y2="556" stroke="#111" stroke-width="3"/>
+<rect x="900" y="556" width="178" height="46" rx="0" fill="#fff" stroke="#111"/>
+<rect x="888" y="568" width="178" height="46" rx="0" fill="#fff" stroke="#111"/>
+<text x="983" y="576" text-anchor="middle">start Shipping</text>
+<text x="983" y="594" text-anchor="middle">notification worker</text>
+<line x1="983" y1="614" x2="983" y2="636" stroke="#111" stroke-width="3"/>
+<polygon points="888,636 1078,636 1058,694 908,694" fill="#fffdbd" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="665" text-anchor="middle">shipment deadline</text>
+<line x1="983" y1="694" x2="983" y2="716" stroke="#111" stroke-width="3"/>
+<polygon points="888,716 1078,716 1058,774 908,774" fill="#fffdbd" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="745" text-anchor="middle">30 seconds</text>
+<line x1="983" y1="774" x2="983" y2="796" stroke="#111" stroke-width="3"/>
+<rect x="888" y="796" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<line x1="897" y1="796" x2="897" y2="854" stroke="#111" stroke-width="1.6"/>
+<line x1="1069" y1="796" x2="1069" y2="854" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="825" text-anchor="middle">Create shipment</text>
+<line x1="983" y1="854" x2="983" y2="876" stroke="#111" stroke-width="3"/>
+<rect x="888" y="876" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="983" y="905" text-anchor="middle">create shipment</text>
+<line x1="983" y1="934" x2="983" y2="956" stroke="#111" stroke-width="3"/>
+<polygon points="888,976 983,956 1078,976 1078,998 888,998" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="983" y="987" text-anchor="middle">Exit</text>
+<line x1="1383" y1="102" x2="1383" y2="118" stroke="#111" stroke-width="3"/>
+<polygon points="1288,118 1478,118 1478,140 1383,160 1288,140" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="1383" y="129" text-anchor="middle">Exit</text>
+<line x1="1383" y1="160" x2="1383" y2="182" stroke="#111" stroke-width="3"/>
+<rect x="1288" y="182" width="190" height="58" rx="0" fill="#fff" stroke="#111"/>
+<text x="1383" y="211" text-anchor="middle">write audit log</text>
+<line x1="1383" y1="240" x2="1383" y2="958" stroke="#111" stroke-width="3"/>
+<rect x="1320" y="958" width="126" height="38" rx="19" fill="#fff" stroke="#111"/>
+<text x="1383" y="977" text-anchor="middle">End</text>
+</svg>
