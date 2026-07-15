@@ -3,10 +3,9 @@ Description=Emacs: The extensible, self-documenting text editor (daemon)
 After=graphical-session.target
 
 [Service]
-Type=forking
-Environment=EMACS_CLIENT=/usr/bin/emacsclient
-ExecStart=/usr/bin/emacs --daemon
-ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
+Type=simple
+ExecStart=/usr/bin/env emacs --fg-daemon
+ExecStop=/usr/bin/env emacsclient --eval "(kill-emacs)"
 Restart=on-failure
 
 [Install]
