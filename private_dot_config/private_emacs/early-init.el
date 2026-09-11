@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; Startup speed, annoyance suppression
 (setopt gc-cons-threshold 10000000)
 (setq byte-compile-warnings '(not obsolete))
