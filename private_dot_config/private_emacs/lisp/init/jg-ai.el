@@ -169,6 +169,7 @@ house.")
   )
 
 (use-package agent-shell :ensure :pin melpa-stable)
+(use-package shell-maker :ensure :pin melpa-stable)
 (use-package acp :ensure :pin melpa-stable)
 
 (provide 'jg-ai)
