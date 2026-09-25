@@ -80,7 +80,14 @@
 (use-package yaml-ts-mode :mode "\\.ya?ml\\'")
 (use-package earthfile-mode)
 (use-package systemd :ensure :pin nongnu)
-(use-package templ-ts-mode :ensure :pin melpa-stable)
+(use-package templ-ts-mode
+  :ensure :pin melpa-stable
+  :init
+  ;; Avoids error:
+  ;; ⛔ Error (use-package): templ-ts-mode/:catch: Symbol’s value as variable is void: js--treesit-indent-rules
+  (with-eval-after-load 'js
+    (unless (boundp 'js--treesit-indent-rules)
+      (defvar js--treesit-indent-rules (js--treesit-indent-rules)))))
 (use-package zig-mode :ensure :pin nongnu)
 (use-package kdl-mode :ensure)
 (use-package buttercup :ensure :pin nongnu)
