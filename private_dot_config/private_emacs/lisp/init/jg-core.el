@@ -37,6 +37,19 @@
     (setopt backup-directory-alist `(("." . ,(var "backups"))))
     (setq elfeed-score-rule-stats-file (var "elfeed/score/stats.el"))))
 
+(use-package info
+  :ensure nil
+  :defer t
+  :config
+  (add-to-list 'Info-additional-directory-list
+               (no-littering-expand-var-file-name "info/"))
+  ;; Info caches directory contents per buffer.  A config reload must expose
+  ;; newly registered directories even when the old catalogs did not change.
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (derived-mode-p 'Info-mode)
+        (setq Info-dir-contents nil)))))
+
 (use-package age
   :ensure :pin melpa-stable :demand t
   :config

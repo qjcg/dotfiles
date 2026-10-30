@@ -3,3 +3,4 @@
 /.agent-shell/
 .envrc
 *.elc
+/private_dot_config/private_emacs/var/info/

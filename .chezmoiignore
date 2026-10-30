@@ -2,5 +2,6 @@ README.md
 LICENSE
 id.txt.age
 Taskfile.yaml
+.config/emacs/var/info
 _old-emacs-config
 _tests

@@ -1,0 +1,50 @@
+#!/bin/sh
+# Build the local Emacs manual after its source has been deployed.
+set -eu
+umask 077
+
+emacs_dir={{ joinPath .chezmoi.destDir ".config" "emacs" | shellQuote }}
+texi="$emacs_dir/docs/ghostel.texi"
+info_dir="$emacs_dir/var/info"
+manual="$info_dir/jg-ghostel.info"
+catalog="$info_dir/dir"
+stamp="$info_dir/jg-ghostel.sha256"
+
+for program in makeinfo install-info sha256sum cmp; do
+    if ! command -v "$program" >/dev/null 2>&1; then
+        printf 'Missing required command for Emacs Info: %s\n' "$program" >&2
+        exit 1
+    fi
+done
+
+checksum=$(sha256sum < "$texi")
+previous_checksum=
+if [ -r "$stamp" ]; then
+    IFS= read -r previous_checksum < "$stamp" || :
+fi
+
+mkdir -p "$info_dir"
+build_dir=$(mktemp -d "$info_dir/.build-XXXXXX")
+trap 'rm -rf "$build_dir"' 0
+trap 'exit 1' HUP INT TERM
+
+# A content checksum catches changes even when source mtimes are preserved.
+# Stage the complete file so a failed build leaves the last good manual usable.
+if [ ! -s "$manual" ] || [ "$checksum" != "$previous_checksum" ]; then
+    makeinfo --no-split --output="$build_dir/jg-ghostel.info" "$texi"
+    test -s "$build_dir/jg-ghostel.info"
+    printf '%s\n' "$checksum" > "$build_dir/source.sha256"
+    mv "$build_dir/jg-ghostel.info" "$manual"
+    mv "$build_dir/source.sha256" "$stamp"
+fi
+
+# Refresh only our entry; preserve unrelated local manuals.  Stage the catalog
+# too, and leave its mtime alone when its contents have not changed.
+if [ -s "$catalog" ]; then
+    cp "$catalog" "$build_dir/dir"
+    install-info --delete "$manual" "$build_dir/dir"
+fi
+install-info "$manual" "$build_dir/dir"
+if ! cmp -s "$build_dir/dir" "$catalog"; then
+    mv "$build_dir/dir" "$catalog"
+fi

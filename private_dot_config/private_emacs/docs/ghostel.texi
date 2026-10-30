@@ -176,13 +176,13 @@ GPTel remains on @kbd{C-c SPC SPC}; its old @kbd{C-`} binding is removed.
 @cindex headless tests
 @cindex native shell tests
 
-Run these commands from the Emacs configuration directory containing
-@file{Taskfile.yaml}, for example @file{private_dot_config/private_emacs/}
-in the dotfiles source checkout:
+Run these commands from @file{private_dot_config/private_emacs/} in the
+dotfiles source checkout, where @file{Taskfile.yaml} is located:
 
 @example
 task test-ghostel
 task test-ghostel-gui
+task test-info
 @end example
 
 @code{test-ghostel} loads installed Ghostel Lisp without its native module,
@@ -195,6 +195,14 @@ line-mode entry.  It requires @command{xvfb-run}, @command{xauth}, and a
 working installed Ghostel native module.  Neither task loads or changes
 the running Emacs configuration.
 
+@code{test-info} exercises the real chezmoi installer in a temporary source
+and destination, including unchanged applies, source changes, deleted output,
+failed builds, and preservation of unrelated local manuals.  It verifies
+native Emacs discovery, indexes, and registration after the directory has
+already been cached.  It requires @command{chezmoi}, @command{python3}, GNU
+Texinfo, and installed Emacs packages.  Run it from the source checkout:
+it needs the repository's installer template, not only deployed files.
+
 Override @env{EMACS} for a non-snap installation, and @env{EMACS_DIR} to
 select a package directory (packages are read from
 @file{$EMACS_DIR/var/elpa}).  The snap default uses its underlying binary
@@ -205,52 +213,44 @@ because the wrapper requires a display even in batch mode.
 @cindex building the manual
 @cindex Info directory
 
-This manual's maintained source is @file{docs/ghostel.texi}.  The suggested
-installation layout puts generated files under @file{var/info/}, consistent
-with this configuration's @code{no-littering} layout.  Automatic installation
-is a proposal, not yet part of the configuration.
+This manual's maintained source is @file{docs/ghostel.texi}.  On
+@command{chezmoi apply}, @file{run_after_build-emacs-info.sh.tmpl} runs after
+the source is deployed and generates @file{var/info/jg-ghostel.info} and
+its local @file{var/info/dir} catalog.  This state directory follows the
+configuration's @code{no-littering} layout.  Compilation happens during
+chezmoi deployment, not during Emacs startup.
 
-With GNU Texinfo installed, run the following from the Emacs configuration
-root to build the manual and its local directory catalog:
+The installer requires GNU Texinfo's @command{makeinfo} and
+@command{install-info}, plus the standard @command{sha256sum} and
+@command{cmp} utilities.  The package lists for new chezmoi configurations
+include @code{texinfo} on Arch/Ubuntu and @code{install-info} on Ubuntu.
+Older configurations must already provide these commands or refresh their
+package data before deployment; a missing command causes a clear error.
 
-@example
-mkdir -p var/info
-makeinfo --no-split --output=var/info/jg-ghostel.info docs/ghostel.texi
-install-info var/info/jg-ghostel.info var/info/dir
-@end example
+A source checksum in @file{var/info/jg-ghostel.sha256} detects content
+changes even when file timestamps are preserved.  Unchanged applies leave
+the generated manual and catalog untouched.  Missing output is rebuilt,
+including when the whole generated directory has been deleted.  Builds
+are staged before replacement, so a compiler failure leaves the last good
+manual usable.  Catalog updates preserve unrelated local manual entries.
+Generated state is excluded from both Git and chezmoi source management.
 
 The source declares an @code{Emacs} directory category and a
 @code{Ghostel Workflow} menu entry.  @command{install-info} registers that
 entry in the local @file{dir} file; no system directory or root access is
-needed.  Keep generated @file{.info} files and @file{dir} out of version
-control.
+needed.
 
-Preview the generated manual directly with @kbd{C-u C-h i}, supplying the
-path to @file{var/info/jg-ghostel.info}.  To include its catalog in the
-normal @kbd{C-h i} directory, this built-in Info configuration is proposed
-for @file{lisp/init/jg-core.el}:
+@file{lisp/init/jg-core.el} registers the state directory lazily through
+@code{Info-additional-directory-list}, preserving Emacs's system and
+package manuals.  It also invalidates the buffer-local directory caches
+when reloaded, so existing Info buffers see a newly registered directory.
 
-@lisp
-(use-package info
-  :ensure nil
-  :defer t
-  :config
-  (add-to-list 'Info-additional-directory-list
-               (no-littering-expand-var-file-name "info/")))
-@end lisp
-
-Using @code{Info-additional-directory-list} preserves Emacs's system and
-package manuals.  Once registered, use @kbd{C-h i}, then @kbd{d} if Info
+After applying the configuration, use @kbd{C-h i}, then @kbd{d} if Info
 reopened a previous node, and select @code{Ghostel Workflow} from the
 @code{Emacs} section.  The menu command is @kbd{m Ghostel Workflow RET}.
 Within this manual, @kbd{i} searches its key and concept indexes.
-
-For automation, a proposed @file{run_after_build-emacs-info.sh.tmpl} would
-run after chezmoi deploys the source.  It would rebuild missing or stale
-Info output, and idempotently maintain the local @file{dir} catalog.
-Keep compilation out of Emacs startup.  An always-run, freshness-checked
-script also recovers if the generated directory is deleted; an unchanged
-@file{run_onchange_} script alone does not.
+Preview the generated file directly with @kbd{C-u C-h i}, supplying the
+path to @file{var/info/jg-ghostel.info}.
 
 For the underlying mechanisms, see the GNU Texinfo manual's
 @uref{https://www.gnu.org/software/texinfo/manual/texinfo/html_node/Installing-Dir-Entries.html,

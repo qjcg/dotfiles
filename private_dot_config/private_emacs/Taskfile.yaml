@@ -6,6 +6,13 @@ vars:
   EMACS_DIR: '{{.HOME}}/.config/emacs'
 
 tasks:
+  test-info:
+    desc: Test Info deployment and discovery from the dotfiles source checkout
+    cmds:
+      - >
+        EMACS="{{.EMACS}}" EMACS_DIR="{{.EMACS_DIR}}"
+        python3 "{{.TASKFILE_DIR}}/testdata/test-emacs-info.py"
+
   test-ghostel:
     desc: Test quake terminals with real windows but without spawning shells
     cmds:
