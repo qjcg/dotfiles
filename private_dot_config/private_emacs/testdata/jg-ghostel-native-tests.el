@@ -1,0 +1,92 @@
+;;; jg-ghostel-native-tests.el --- Native terminal integration -*- lexical-binding: t; -*-
+
+;; These tests require the installed Ghostel native module and a graphical
+;; frame.  `task test-ghostel-gui' runs them on an isolated Xvfb display.
+
+(require 'ert)
+(require 'jg-ghostel)
+
+(ert-deftest jg-ghostel-native-shell-survives-hide-expand-and-switch ()
+  (skip-unless (display-graphic-p))
+  (let ((ghostel-shell "/bin/sh")
+        (ghostel-query-before-killing nil)
+        (buffers nil)
+        (original-view (frame-parameter nil 'jg-ghostel-view)))
+    (unwind-protect
+        (save-window-excursion
+          (delete-other-windows)
+          (set-frame-parameter nil 'jg-ghostel-view nil)
+          (jg-ghostel-global-new)
+          (push (current-buffer) buffers)
+          (let* ((first (current-buffer))
+                 (process (get-buffer-process first)))
+            (should (process-live-p process))
+            (ghostel-send-string "printf '\\nJG_GHOSTEL_SMOKE_OK\\n'\n")
+            (let ((deadline (+ (float-time) 5)))
+              (while (and (< (float-time) deadline)
+                          (not (string-match-p
+                                "^JG_GHOSTEL_SMOKE_OK[ \t]*$"
+                                (buffer-substring-no-properties
+                                 (point-min) (point-max)))))
+                (accept-process-output nil 0.05)
+                (ghostel-force-redraw)))
+            (should (string-match-p "^JG_GHOSTEL_SMOKE_OK[ \t]*$"
+                                    (buffer-substring-no-properties
+                                     (point-min) (point-max))))
+            (jg-ghostel-global)
+            (should (process-live-p process))
+            (jg-ghostel-global)
+            (should (eq (current-buffer) first))
+            (jg-ghostel-toggle-size)
+            (should (= (length (window-list)) 1))
+            (jg-ghostel-global-new)
+            (push (current-buffer) buffers)
+            (should (process-live-p (get-buffer-process (current-buffer))))
+            (should (= (length (window-list)) 1))
+            (jg-ghostel-previous)
+            (should (eq (current-buffer) first))
+            (should (eq (get-buffer-process first) process))
+            (jg-ghostel-toggle-size)
+            (should (eq (window-parameter (selected-window) 'window-side) 'top))
+            (should (process-live-p process))))
+      (set-frame-parameter nil 'jg-ghostel-view nil)
+      (dolist (buffer buffers)
+        (when (buffer-live-p buffer) (kill-buffer buffer)))
+      (set-frame-parameter nil 'jg-ghostel-view original-view))))
+
+(ert-deftest jg-ghostel-native-all-input-modes-retain-terminal-controls ()
+  (skip-unless (display-graphic-p))
+  (let ((ghostel-shell "/bin/sh")
+        (ghostel-query-before-killing nil)
+        (terminal nil)
+        (original-view (frame-parameter nil 'jg-ghostel-view)))
+    (unwind-protect
+        (save-window-excursion
+          (delete-other-windows)
+          (set-frame-parameter nil 'jg-ghostel-view nil)
+          (jg-ghostel-global-new)
+          (setq terminal (current-buffer))
+          (let ((deadline (+ (float-time) 5)))
+            (while (and (< (float-time) deadline)
+                        (not (ghostel-input-start-point)))
+              (accept-process-output nil 0.05)
+              (ghostel-force-redraw)))
+          (should (ghostel-input-start-point))
+          (dolist (mode '(ghostel-semi-char-mode ghostel-char-mode
+                         ghostel-copy-mode ghostel-emacs-mode ghostel-line-mode))
+            ;; Force line mode even before the shell has reported a prompt.
+            (if (eq mode 'ghostel-line-mode) (ghostel-line-mode t)
+              (funcall mode))
+            (should (eq (key-binding (kbd "C-`")) #'jg-ghostel-toggle))
+            (should (eq (key-binding (kbd "C-c t n")) #'jg-ghostel-new))
+            (should (eq (key-binding (kbd "C-c t f")) #'jg-ghostel-toggle-size))
+            (call-interactively (key-binding (kbd "C-`")))
+            (should (= (length (window-list)) 1))
+            (jg-ghostel-global)
+            (should (eq (current-buffer) terminal))))
+      (set-frame-parameter nil 'jg-ghostel-view nil)
+      (when (buffer-live-p terminal) (kill-buffer terminal))
+      (set-frame-parameter nil 'jg-ghostel-view original-view))))
+
+(provide 'jg-ghostel-native-tests)
+;;; jg-ghostel-native-tests.el ends here

@@ -2,10 +2,33 @@ version: '3'
 
 vars:
   # The snap wrapper requires a display; use the underlying binary for batch mode.
-  EMACS: '{{.EMACS | default "/snap/emacs/current/usr/bin/emacs-30.2"}}'
+  EMACS: '{{.EMACS | default "/snap/emacs/current/usr/bin/emacs"}}'
   EMACS_DIR: '{{.HOME}}/.config/emacs'
 
 tasks:
+  test-ghostel:
+    desc: Test quake terminals with real windows but without spawning shells
+    cmds:
+      - >
+        {{.EMACS}} --batch -Q
+        --eval '(setq package-user-dir (expand-file-name "{{.EMACS_DIR}}/var/elpa"))'
+        --funcall package-initialize
+        --directory "{{.TASKFILE_DIR}}/lisp"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-ghostel-tests.el"
+        --funcall ert-run-tests-batch-and-exit
+
+  test-ghostel-gui:
+    desc: Test multiple frames and native Ghostel shells in an isolated Xvfb display
+    cmds:
+      - >
+        xvfb-run -a {{.EMACS}} -Q
+        --eval '(setq package-user-dir (expand-file-name "{{.EMACS_DIR}}/var/elpa"))'
+        --funcall package-initialize
+        --directory "{{.TASKFILE_DIR}}/lisp"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-ghostel-tests.el"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-ghostel-native-tests.el"
+        --load "{{.TASKFILE_DIR}}/testdata/run-ghostel-gui-tests.el"
+
   test-boot:
     desc: Smoke-test — load the deployed Emacs config in batch mode
     cmds:

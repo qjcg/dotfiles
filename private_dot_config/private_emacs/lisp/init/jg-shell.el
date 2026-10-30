@@ -53,8 +53,9 @@
   (add-to-list 'vterm-eval-cmds '("dired" dired)))
 
 (use-package ghostel
-  :ensure :pin melpa-stable
+  :ensure :pin melpa-stable :demand t
   :config
+  (require 'jg-ghostel)
   (add-to-list 'ghostel-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
 
 (provide 'jg-shell)

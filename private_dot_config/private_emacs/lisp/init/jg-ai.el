@@ -2,8 +2,7 @@
 
 (use-package gptel
   :ensure :pin nongnu
-  :bind (("C-`" . gptel)
-         ("C-<tab>" . gptel-rewrite)
+  :bind (("C-<tab>" . gptel-rewrite)
          ("C-c RET" . gptel-send)
          ("C-c SPC SPC" . gptel)
          ("C-c SPC m" . gptel-menu)

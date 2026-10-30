@@ -1,0 +1,457 @@
+;;; jg-ghostel-tests.el --- Quake terminal behavior tests -*- lexical-binding: t; -*-
+
+;; Run via `task test-ghostel' in the Emacs config directory.  Ghostel is
+;; loaded from installed packages, but no native module or shell is spawned.
+;; Window management, identities, keymaps, and input modes are real.
+
+(require 'ert)
+(require 'jg-ghostel)
+
+(defvar jg-ghostel-test--buffers nil)
+(defvar jg-ghostel-test--project nil)
+
+(defun jg-ghostel-test--create (name display identity)
+  "Substitute only the native terminal spawn for NAME, DISPLAY, IDENTITY."
+  (let ((buffer (generate-new-buffer name)))
+    (push buffer jg-ghostel-test--buffers)
+    (with-current-buffer buffer
+      (ghostel-mode))
+    (when display
+      (pop-to-buffer buffer display))
+    (with-current-buffer buffer
+      (setq ghostel-identity identity))
+    buffer))
+
+(defun jg-ghostel-test--layout ()
+  "Capture visible editor layout, excluding split flags and buffer history.
+Adding a side window marks the main window's combination limit; Emacs keeps
+that flag after deleting it.  Full-frame display also updates buffer history.
+Neither is a change to the editor's splits, buffers, point, or scrolling."
+  (cl-labels ((strip (value)
+                (if (consp value)
+                    (if (and (consp (car value))
+                             (memq (caar value)
+                                   '(combination-limit prev-buffers next-buffers)))
+                        (strip (cdr value))
+                      (cons (strip (car value)) (strip (cdr value))))
+                  value)))
+    (strip (window-state-get nil t))))
+
+(defmacro jg-ghostel-test--session (&rest body)
+  "Run BODY with isolated buffers, projects, and frame presentation."
+  (declare (indent 0) (debug t))
+  `(let ((jg-ghostel-test--buffers nil)
+         (jg-ghostel-test--project nil)
+         (current-prefix-arg nil)
+         (prefix-arg nil)
+         (original-view (frame-parameter nil 'jg-ghostel-view)))
+     (save-window-excursion
+       (let ((ignore-window-parameters t)) (delete-other-windows))
+       (set-frame-parameter nil 'jg-ghostel-view nil)
+       (unwind-protect
+           (cl-letf (((symbol-function 'ghostel-create)
+                      #'jg-ghostel-test--create)
+                     ((symbol-function 'project-current)
+                      (lambda (&optional prompt _directory)
+                        (if jg-ghostel-test--project
+                            (cons 'transient jg-ghostel-test--project)
+                          (when prompt (user-error "No test project"))))))
+             (let ((editor (generate-new-buffer " *jg-ghostel-test-editor*")))
+               (push editor jg-ghostel-test--buffers)
+               (switch-to-buffer editor)
+               ,@body))
+         (set-frame-parameter nil 'jg-ghostel-view nil)
+         (dolist (buffer jg-ghostel-test--buffers)
+           (when (buffer-live-p buffer) (kill-buffer buffer)))))
+     (set-frame-parameter nil 'jg-ghostel-view original-view)))
+
+(ert-deftest jg-ghostel-global-toggle-reuses-and-does-not-kill ()
+  (jg-ghostel-test--session
+    (let ((editor-window (selected-window)))
+      (jg-ghostel-toggle)
+      (let ((terminal (current-buffer))
+            (panel (selected-window)))
+        (should (equal default-directory (expand-file-name "~/")))
+        (should (eq (window-parameter panel 'window-side) 'top))
+        (should (< (window-total-height panel) (frame-height)))
+        (should (eq (alist-get 'kind ghostel-identity) 'term))
+        (should (equal (alist-get 'name ghostel-identity) "*ghostel: global*"))
+        (jg-ghostel-toggle)
+        (should (eq (selected-window) editor-window))
+        (should (buffer-live-p terminal))
+        (should (= (length (window-list)) 1))
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) terminal))
+        (should (= (length (cl-remove-if-not
+                            (lambda (b) (with-current-buffer b
+                                          (derived-mode-p 'ghostel-mode)))
+                            jg-ghostel-test--buffers))
+                   1))))))
+
+(ert-deftest jg-ghostel-visible-unfocused-panel-is-focused-not-hidden ()
+  (jg-ghostel-test--session
+    (let ((editor-window (selected-window)))
+      (jg-ghostel-toggle)
+      (let ((panel (selected-window)))
+        (select-window editor-window)
+        (jg-ghostel-toggle)
+        (should (eq (selected-window) panel))
+        (should (= (length (window-list)) 2))))))
+
+(ert-deftest jg-ghostel-projects-and-global-have-distinct-terminals ()
+  (jg-ghostel-test--session
+    (let ((editor-window (selected-window))
+          (jg-ghostel-test--project "/tmp/alpha/app/"))
+      (jg-ghostel-toggle)
+      (let ((alpha (current-buffer)))
+        (should (equal default-directory "/tmp/alpha/app/"))
+        (should (equal (alist-get 'project-root ghostel-identity)
+                       "/tmp/alpha/app/"))
+        (select-window editor-window)
+        (setq jg-ghostel-test--project "/tmp/beta/app/")
+        (jg-ghostel-toggle)
+        (should-not (eq (current-buffer) alpha))
+        (should (equal (alist-get 'project-root ghostel-identity)
+                       "/tmp/beta/app/"))
+        (should (= (length (window-list)) 2))
+        (jg-ghostel-global)
+        (should (equal (alist-get 'name ghostel-identity) "*ghostel: global*"))
+        (select-window editor-window)
+        (setq jg-ghostel-test--project "/tmp/alpha/app/")
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) alpha))))))
+
+(ert-deftest jg-ghostel-project-ownership-survives-shell-cd ()
+  (jg-ghostel-test--session
+    (setq jg-ghostel-test--project "/tmp/alpha/")
+    (jg-ghostel-toggle)
+    (setq default-directory "/tmp/beta/"
+          jg-ghostel-test--project "/tmp/beta/")
+    (jg-ghostel-new)
+    (should (equal (alist-get 'project-root ghostel-identity) "/tmp/alpha/"))
+    (should (equal default-directory "/tmp/alpha/"))
+    (should (= (alist-get 'instance ghostel-identity) 2))))
+
+(ert-deftest jg-ghostel-global-ownership-survives-cd-into-project ()
+  (jg-ghostel-test--session
+    (jg-ghostel-global)
+    (setq default-directory "/tmp/alpha/"
+          jg-ghostel-test--project "/tmp/alpha/")
+    (jg-ghostel-new)
+    (should (equal (alist-get 'name ghostel-identity) "*ghostel: global*"))
+    (should-not (alist-get 'project-root ghostel-identity))
+    (should (= (alist-get 'instance ghostel-identity) 2))))
+
+(ert-deftest jg-ghostel-prefix-toggle-creates-and-remembers-last-used ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((first (current-buffer)))
+      (jg-ghostel-toggle '(4))
+      (let ((second (current-buffer)))
+        (should-not (eq first second))
+        (should (= (alist-get 'instance ghostel-identity) 2))
+        (jg-ghostel-toggle)
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) second))
+        (jg-ghostel-previous)
+        (should (eq (current-buffer) first))
+        (jg-ghostel-toggle)
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) first))))))
+
+(ert-deftest jg-ghostel-cycling-wraps-within-context-in-slot-order ()
+  (jg-ghostel-test--session
+    (jg-ghostel-global-new)
+    (let ((global (current-buffer)))
+      (setq jg-ghostel-test--project "/tmp/alpha/")
+      (jg-ghostel-project)
+      (let ((first (current-buffer)))
+        (jg-ghostel-new)
+        (let ((second (current-buffer)))
+          (jg-ghostel-new)
+          (let ((third (current-buffer)))
+            (jg-ghostel-next)
+            (should (eq (current-buffer) first))
+            (jg-ghostel-next)
+            (should (eq (current-buffer) second))
+            (jg-ghostel-previous)
+            (should (eq (current-buffer) first))
+            (jg-ghostel-previous)
+            (should (eq (current-buffer) third))
+            (should-not (eq (current-buffer) global))))))))
+
+(ert-deftest jg-ghostel-switch-is-scoped-and-all-switch-can-cross-contexts ()
+  (jg-ghostel-test--session
+    (jg-ghostel-global-new)
+    (let ((global (current-buffer)))
+      (setq jg-ghostel-test--project "/tmp/alpha/")
+      (jg-ghostel-project)
+      (let ((first (current-buffer)))
+        (jg-ghostel-new)
+        (let ((second (current-buffer)))
+          (cl-letf (((symbol-function 'completing-read)
+                     (lambda (_prompt names &rest _args)
+                       (should (member (buffer-name first) names))
+                       (should (member (buffer-name second) names))
+                       (should-not (member (buffer-name global) names))
+                       (buffer-name first))))
+            (jg-ghostel-switch))
+          (should (eq (current-buffer) first))
+          (cl-letf (((symbol-function 'completing-read)
+                     (lambda (_prompt names &rest _args)
+                       (should (member (buffer-name global) names))
+                       (buffer-name global))))
+            (jg-ghostel-switch-all))
+          (should (eq (current-buffer) global))
+          (jg-ghostel-new)
+          (should (equal (alist-get 'name ghostel-identity)
+                         "*ghostel: global*")))))))
+
+(ert-deftest jg-ghostel-empty-selection-and-cycle-do-not-create-terminals ()
+  (jg-ghostel-test--session
+    (should-error (jg-ghostel-switch) :type 'user-error)
+    (should-error (jg-ghostel-switch-all) :type 'user-error)
+    (should-error (jg-ghostel-next) :type 'user-error)
+    (should-error (jg-ghostel-previous) :type 'user-error)
+    (should (= (length (window-list)) 1))))
+
+(ert-deftest jg-ghostel-full-frame-switch-shrink-and-hide-restore-editor-layout ()
+  (jg-ghostel-test--session
+    (let* ((left (selected-window))
+           (right (split-window-right))
+           (right-buffer (generate-new-buffer " *jg-ghostel-test-right*")))
+      (push right-buffer jg-ghostel-test--buffers)
+      (set-window-buffer right right-buffer)
+      (let ((editor-layout (jg-ghostel-test--layout)))
+        (jg-ghostel-toggle)
+        (let ((first (current-buffer)))
+          (jg-ghostel-toggle-size)
+          (should (= (length (window-list)) 1))
+          (should (eq (current-buffer) first))
+          (should-not (window-parameter (selected-window) 'window-side))
+          (jg-ghostel-new)
+          (let ((second (current-buffer)))
+            (should-not (eq first second))
+            (should (= (length (window-list)) 1))
+            (jg-ghostel-previous)
+            (should (eq (current-buffer) first))
+            (should (= (length (window-list)) 1))
+            (jg-ghostel-next)
+            (jg-ghostel-toggle-size)
+            (should (= (length (window-list)) 3))
+            (should (eq (current-buffer) second))
+            (should (eq (window-parameter (selected-window) 'window-side) 'top))
+            (should (eq (window-buffer right) right-buffer))
+            (jg-ghostel-toggle)
+            (should (eq (selected-window) left))
+            (should (equal (jg-ghostel-test--layout) editor-layout))))))))
+
+(ert-deftest jg-ghostel-hide-from-full-frame-reopens-in-quake-mode ()
+  (jg-ghostel-test--session
+    (split-window-right)
+    (let ((layout (jg-ghostel-test--layout)))
+      (jg-ghostel-toggle)
+      (let ((terminal (current-buffer)))
+        (jg-ghostel-toggle-size)
+        (jg-ghostel-toggle)
+        (should (equal (jg-ghostel-test--layout) layout))
+        (should (buffer-live-p terminal))
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) terminal))
+        (should (eq (window-parameter (selected-window) 'window-side) 'top))
+        (should (= (length (window-list)) 3))))))
+
+(ert-deftest jg-ghostel-size-toggle-can-summon-a-terminal ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle-size)
+    (should (derived-mode-p 'ghostel-mode))
+    (should (= (length (window-list)) 1))
+    (jg-ghostel-toggle-size)
+    (should (eq (window-parameter (selected-window) 'window-side) 'top))))
+
+(ert-deftest jg-ghostel-terminal-exit-restores-editor-in-both-display-modes ()
+  (dolist (full '(nil t))
+    (jg-ghostel-test--session
+      (split-window-right)
+      (let ((layout (jg-ghostel-test--layout)))
+        (jg-ghostel-toggle)
+        (when full (jg-ghostel-toggle-size))
+        (kill-buffer (current-buffer))
+        (should (equal (jg-ghostel-test--layout) layout))
+        (should-not (frame-parameter nil 'jg-ghostel-view))))))
+
+(ert-deftest jg-ghostel-manually-deleted-panel-can-be-reopened ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((terminal (current-buffer)))
+      (delete-window)
+      (jg-ghostel-toggle)
+      (should (eq (current-buffer) terminal))
+      (should (eq (window-parameter (selected-window) 'window-side) 'top)))))
+
+(ert-deftest jg-ghostel-hide-keeps-editor-splits-created-while-panel-is-open ()
+  (jg-ghostel-test--session
+    (let ((editor (selected-window)))
+      (jg-ghostel-toggle)
+      (let ((panel (selected-window)))
+        (select-window editor)
+        (split-window-right)
+        (select-window panel)
+        (jg-ghostel-toggle)
+        (should (= (length (window-list)) 2))))))
+
+(ert-deftest jg-ghostel-creation-failure-restores-previous-full-frame-view ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((terminal (current-buffer)))
+      (jg-ghostel-toggle-size)
+      (cl-letf (((symbol-function 'ghostel-create)
+                 (lambda (name display identity)
+                   (let ((failed (jg-ghostel-test--create name display identity)))
+                     (kill-buffer failed)
+                     (error "Test spawn failure")))))
+        (should-error (jg-ghostel-new)))
+      (should (eq (current-buffer) terminal))
+      (should (= (length (window-list)) 1))
+      (jg-ghostel-toggle-size)
+      (should (eq (window-parameter (selected-window) 'window-side) 'top)))))
+
+(ert-deftest jg-ghostel-prefix-toggle-works-through-char-mode-keymaps ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (ghostel-char-mode)
+    (execute-kbd-macro (kbd "C-u C-`"))
+    (should (= (alist-get 'instance ghostel-identity) 2))
+    (should (= (length (window-list)) 2))))
+
+(ert-deftest jg-ghostel-terminal-exit-during-selection-does-not-open-another-buffer ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((terminal (current-buffer)))
+      (cl-letf (((symbol-function 'completing-read)
+                 (lambda (&rest _args)
+                   (prog1 (buffer-name terminal) (kill-buffer terminal)))))
+        (should-error (jg-ghostel-switch) :type 'user-error))
+      (should (= (length (window-list)) 1))
+      (should-not (derived-mode-p 'ghostel-mode)))))
+
+(ert-deftest jg-ghostel-full-frame-expansion-from-a-sidebar-restores-it ()
+  (jg-ghostel-test--session
+    (let ((sidebar-buffer (generate-new-buffer " *jg-ghostel-test-sidebar*")))
+      (push sidebar-buffer jg-ghostel-test--buffers)
+      (select-window
+       (display-buffer-in-side-window sidebar-buffer '((side . left))))
+      (let ((layout (jg-ghostel-test--layout)))
+        (jg-ghostel-toggle)
+        (jg-ghostel-toggle-size)
+        (should (= (length (window-list)) 1))
+        (should (derived-mode-p 'ghostel-mode))
+        (jg-ghostel-toggle)
+        (should (equal (jg-ghostel-test--layout) layout))))))
+
+(ert-deftest jg-ghostel-full-frame-expansion-restores-editor-dedication ()
+  (jg-ghostel-test--session
+    (let ((editor-window (selected-window)))
+      (set-window-dedicated-p editor-window t)
+      (jg-ghostel-toggle)
+      (jg-ghostel-toggle-size)
+      (should (derived-mode-p 'ghostel-mode))
+      (jg-ghostel-toggle)
+      (should (eq (selected-window) editor-window))
+      (should (window-dedicated-p editor-window)))))
+
+(ert-deftest jg-ghostel-project-switch-always-shows-selected-project ()
+  (jg-ghostel-test--session
+    (setq jg-ghostel-test--project "/tmp/alpha/")
+    (jg-ghostel-project)
+    (let ((alpha (current-buffer)))
+      (jg-ghostel-project)
+      (should (eq (current-buffer) alpha))
+      (should (= (length (window-list)) 2))
+      (setq jg-ghostel-test--project "/tmp/beta/")
+      (jg-ghostel-project)
+      (should-not (eq (current-buffer) alpha))
+      (should (equal (alist-get 'project-root ghostel-identity) "/tmp/beta/")))))
+
+(ert-deftest jg-ghostel-adopts-native-project-identities-not-plain-or-exec-terminals ()
+  (jg-ghostel-test--session
+    (let ((native (jg-ghostel-test--create
+                   "*native project*" nil
+                   '((kind . term) (project-root . "/tmp/alpha/") (instance . 1)))))
+      (jg-ghostel-test--create "*plain ghostel*" nil
+                              '((kind . term) (name . "*ghostel*") (instance . 1)))
+      (jg-ghostel-test--create "*exec ghostel*" nil
+                              '((kind . exec) (project-root . "/tmp/alpha/")))
+      (setq jg-ghostel-test--project "/tmp/alpha/")
+      (jg-ghostel-toggle)
+      (should (eq (current-buffer) native))
+      (jg-ghostel-new)
+      (should (= (alist-get 'instance ghostel-identity) 2))
+      (cl-letf (((symbol-function 'completing-read)
+                 (lambda (_prompt names &rest _args)
+                   (should (= (length names) 2))
+                   (buffer-name native))))
+        (jg-ghostel-switch-all)))))
+
+(ert-deftest jg-ghostel-remote-ownership-is-stable-without-directory-discovery ()
+  (jg-ghostel-test--session
+    (let ((buffer (jg-ghostel-test--create
+                   "*remote project*" nil
+                   '((kind . term)
+                     (project-root . "/ssh:host:/srv/app/") (instance . 1)))))
+      (with-current-buffer buffer (setq default-directory "/tmp/elsewhere/"))
+      (pop-to-buffer buffer '((jg-ghostel--display-buffer)))
+      (cl-letf (((symbol-function 'project-current)
+                 (lambda (&rest _) (error "Must not query shell directory"))))
+        (jg-ghostel-toggle))
+      (should (= (length (window-list)) 1)))))
+
+(ert-deftest jg-ghostel-terminal-controls-work-in-every-input-mode ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((terminal (current-buffer)))
+      ;; Line-mode entry requires a native terminal.  Its inherited keymap
+      ;; is checked separately below; the native smoke suite tests entry.
+      (dolist (mode '(ghostel-semi-char-mode ghostel-char-mode
+                     ghostel-copy-mode ghostel-emacs-mode))
+        (funcall mode)
+        (should (eq (key-binding (kbd "C-`")) #'jg-ghostel-toggle))
+        (should (eq (key-binding (kbd "C-c t n")) #'jg-ghostel-new))
+        (should (eq (key-binding (kbd "C-c t f")) #'jg-ghostel-toggle-size))
+        (should (eq (key-binding (kbd "C-u")) #'universal-argument))
+        (should (eq (key-binding (kbd "C-c C-c")) #'ghostel-send-C-c))
+        (call-interactively (key-binding (kbd "C-`")))
+        (should (= (length (window-list)) 1))
+        (jg-ghostel-toggle)
+        (should (eq (current-buffer) terminal)))
+      (use-local-map ghostel-line-mode-map)
+      (should (eq (key-binding (kbd "C-`")) #'jg-ghostel-toggle))
+      (should (eq (key-binding (kbd "C-c t f")) #'jg-ghostel-toggle-size)))))
+
+(ert-deftest jg-ghostel-frames-have-independent-display-modes-and-layouts ()
+  (skip-unless (display-graphic-p))
+  (jg-ghostel-test--session
+    (let ((first-frame (selected-frame))
+          (second-frame
+           (let ((noninteractive nil))
+             (make-frame-on-display (frame-parameter nil 'display)
+                                    '((width . 100) (height . 40))))))
+      (unwind-protect
+          (progn
+            (jg-ghostel-toggle)
+            (let ((first-terminal (current-buffer))
+                  (first-panel (selected-window)))
+              (with-selected-frame second-frame
+                (jg-ghostel-global-new)
+                (jg-ghostel-toggle-size)
+                (should (= (length (window-list)) 1))
+                (jg-ghostel-toggle))
+              (should (eq (selected-frame) first-frame))
+              (should (window-live-p first-panel))
+              (should (eq (window-buffer first-panel) first-terminal))
+              (should (eq (window-parameter first-panel 'window-side) 'top))
+              (should (= (length (window-list)) 2))))
+        (delete-frame second-frame t)))))
+
+(provide 'jg-ghostel-tests)
+;;; jg-ghostel-tests.el ends here

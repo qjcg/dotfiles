@@ -16,7 +16,7 @@
   (setopt project-switch-commands '((project-find-file "Find file")
 				    (project-find-regexp "Find regexp")
 				    (project-find-dir "Find directory")
-				    (ghostel-project "Ghostel" ?t)
+				    (jg-ghostel-project "Ghostel" ?t)
 				    (magit "Magit" ?m)
 				    (magit-log-all-branches "Magit Log (all branches)" ?l)
 				    (agent-shell-anthropic-start-claude-code "Agent Shell (Claude)" ?c)
