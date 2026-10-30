@@ -1,0 +1,271 @@
+\input texinfo
+@c -*-texinfo-*-
+@setfilename jg-ghostel.info
+@settitle Ghostel Terminal Workflow
+@documentencoding UTF-8
+@documentlanguage en
+
+@dircategory Emacs
+@direntry
+* Ghostel Workflow: (jg-ghostel). Project and global quake terminals in Emacs.
+@end direntry
+
+@node Top
+@top Ghostel Terminal Workflow
+
+Ghostel terminals are managed by @file{lisp/jg-ghostel.el}, loaded by
+@file{lisp/init/jg-shell.el}.  No extra terminal/window-management package
+is needed.  These paths are relative to the Emacs configuration directory.
+
+This manual describes the project/global terminal controls, independent
+quake/full-frame preferences, and editor-layout restoration.
+
+@menu
+* Keys::           Terminal commands and key bindings.
+* Display Modes::  Quake panels, fullscreen terminals, and editor layouts.
+* Contexts::       Project/global ownership, selection, and terminal lifetime.
+* Input Modes::    Reserved keys and terminal input modes.
+* Tests::          Headless and graphical/native validation.
+* Building the Manual::  Build, preview, and register this Info manual.
+* Key Index::      Look up a key binding.
+* Concept Index::  Look up a workflow topic.
+@end menu
+
+@node Keys
+@chapter Keys
+
+@table @kbd
+@item C-`
+@kindex C-`
+Summon, focus, or hide the current context's terminal.
+
+@item C-u C-`
+@kindex C-u C-`
+Create another quake terminal in the current context.
+
+@item C-c t n
+@kindex C-c t n
+Create another quake terminal in the current context.
+
+@item C-c t N
+@kindex C-c t N
+Create another fullscreen terminal in the current context.
+
+@item C-c t b
+@kindex C-c t b
+Choose a terminal in the current context.
+
+@item C-c t ]
+@kindex C-c t ]
+Select the next terminal, wrapping within the current context.
+
+@item C-c t [
+@kindex C-c t [
+Select the previous terminal, wrapping within the current context.
+
+@item C-c t f
+@kindex C-c t f
+Toggle between a quake panel and the full editing area.
+
+@item C-c t g
+@kindex C-c t g
+Toggle a global terminal, even inside a project.
+
+@item C-c t G
+@kindex C-c t G
+Create another global quake terminal.
+
+@item C-c t t
+@kindex C-c t t
+Choose from all managed project and global terminals.
+@end table
+
+@node Display Modes
+@chapter Display Modes and Editor Layouts
+@cindex quake panel
+@cindex fullscreen terminal
+@cindex display mode preferences
+@cindex editor layout restoration
+
+The top panel occupies approximately 35% of the frame height.  Customize
+@code{jg-ghostel-quake-height} to change that fraction.  Full display fills
+the Emacs editing area; it does not change OS fullscreen state.  Shrinking
+or hiding restores the editor layout.
+
+Each terminal remembers its display mode for its lifetime: after expanding
+with @kbd{C-c t f}, the toggle alternates between hidden and full-frame.
+Press @kbd{C-c t f} again to return to quake mode; subsequent hide/show
+toggles then retain quake mode.  Reopening fullscreen captures the current
+editor layout, so editor changes made while hidden are preserved.
+
+Each terminal owns its display mode; the frame owns the editor layout.
+Switching, cycling, hiding, and either completion picker leave mode
+preferences unchanged and display the destination in its own remembered
+mode.  Switching fullscreen to quake restores the editor and opens the
+destination in the top panel; quake to fullscreen saves the editor layout
+and expands the destination.  Switching between terminals with the same
+mode simply replaces the buffer.
+
+New terminals always start in quake mode with @kbd{C-c t n} or a prefix
+toggle, even when created from a fullscreen terminal.  Use @kbd{C-c t N}
+to create a fullscreen terminal instead.  Only explicit creation and
+@kbd{C-c t f} choose a terminal's mode; displaying it never inherits or
+changes another terminal's preference.
+
+@cindex multiple frames
+Window layouts are independent per frame; terminal buffers and their
+remembered preferences are shared across frames.  Changing the preference
+in one frame does not resize an already visible view in another frame;
+that view uses the preference when next summoned or selected through the
+terminal commands.  Hiding a view never overwrites the preference.
+Preferences last for the terminal session, not across Emacs restarts.
+
+@node Contexts
+@chapter Project and Global Contexts
+@cindex project terminals
+@cindex global terminals
+@cindex creation-time ownership
+@cindex shell directory changes
+@cindex TRAMP
+
+Inside a managed terminal, its creation-time ownership determines the
+context.  Otherwise, the current @code{project.el} project determines it;
+outside projects, the global group is used.  Project terminals start at
+the project root; global terminals start in @file{~}.  Shell @command{cd}
+and buffer renaming do not change ownership.  Projects are distinguished
+by their full roots, including TRAMP prefixes, not just names.
+
+@cindex completion picker
+The completion picker annotates each terminal with its owner and Ghostel's
+process status/title, using the normal Vertico/Orderless setup.  @kbd{C-c t b}
+is scoped to the current context; @kbd{C-c t t} includes all managed contexts.
+@xref{Keys}.
+
+@cindex most recently used terminal
+@cindex terminal lifetime
+The toggle reuses the most recently used terminal in that group.  An
+unfocused, already visible matching panel is focused rather than hidden.
+Hiding leaves processes running; terminal exit or buffer killing closes
+the view and restores the editor.  While a panel is open, editor splits
+can still be changed normally.
+
+The Ghostel action in the project-switch menu uses this same workflow and
+always shows the selected project's terminal.  Existing
+@code{ghostel-project} terminals are adopted by identity.  Plain
+@kbd{M-x ghostel} terminals and Ghostel compilation/exec buffers remain
+outside the managed groups and are still accessible via @kbd{C-x b}.
+
+@node Input Modes
+@chapter Input Modes and Reserved Keys
+@cindex input modes
+@cindex reserved keys
+@cindex char mode
+
+The terminal controls work in semi-char, char, copy, Emacs, and line input
+modes.  Even in char mode, @kbd{C-`} and the @kbd{C-c} / @kbd{C-u} prefixes
+are reserved for Emacs.  Use @kbd{C-c C-c} for interrupt and @kbd{C-c C-q}
+to send a reserved key literally.  On TTY connections that cannot encode
+Ctrl-backtick distinctly, the named command @kbd{M-x jg-ghostel-toggle}
+remains available outside char mode.
+
+GPTel remains on @kbd{C-c SPC SPC}; its old @kbd{C-`} binding is removed.
+
+@node Tests
+@chapter Tests
+@cindex tests
+@cindex headless tests
+@cindex native shell tests
+
+Run these commands from the Emacs configuration directory containing
+@file{Taskfile.yaml}, for example @file{private_dot_config/private_emacs/}
+in the dotfiles source checkout:
+
+@example
+task test-ghostel
+task test-ghostel-gui
+@end example
+
+@code{test-ghostel} loads installed Ghostel Lisp without its native module,
+substitutes only shell creation, and exercises real windows, identities,
+and keymaps.  Multi-frame tests are skipped in headless batch mode.
+
+@code{test-ghostel-gui} runs the same suite plus real-shell integration
+tests in an isolated Xvfb display, including multiple frames and native
+line-mode entry.  It requires @command{xvfb-run}, @command{xauth}, and a
+working installed Ghostel native module.  Neither task loads or changes
+the running Emacs configuration.
+
+Override @env{EMACS} for a non-snap installation, and @env{EMACS_DIR} to
+select a package directory (packages are read from
+@file{$EMACS_DIR/var/elpa}).  The snap default uses its underlying binary
+because the wrapper requires a display even in batch mode.
+
+@node Building the Manual
+@chapter Building and Registering the Manual
+@cindex building the manual
+@cindex Info directory
+
+This manual's maintained source is @file{docs/ghostel.texi}.  The suggested
+installation layout puts generated files under @file{var/info/}, consistent
+with this configuration's @code{no-littering} layout.  Automatic installation
+is a proposal, not yet part of the configuration.
+
+With GNU Texinfo installed, run the following from the Emacs configuration
+root to build the manual and its local directory catalog:
+
+@example
+mkdir -p var/info
+makeinfo --no-split --output=var/info/jg-ghostel.info docs/ghostel.texi
+install-info var/info/jg-ghostel.info var/info/dir
+@end example
+
+The source declares an @code{Emacs} directory category and a
+@code{Ghostel Workflow} menu entry.  @command{install-info} registers that
+entry in the local @file{dir} file; no system directory or root access is
+needed.  Keep generated @file{.info} files and @file{dir} out of version
+control.
+
+Preview the generated manual directly with @kbd{C-u C-h i}, supplying the
+path to @file{var/info/jg-ghostel.info}.  To include its catalog in the
+normal @kbd{C-h i} directory, this built-in Info configuration is proposed
+for @file{lisp/init/jg-core.el}:
+
+@lisp
+(use-package info
+  :ensure nil
+  :defer t
+  :config
+  (add-to-list 'Info-additional-directory-list
+               (no-littering-expand-var-file-name "info/")))
+@end lisp
+
+Using @code{Info-additional-directory-list} preserves Emacs's system and
+package manuals.  Once registered, use @kbd{C-h i}, then @kbd{d} if Info
+reopened a previous node, and select @code{Ghostel Workflow} from the
+@code{Emacs} section.  The menu command is @kbd{m Ghostel Workflow RET}.
+Within this manual, @kbd{i} searches its key and concept indexes.
+
+For automation, a proposed @file{run_after_build-emacs-info.sh.tmpl} would
+run after chezmoi deploys the source.  It would rebuild missing or stale
+Info output, and idempotently maintain the local @file{dir} catalog.
+Keep compilation out of Emacs startup.  An always-run, freshness-checked
+script also recovers if the generated directory is deleted; an unchanged
+@file{run_onchange_} script alone does not.
+
+For the underlying mechanisms, see the GNU Texinfo manual's
+@uref{https://www.gnu.org/software/texinfo/manual/texinfo/html_node/Installing-Dir-Entries.html,
+Installing Info Directory Files} and
+@uref{https://www.gnu.org/software/texinfo/manual/texinfo/html_node/Other-Info-Directories.html,
+Info Files in Other Directories}, and chezmoi's
+@uref{https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/,
+script documentation}.
+
+@node Key Index
+@unnumbered Key Index
+@printindex ky
+
+@node Concept Index
+@unnumbered Concept Index
+@printindex cp
+
+@bye
