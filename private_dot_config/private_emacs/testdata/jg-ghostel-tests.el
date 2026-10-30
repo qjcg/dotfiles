@@ -246,7 +246,7 @@ Neither is a change to the editor's splits, buffers, point, or scrolling."
             (should (eq (selected-window) left))
             (should (equal (jg-ghostel-test--layout) editor-layout))))))))
 
-(ert-deftest jg-ghostel-hide-from-full-frame-reopens-in-quake-mode ()
+(ert-deftest jg-ghostel-full-frame-persists-across-hide-and-show ()
   (jg-ghostel-test--session
     (split-window-right)
     (let ((layout (jg-ghostel-test--layout)))
@@ -256,10 +256,63 @@ Neither is a change to the editor's splits, buffers, point, or scrolling."
         (jg-ghostel-toggle)
         (should (equal (jg-ghostel-test--layout) layout))
         (should (buffer-live-p terminal))
+        ;; Reopening must capture the current editor layout, not the old one.
+        (split-window-below)
+        (setq layout (jg-ghostel-test--layout))
+        (dotimes (_ 3)
+          (jg-ghostel-toggle)
+          (should (eq (current-buffer) terminal))
+          (should-not (window-parameter (selected-window) 'window-side))
+          (should (= (length (window-list)) 1))
+          (jg-ghostel-toggle)
+          (should (equal (jg-ghostel-test--layout) layout)))
+        (jg-ghostel-toggle)
+        (jg-ghostel-toggle-size)
+        (should (eq (window-parameter (selected-window) 'window-side) 'top))
+        (jg-ghostel-toggle)
+        ;; Side-window resizing can round odd split heights.  The editor
+        ;; splits survive, and subsequent summoning remembers quake mode.
+        (should (= (length (window-list)) 3))
         (jg-ghostel-toggle)
         (should (eq (current-buffer) terminal))
         (should (eq (window-parameter (selected-window) 'window-side) 'top))
-        (should (= (length (window-list)) 3))))))
+        (should (= (length (window-list)) 4))))))
+
+(ert-deftest jg-ghostel-hidden-terminals-remember-their-own-display-mode ()
+  (jg-ghostel-test--session
+    (jg-ghostel-toggle)
+    (let ((quake-terminal (current-buffer)))
+      (jg-ghostel-new)
+      (let ((full-terminal (current-buffer)))
+        (jg-ghostel-toggle-size)
+        (jg-ghostel-toggle)
+        (cl-letf (((symbol-function 'completing-read)
+                   (lambda (&rest _args) (buffer-name quake-terminal))))
+          (jg-ghostel-switch))
+        (should (eq (current-buffer) quake-terminal))
+        (should (eq (window-parameter (selected-window) 'window-side) 'top))
+        (jg-ghostel-toggle)
+        (cl-letf (((symbol-function 'completing-read)
+                   (lambda (&rest _args) (buffer-name full-terminal))))
+          (jg-ghostel-switch))
+        (should (eq (current-buffer) full-terminal))
+        (should (= (length (window-list)) 1))))))
+
+(ert-deftest jg-ghostel-projects-remember-full-frame-mode-independently ()
+  (jg-ghostel-test--session
+    (setq jg-ghostel-test--project "/tmp/alpha/")
+    (jg-ghostel-toggle)
+    (let ((alpha (current-buffer)))
+      (jg-ghostel-toggle-size)
+      (jg-ghostel-toggle)
+      (setq jg-ghostel-test--project "/tmp/beta/")
+      (jg-ghostel-toggle)
+      (should (eq (window-parameter (selected-window) 'window-side) 'top))
+      (jg-ghostel-toggle)
+      (setq jg-ghostel-test--project "/tmp/alpha/")
+      (jg-ghostel-toggle)
+      (should (eq (current-buffer) alpha))
+      (should (= (length (window-list)) 1)))))
 
 (ert-deftest jg-ghostel-size-toggle-can-summon-a-terminal ()
   (jg-ghostel-test--session
@@ -408,6 +461,8 @@ Neither is a change to the editor's splits, buffers, point, or scrolling."
 
 (ert-deftest jg-ghostel-terminal-controls-work-in-every-input-mode ()
   (jg-ghostel-test--session
+    (should (eq (key-binding (kbd "C-c t t")) #'jg-ghostel-switch-all))
+    (should-not (key-binding (kbd "C-c t B")))
     (jg-ghostel-toggle)
     (let ((terminal (current-buffer)))
       ;; Line-mode entry requires a native terminal.  Its inherited keymap
@@ -417,6 +472,8 @@ Neither is a change to the editor's splits, buffers, point, or scrolling."
         (funcall mode)
         (should (eq (key-binding (kbd "C-`")) #'jg-ghostel-toggle))
         (should (eq (key-binding (kbd "C-c t n")) #'jg-ghostel-new))
+        (should (eq (key-binding (kbd "C-c t t")) #'jg-ghostel-switch-all))
+        (should-not (key-binding (kbd "C-c t B")))
         (should (eq (key-binding (kbd "C-c t f")) #'jg-ghostel-toggle-size))
         (should (eq (key-binding (kbd "C-u")) #'universal-argument))
         (should (eq (key-binding (kbd "C-c C-c")) #'ghostel-send-C-c))
@@ -425,6 +482,8 @@ Neither is a change to the editor's splits, buffers, point, or scrolling."
         (jg-ghostel-toggle)
         (should (eq (current-buffer) terminal)))
       (use-local-map ghostel-line-mode-map)
+      (should (eq (key-binding (kbd "C-c t t")) #'jg-ghostel-switch-all))
+      (should-not (key-binding (kbd "C-c t B")))
       (should (eq (key-binding (kbd "C-`")) #'jg-ghostel-toggle))
       (should (eq (key-binding (kbd "C-c t f")) #'jg-ghostel-toggle-size)))))
 

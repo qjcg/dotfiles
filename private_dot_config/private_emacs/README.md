@@ -15,14 +15,22 @@ Ghostel terminals are managed by `lisp/jg-ghostel.el`, loaded by
 | `C-c t f` | Toggle quake panel ↔ full editing area |
 | `C-c t g` | Toggle a global terminal, even inside a project |
 | `C-c t G` | Create another global terminal |
-| `C-c t B` | Choose from all managed project and global terminals |
+| `C-c t t` | Choose from all managed project and global terminals |
 
 The top panel occupies approximately 35% of the frame height. Customize
 `jg-ghostel-quake-height` to change that fraction. Full display fills the
 Emacs editing area; it does not change OS fullscreen state. Shrinking or
-hiding restores the editor layout. Switching terminals preserves the display
-mode, and summoning a hidden terminal starts in quake mode again. Window
-presentation is independent per frame; terminal buffers are shared across frames.
+hiding restores the editor layout. Each terminal remembers its display mode
+for its lifetime: after expanding with `C-c t f`, the toggle alternates between
+hidden and full-frame. Press `C-c t f` again to return to quake mode; subsequent
+hide/show toggles then retain quake mode. Reopening fullscreen captures the
+current editor layout, so editor changes made while hidden are preserved.
+
+Switching or creating terminals in an already open view keeps its display mode
+and remembers that mode for the selected terminal. Otherwise, a new terminal
+starts in quake mode. Window layouts are independent per frame; terminal buffers
+and their remembered display preferences are shared across frames. Preferences
+are in-memory for the terminal session, not persisted across Emacs restarts.
 
 Inside a managed terminal, its creation-time ownership determines the context.
 Otherwise, the current `project.el` project determines it; outside projects,

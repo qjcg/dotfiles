@@ -23,6 +23,10 @@
 (defconst jg-ghostel--global-name "*ghostel: global*"
   "Ghostel slot name identifying the managed global group.")
 
+(defvar-local jg-ghostel--fullscreen nil
+  "Non-nil when this terminal should reopen in full-frame display.
+This session preference survives hiding; editor layouts remain per-frame.")
+
 (cl-defstruct jg-ghostel--view
   window buffer return-window editor-configuration)
 
@@ -85,29 +89,43 @@ When CONTEXT is non-nil, restrict results to that project or global group."
   "Display BUFFER in the frame's terminal view and return its window.
 This display action also lets Ghostel size a new terminal before spawning."
   (let* ((view (jg-ghostel--view))
+         (existing-view view)
          (window
           (if view
               (progn
                 (jg-ghostel--replace-buffer
                  (jg-ghostel--view-window view) buffer)
                 (jg-ghostel--view-window view))
-            (let ((return-window (selected-window)))
-              (prog1
-                  (display-buffer-in-side-window
-                   buffer `((side . top) (slot . 0)
-                            (window-height . ,jg-ghostel-quake-height)))
-                (setq view (make-jg-ghostel--view
-                            :return-window return-window)))))))
+            (setq view (make-jg-ghostel--view
+                        :buffer buffer :return-window (selected-window)))
+            (if (buffer-local-value 'jg-ghostel--fullscreen buffer)
+                ;; Reopen directly: a temporary panel could redistribute
+                ;; odd-sized editor splits before we save their layout.
+                (progn
+                  (jg-ghostel--expand view)
+                  (jg-ghostel--view-window view))
+              (display-buffer-in-side-window
+               buffer `((side . top) (slot . 0)
+                        (window-height . ,jg-ghostel-quake-height)))))))
     (unless (window-live-p window)
       (user-error "Cannot display the Ghostel terminal panel"))
     (setf (jg-ghostel--view-window view) window
           (jg-ghostel--view-buffer view) buffer)
     (set-frame-parameter nil 'jg-ghostel-view view)
-    window))
+    (when existing-view
+      ;; Switching an open view keeps its size and remembers it for the
+      ;; newly selected terminal, including terminals created in that view.
+      (with-current-buffer buffer
+        (setq jg-ghostel--fullscreen
+              (not (null (jg-ghostel--view-editor-configuration view))))))
+    (jg-ghostel--view-window view)))
 
 (defun jg-ghostel--hide ()
-  "Hide the frame's terminal view without killing its buffer or process."
+  "Hide the terminal without killing its process or resetting its display mode."
   (when-let* ((view (jg-ghostel--view)))
+    (with-current-buffer (jg-ghostel--view-buffer view)
+      (setq jg-ghostel--fullscreen
+            (not (null (jg-ghostel--view-editor-configuration view)))))
     (set-frame-parameter nil 'jg-ghostel-view nil)
     (if (jg-ghostel--view-editor-configuration view)
         (set-window-configuration
@@ -255,8 +273,35 @@ Unlike the toggle, this project-switch action always shows the terminal."
   (interactive)
   (jg-ghostel--cycle -1))
 
+(defun jg-ghostel--expand (view)
+  "Expand terminal VIEW, saving the current editor layout and session preference."
+  ;; A side window cannot be made the sole window.  Save the editor
+  ;; layout without the panel, then expand a normal window instead.
+  (when (window-live-p (jg-ghostel--view-window view))
+    (delete-window (jg-ghostel--view-window view)))
+  (let ((return-window (jg-ghostel--view-return-window view)))
+    (select-window
+     (if (and (window-live-p return-window)
+              (not (window-parameter return-window 'window-side)))
+         return-window
+       (cl-find-if (lambda (window)
+                     (not (window-parameter window 'window-side)))
+                   (window-list nil 'nomini)))))
+  (setf (jg-ghostel--view-editor-configuration view)
+        (current-window-configuration))
+  ;; Invoking from a dedicated editor or sidebar must also work.  Its
+  ;; dedication is part of the saved configuration and restored later.
+  (set-window-dedicated-p (selected-window) nil)
+  (switch-to-buffer (jg-ghostel--view-buffer view))
+  (let ((ignore-window-parameters t))
+    (delete-other-windows))
+  (setf (jg-ghostel--view-window view) (selected-window))
+  (with-current-buffer (jg-ghostel--view-buffer view)
+    (setq jg-ghostel--fullscreen t)))
+
 (defun jg-ghostel-toggle-size ()
   "Toggle the terminal between a quake panel and the full editing area.
+Remember the size for subsequent hide/show toggles of this terminal session.
 Restore the editor's window layout on shrinking or hiding."
   (interactive)
   (unless (jg-ghostel--view)
@@ -268,35 +313,18 @@ Restore the editor's window layout on shrinking or hiding."
           (set-window-configuration
            (jg-ghostel--view-editor-configuration view))
           (setf (jg-ghostel--view-editor-configuration view) nil)
+          (with-current-buffer buffer
+            (setq jg-ghostel--fullscreen nil))
           (set-frame-parameter nil 'jg-ghostel-view nil)
           (let ((window (jg-ghostel--display-buffer buffer nil)))
             (select-window window)))
-      ;; A side window cannot be made the sole window.  Save the editor
-      ;; layout without the panel, then expand a normal window instead.
-      (delete-window (jg-ghostel--view-window view))
-      (let ((return-window (jg-ghostel--view-return-window view)))
-        (select-window
-         (if (and (window-live-p return-window)
-                  (not (window-parameter return-window 'window-side)))
-             return-window
-           (cl-find-if (lambda (window)
-                         (not (window-parameter window 'window-side)))
-                       (window-list nil 'nomini)))))
-      (setf (jg-ghostel--view-editor-configuration view)
-            (current-window-configuration))
-      ;; Invoking from a dedicated editor or sidebar must also work.  Its
-      ;; dedication is part of the saved configuration and restored later.
-      (set-window-dedicated-p (selected-window) nil)
-      (switch-to-buffer buffer)
-      (let ((ignore-window-parameters t))
-        (delete-other-windows))
-      (setf (jg-ghostel--view-window view) (selected-window)))))
+      (jg-ghostel--expand view))))
 
 (defvar-keymap jg-ghostel-prefix-map
   :doc "Context-aware terminal commands."
   "n" #'jg-ghostel-new
   "b" #'jg-ghostel-switch
-  "B" #'jg-ghostel-switch-all
+  "t" #'jg-ghostel-switch-all
   "]" #'jg-ghostel-next
   "[" #'jg-ghostel-previous
   "f" #'jg-ghostel-toggle-size
