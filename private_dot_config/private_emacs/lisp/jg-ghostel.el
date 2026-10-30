@@ -24,8 +24,9 @@
   "Ghostel slot name identifying the managed global group.")
 
 (defvar-local jg-ghostel--fullscreen nil
-  "Non-nil when this terminal should reopen in full-frame display.
-This session preference survives hiding; editor layouts remain per-frame.")
+  "Non-nil when this terminal should display in full-frame mode.
+Creation and `jg-ghostel-toggle-size' choose this preference.  Showing,
+switching, or hiding never changes it; editor layouts remain per-frame.")
 
 (cl-defstruct jg-ghostel--view
   window buffer return-window editor-configuration)
@@ -85,47 +86,43 @@ When CONTEXT is non-nil, restrict results to that project or global group."
         (set-window-buffer window buffer)
       (set-window-dedicated-p window dedicated))))
 
-(defun jg-ghostel--display-buffer (buffer _alist)
-  "Display BUFFER in the frame's terminal view and return its window.
-This display action also lets Ghostel size a new terminal before spawning."
-  (let* ((view (jg-ghostel--view))
-         (existing-view view)
-         (window
-          (if view
-              (progn
-                (jg-ghostel--replace-buffer
-                 (jg-ghostel--view-window view) buffer)
-                (jg-ghostel--view-window view))
-            (setq view (make-jg-ghostel--view
-                        :buffer buffer :return-window (selected-window)))
-            (if (buffer-local-value 'jg-ghostel--fullscreen buffer)
-                ;; Reopen directly: a temporary panel could redistribute
-                ;; odd-sized editor splits before we save their layout.
-                (progn
-                  (jg-ghostel--expand view)
-                  (jg-ghostel--view-window view))
+(defun jg-ghostel--display-buffer (buffer alist)
+  "Display BUFFER in its remembered mode and return the frame's terminal window.
+ALIST may specify `jg-ghostel-initial-fullscreen' when creating a terminal,
+so Ghostel sees its final window dimensions before spawning the shell."
+  (when-let* ((initial-mode (assq 'jg-ghostel-initial-fullscreen alist)))
+    (with-current-buffer buffer
+      (setq jg-ghostel--fullscreen (not (null (cdr initial-mode))))))
+  (let* ((fullscreen (buffer-local-value 'jg-ghostel--fullscreen buffer))
+         (view (jg-ghostel--view)))
+    ;; The incoming terminal owns its mode.  Restore the editor first when
+    ;; changing modes; merely swapping buffers would inherit the old mode.
+    (when (and view
+               (not (eq fullscreen
+                        (not (null (jg-ghostel--view-editor-configuration view))))))
+      (jg-ghostel--hide)
+      (setq view nil))
+    (if view
+        (jg-ghostel--replace-buffer (jg-ghostel--view-window view) buffer)
+      (setq view (make-jg-ghostel--view
+                  :buffer buffer :return-window (selected-window)))
+      (if fullscreen
+          ;; Expand directly, without a temporary panel that could round
+          ;; odd-sized editor splits before their layout is saved.
+          (jg-ghostel--expand view)
+        (setf (jg-ghostel--view-window view)
               (display-buffer-in-side-window
                buffer `((side . top) (slot . 0)
-                        (window-height . ,jg-ghostel-quake-height)))))))
-    (unless (window-live-p window)
-      (user-error "Cannot display the Ghostel terminal panel"))
-    (setf (jg-ghostel--view-window view) window
-          (jg-ghostel--view-buffer view) buffer)
+                        (window-height . ,jg-ghostel-quake-height))))))
+    (unless (window-live-p (jg-ghostel--view-window view))
+      (user-error "Cannot display the Ghostel terminal"))
+    (setf (jg-ghostel--view-buffer view) buffer)
     (set-frame-parameter nil 'jg-ghostel-view view)
-    (when existing-view
-      ;; Switching an open view keeps its size and remembers it for the
-      ;; newly selected terminal, including terminals created in that view.
-      (with-current-buffer buffer
-        (setq jg-ghostel--fullscreen
-              (not (null (jg-ghostel--view-editor-configuration view))))))
     (jg-ghostel--view-window view)))
 
 (defun jg-ghostel--hide ()
   "Hide the terminal without killing its process or resetting its display mode."
   (when-let* ((view (jg-ghostel--view)))
-    (with-current-buffer (jg-ghostel--view-buffer view)
-      (setq jg-ghostel--fullscreen
-            (not (null (jg-ghostel--view-editor-configuration view)))))
     (set-frame-parameter nil 'jg-ghostel-view nil)
     (if (jg-ghostel--view-editor-configuration view)
         (set-window-configuration
@@ -147,8 +144,8 @@ This display action also lets Ghostel size a new terminal before spawning."
   "Arrange for terminal exit or explicit buffer killing to restore the editor."
   (add-hook 'kill-buffer-hook #'jg-ghostel--buffer-killed nil t))
 
-(defun jg-ghostel--create (context)
-  "Create a fresh terminal belonging to CONTEXT in the current display mode."
+(defun jg-ghostel--create (context &optional fullscreen)
+  "Create a terminal belonging to CONTEXT, in quake mode unless FULLSCREEN."
   (let* ((buffers (jg-ghostel--buffers context))
          (instance (1+ (cl-loop for buffer in buffers
                                maximize (or (alist-get
@@ -171,7 +168,9 @@ This display action also lets Ghostel size a new terminal before spawning."
                      (copy-jg-ghostel--view view))))
     (condition-case error
         (ghostel-create (format "*ghostel: %s #%d*" label instance)
-                        '((jg-ghostel--display-buffer)) identity)
+                        `((jg-ghostel--display-buffer)
+                          (jg-ghostel-initial-fullscreen . ,fullscreen))
+                        identity)
       ((error quit)
        (set-window-configuration configuration)
        (set-frame-parameter nil 'jg-ghostel-view old-view)
@@ -190,32 +189,38 @@ This display action also lets Ghostel size a new terminal before spawning."
              (equal context (jg-ghostel--owner (jg-ghostel--view-buffer view))))
         (if (eq (selected-window) (jg-ghostel--view-window view))
             (jg-ghostel--hide)
-          (select-window (jg-ghostel--view-window view)))
+          (pop-to-buffer (jg-ghostel--view-buffer view)
+                         '((jg-ghostel--display-buffer))))
       (jg-ghostel--open context new))))
 
 ;;;###autoload
 (defun jg-ghostel-toggle (&optional new)
-  "Toggle the current context's terminal.  With prefix NEW, create another."
+  "Toggle the context's terminal.  With prefix NEW, create another in quake mode."
   (interactive "P")
   (jg-ghostel--toggle (jg-ghostel--context) new))
 
 (defun jg-ghostel-new ()
-  "Create another terminal in the current project or global group."
+  "Create another quake terminal in the current project or global group."
   (interactive)
   (jg-ghostel--open (jg-ghostel--context) t))
 
+(defun jg-ghostel-new-fullscreen ()
+  "Create a fullscreen terminal in the current project or global group."
+  (interactive)
+  (jg-ghostel--create (jg-ghostel--context) t))
+
 (defun jg-ghostel-global (&optional new)
-  "Toggle the global terminal, even in a project.  Prefix NEW creates another."
+  "Toggle the global terminal, even in a project.  Prefix NEW creates a quake one."
   (interactive "P")
   (jg-ghostel--toggle 'global new))
 
 (defun jg-ghostel-global-new ()
-  "Create another global terminal, even in a project."
+  "Create another global quake terminal, even in a project."
   (interactive)
   (jg-ghostel--open 'global t))
 
 (defun jg-ghostel-project (&optional new)
-  "Show the selected project's last-used terminal.  Prefix NEW creates another.
+  "Show the selected project's last-used terminal.  Prefix NEW creates a quake one.
 Unlike the toggle, this project-switch action always shows the terminal."
   (interactive "P")
   (jg-ghostel--open (jg-ghostel--root (project-root (project-current t))) new))
@@ -274,7 +279,7 @@ Unlike the toggle, this project-switch action always shows the terminal."
   (jg-ghostel--cycle -1))
 
 (defun jg-ghostel--expand (view)
-  "Expand terminal VIEW, saving the current editor layout and session preference."
+  "Expand terminal VIEW, saving the editor layout without changing its preference."
   ;; A side window cannot be made the sole window.  Save the editor
   ;; layout without the panel, then expand a normal window instead.
   (when (window-live-p (jg-ghostel--view-window view))
@@ -295,34 +300,29 @@ Unlike the toggle, this project-switch action always shows the terminal."
   (switch-to-buffer (jg-ghostel--view-buffer view))
   (let ((ignore-window-parameters t))
     (delete-other-windows))
-  (setf (jg-ghostel--view-window view) (selected-window))
-  (with-current-buffer (jg-ghostel--view-buffer view)
-    (setq jg-ghostel--fullscreen t)))
+  (setf (jg-ghostel--view-window view) (selected-window)))
 
 (defun jg-ghostel-toggle-size ()
-  "Toggle the terminal between a quake panel and the full editing area.
-Remember the size for subsequent hide/show toggles of this terminal session.
-Restore the editor's window layout on shrinking or hiding."
+  "Toggle and remember only this terminal's quake/full-frame display mode.
+Switching and hiding terminals leave their preferences unchanged."
   (interactive)
   (unless (jg-ghostel--view)
     (jg-ghostel--open (jg-ghostel--context)))
   (let* ((view (jg-ghostel--view))
          (buffer (jg-ghostel--view-buffer view)))
-    (if (jg-ghostel--view-editor-configuration view)
-        (progn
-          (set-window-configuration
-           (jg-ghostel--view-editor-configuration view))
-          (setf (jg-ghostel--view-editor-configuration view) nil)
-          (with-current-buffer buffer
-            (setq jg-ghostel--fullscreen nil))
-          (set-frame-parameter nil 'jg-ghostel-view nil)
-          (let ((window (jg-ghostel--display-buffer buffer nil)))
-            (select-window window)))
-      (jg-ghostel--expand view))))
+    (with-current-buffer buffer
+      (setq jg-ghostel--fullscreen
+            (null (jg-ghostel--view-editor-configuration view))))
+    (pop-to-buffer buffer '((jg-ghostel--display-buffer)))))
 
-(defvar-keymap jg-ghostel-prefix-map
-  :doc "Context-aware terminal commands."
+(defvar jg-ghostel-prefix-map (make-sparse-keymap)
+  "Context-aware terminal commands.")
+
+;; Configure in place so reloading adds bindings to input-mode maps that
+;; already reference this prefix map.
+(define-keymap :keymap jg-ghostel-prefix-map
   "n" #'jg-ghostel-new
+  "N" #'jg-ghostel-new-fullscreen
   "b" #'jg-ghostel-switch
   "t" #'jg-ghostel-switch-all
   "]" #'jg-ghostel-next
