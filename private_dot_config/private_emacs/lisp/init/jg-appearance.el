@@ -4,6 +4,12 @@
   :hook prog-mode
   :config (setopt display-line-numbers-type t))
 
+(use-package jg-dashboard
+  :ensure nil :demand t
+  :bind (("C-c h" . jg-dashboard-open))
+  :config
+  (setopt initial-buffer-choice #'jg-dashboard-buffer))
+
 (use-package show-font :ensure)
 
 (use-package org-modern

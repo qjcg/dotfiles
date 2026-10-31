@@ -6,6 +6,15 @@ vars:
   EMACS_DIR: '{{.HOME}}/.config/emacs'
 
 tasks:
+  test-dashboard:
+    desc: Test the dashboard and asynchronous weather without network access
+    cmds:
+      - >
+        {{.EMACS}} --batch -Q
+        --directory "{{.TASKFILE_DIR}}/lisp"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-dashboard-tests.el"
+        --funcall ert-run-tests-batch-and-exit
+
   test-info:
     desc: Test Info deployment and discovery from the dotfiles source checkout
     cmds:
