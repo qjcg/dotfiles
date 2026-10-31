@@ -1,3 +1,5 @@
+[[ "${INSIDE_EMACS%%,*}" == "vterm" ]] || return
+
 hash emacs 2>/dev/null || return
 
 # Shell-side configuration
