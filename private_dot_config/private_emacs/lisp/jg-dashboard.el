@@ -59,6 +59,31 @@ Setting this opts into sending the location and your IP address to wttr.in."
 No quote service is contacted.  Add your own quotes here."
   :type '(repeat (cons (string :tag "Quote") (string :tag "Author"))))
 
+(defcustom jg-dashboard-effect nil
+  "Default decorative animation: nil, snow, rain, or stars.
+Effects occupy a strip above the widgets, leaving their content readable.
+Press s to toggle snow or e to choose an effect.  Interactive choices are
+buffer-local and last until the dashboard is killed; Customize saves the
+default for future dashboard buffers.  Hidden dashboards pause animation."
+  :type '(choice (const :tag "Off" nil) (const snow) (const rain) (const stars)))
+
+(defcustom jg-dashboard-effect-interval 0.15
+  "Seconds between animation frames, clamped to at least 0.05 seconds.
+Larger values make animations slower and reduce redisplay work."
+  :type 'number)
+
+(defcustom jg-dashboard-effect-height 5
+  "Number of rows in the decorative animation strip, limited to 1 through 10."
+  :type 'natnum)
+
+(defcustom jg-dashboard-effect-particles 24
+  "Number of snowflakes, raindrops, or stars, limited to 0 through 100."
+  :type 'natnum)
+
+(defface jg-dashboard-effect
+  '((t :inherit shadow))
+  "Theme-aware face for decorative animation particles.")
+
 (defface jg-dashboard-title
   '((t :inherit font-lock-keyword-face :weight bold :height 1.5))
   "Face for the dashboard title.")
@@ -78,6 +103,12 @@ No quote service is contacted.  Add your own quotes here."
 (defvar jg-dashboard--weather-error nil
   "Cons of the request key and the last error message.")
 (defvar jg-dashboard--weather-request nil)
+(defvar-local jg-dashboard--effect-timer nil)
+(defvar-local jg-dashboard--effect-timer-interval nil)
+(defvar-local jg-dashboard--effect-frame 0)
+(defvar-local jg-dashboard--effect-rows nil
+  "Markers for the single-space anchors in the decorative strip.")
+(defvar-local jg-dashboard--effect-overlays nil)
 (cl-defstruct (jg-dashboard--request (:constructor jg-dashboard--make-request))
   key buffer timer)
 
@@ -226,6 +257,119 @@ No quote service is contacted.  Add your own quotes here."
               "\n" (propertize (concat "— " (jg-dashboard--text (cdr quote))) 'face 'shadow)
               "\n\n"))))
 
+(defun jg-dashboard--clear-effect-overlays ()
+  "Remove only the overlays owned by this dashboard's animation."
+  (mapc #'delete-overlay jg-dashboard--effect-overlays)
+  (setq jg-dashboard--effect-overlays nil))
+
+(defun jg-dashboard--stop-effect ()
+  "Stop this buffer's animation timer and remove its visual effects."
+  (when (timerp jg-dashboard--effect-timer)
+    (cancel-timer jg-dashboard--effect-timer))
+  (setq jg-dashboard--effect-timer nil
+        jg-dashboard--effect-timer-interval nil)
+  (jg-dashboard--clear-effect-overlays))
+
+(defun jg-dashboard--insert-effect ()
+  "Insert fixed-height animation anchors when an effect is enabled."
+  (mapc (lambda (marker) (set-marker marker nil)) jg-dashboard--effect-rows)
+  (setq jg-dashboard--effect-rows nil)
+  (when (memq jg-dashboard-effect '(snow rain stars))
+    (dotimes (_ (max 1 (min 10 jg-dashboard-effect-height)))
+      (push (copy-marker (point)) jg-dashboard--effect-rows)
+      (insert " \n"))
+    (setq jg-dashboard--effect-rows (nreverse jg-dashboard--effect-rows))
+    (insert "\n")))
+
+(defun jg-dashboard--effect-windows ()
+  "Return live dashboard windows on visible frames."
+  (cl-remove-if-not
+   (lambda (window) (eq (frame-visible-p (window-frame window)) t))
+   (get-buffer-window-list (current-buffer) nil t)))
+
+(defun jg-dashboard--effect-picture (width)
+  "Return animated strip rows of WIDTH columns for the current frame.
+ASCII particles work in both terminal and graphical Emacs."
+  (let* ((height (length jg-dashboard--effect-rows))
+         (rows (cl-loop repeat height collect (make-string width ?\s)))
+         (frame jg-dashboard--effect-frame))
+    (dotimes (particle (max 0 (min 100 jg-dashboard-effect-particles)))
+      (let* ((fall (/ frame (1+ (mod particle 3))))
+             (row (mod (+ (* particle 7)
+                          (if (eq jg-dashboard-effect 'stars) 0 fall)) height))
+             (column (mod (+ (* particle 13)
+                             (pcase jg-dashboard-effect
+                               ('snow (/ frame 5))
+                               ('rain (/ frame 2))
+                               (_ 0))) width))
+             (glyph (pcase jg-dashboard-effect
+                      ('snow (if (= (mod particle 3) 0) ?* ?.))
+                      ('rain ?|)
+                      ('stars (aref ".+* " (mod (+ particle (/ frame 2)) 4))))))
+        (aset (nth row rows) column glyph)))
+    rows))
+
+(defun jg-dashboard--draw-effect (windows)
+  "Draw this frame for WINDOWS using window-specific, disposable overlays.
+No buffer text, buttons, point, or weather data are changed by animation."
+  (jg-dashboard--clear-effect-overlays)
+  (dolist (window windows)
+    (let* ((width (max 1 (min 86 (- (window-body-width window) 4))))
+           (picture (jg-dashboard--effect-picture width)))
+      (cl-mapc
+       (lambda (marker row)
+         (let ((overlay (make-overlay marker (1+ (marker-position marker)))))
+           (overlay-put overlay 'window window)
+           (overlay-put overlay 'display (propertize row 'face 'jg-dashboard-effect))
+           (push overlay jg-dashboard--effect-overlays)))
+       jg-dashboard--effect-rows picture))))
+
+(defun jg-dashboard--sync-effect (&optional _window)
+  "Start, pause, or resize the current buffer's animation after window changes."
+  (let ((windows (jg-dashboard--effect-windows)))
+    (if (and (memq jg-dashboard-effect '(snow rain stars))
+             jg-dashboard--effect-rows windows)
+        (let ((interval (max 0.05 jg-dashboard-effect-interval)))
+          (when (or (not (timerp jg-dashboard--effect-timer))
+                    (not (equal interval jg-dashboard--effect-timer-interval)))
+            (jg-dashboard--stop-effect)
+            (setq jg-dashboard--effect-timer-interval interval
+                  jg-dashboard--effect-timer
+                  (run-at-time interval interval #'jg-dashboard--effect-tick (current-buffer))))
+          (jg-dashboard--draw-effect windows))
+      (jg-dashboard--stop-effect))))
+
+(defun jg-dashboard--effect-tick (buffer)
+  "Advance BUFFER's animation only while it is shown on a visible frame."
+  (when (buffer-live-p buffer)
+    (with-current-buffer buffer
+      (if (and (memq jg-dashboard-effect '(snow rain stars))
+               jg-dashboard--effect-rows (jg-dashboard--effect-windows))
+          (progn
+            (cl-incf jg-dashboard--effect-frame)
+            (jg-dashboard--sync-effect))
+        (jg-dashboard--stop-effect)))))
+
+(defun jg-dashboard-select-effect (effect)
+  "Select EFFECT from off, snow, rain, and stars in the current dashboard."
+  (interactive
+   (list (let ((choice (completing-read "Dashboard effect: "
+                                        '("off" "snow" "rain" "stars") nil t)))
+           (unless (equal choice "off") (intern choice)))))
+  (unless (derived-mode-p 'jg-dashboard-mode)
+    (user-error "Open the dashboard first with M-x jg-dashboard-open"))
+  (unless (memq effect '(nil snow rain stars))
+    (user-error "Unknown dashboard effect: %s" effect))
+  (jg-dashboard--stop-effect)
+  (setq-local jg-dashboard-effect effect
+              jg-dashboard--effect-frame 0)
+  (jg-dashboard--render))
+
+(defun jg-dashboard-toggle-snow ()
+  "Toggle falling snow in the current dashboard without fetching weather."
+  (interactive)
+  (jg-dashboard-select-effect (unless (eq jg-dashboard-effect 'snow) 'snow)))
+
 (defun jg-dashboard--render ()
   "Redraw the dashboard without changing the user's selected buffer/window."
   (when-let* ((buffer (get-buffer jg-dashboard--buffer-name)))
@@ -235,10 +379,12 @@ No quote service is contacted.  Add your own quotes here."
              (today (jg-dashboard--today))
              (window (or (get-buffer-window buffer t) (selected-window)))
              (width (max 28 (min 86 (- (window-body-width window) 4)))))
+        (jg-dashboard--clear-effect-overlays)
         (erase-buffer)
         (insert (propertize "A little perspective" 'face 'jg-dashboard-title) "\n")
         (insert (propertize (format-time-string "%A, %d %B %Y" (jg-dashboard--date-time today))
                             'face 'shadow) "\n\n")
+        (jg-dashboard--insert-effect)
         (jg-dashboard--heading "Today's weather")
         (jg-dashboard--insert-weather)
         (jg-dashboard--heading "Weekly menu")
@@ -251,9 +397,15 @@ No quote service is contacted.  Add your own quotes here."
           (insert-text-button (car action) 'follow-link t
                               'action (lambda (_button) (call-interactively (cdr action))))
           (insert "   "))
-        (insert (propertize "\n\ng refresh · c customize · q close" 'face 'shadow) "\n")
+        (insert-text-button (format "Effects: %s" (or jg-dashboard-effect 'off))
+                            'follow-link t
+                            'action (lambda (_button)
+                                      (call-interactively #'jg-dashboard-select-effect)))
+        (insert (propertize "\n\ng refresh · s snow · e effects · c customize · q close"
+                            'face 'shadow) "\n")
         (goto-char (min old-point (point-max)))
-        (set-buffer-modified-p nil)))))
+        (set-buffer-modified-p nil)
+        (jg-dashboard--sync-effect)))))
 
 (defun jg-dashboard--parse-weather (key)
   "Parse the current HTTP response buffer into weather for KEY.
@@ -370,7 +522,8 @@ never duplicates an in-flight request for the same location, units, and day."
     (jg-dashboard-refresh)))
 
 (defun jg-dashboard--cleanup ()
-  "Release dashboard timers and network requests on buffer deletion."
+  "Release dashboard timers, visual effects, and network requests."
+  (jg-dashboard--stop-effect)
   (when (timerp jg-dashboard--timer) (cancel-timer jg-dashboard--timer))
   (setq jg-dashboard--timer nil)
   (jg-dashboard--cancel-request))
@@ -380,16 +533,21 @@ never duplicates an in-flight request for the same location, units, and day."
     (set-keymap-parent map special-mode-map)
     (define-key map (kbd "g") #'jg-dashboard-refresh)
     (define-key map (kbd "c") #'jg-dashboard-customize)
+    (define-key map (kbd "s") #'jg-dashboard-toggle-snow)
+    (define-key map (kbd "e") #'jg-dashboard-select-effect)
     (define-key map (kbd "TAB") #'forward-button)
     (define-key map (kbd "<backtab>") #'backward-button)
     map))
 
 (define-derived-mode jg-dashboard-mode special-mode "Dashboard"
-  "Read-only daily dashboard.  Press g to refresh, c to configure, q to close."
+  "Read-only dashboard.  Use g to refresh, s for snow, e for effects, q to close."
   (setq-local cursor-type nil
               truncate-lines nil
               display-line-numbers nil)
   (add-hook 'kill-buffer-hook #'jg-dashboard--cleanup nil t)
+  (add-hook 'change-major-mode-hook #'jg-dashboard--cleanup nil t)
+  (add-hook 'window-buffer-change-functions #'jg-dashboard--sync-effect nil t)
+  (add-hook 'window-size-change-functions #'jg-dashboard--sync-effect nil t)
   (unless (timerp jg-dashboard--timer)
     (setq jg-dashboard--timer (run-at-time 60 60 #'jg-dashboard--tick))))
 
@@ -408,7 +566,7 @@ never duplicates an in-flight request for the same location, units, and day."
   (jg-dashboard--render))
 
 (defun jg-dashboard-customize ()
-  "Configure the menu source, weather location and units, or daily quotes."
+  "Configure meals, weather, daily quotes, and default decorative effects."
   (interactive)
   (customize-group 'jg-dashboard))
 

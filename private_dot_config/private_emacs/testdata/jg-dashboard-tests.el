@@ -14,6 +14,10 @@
          (jg-dashboard--weather-error nil)
          (jg-dashboard--weather-request nil)
          (jg-dashboard--timer nil)
+         (jg-dashboard-effect nil)
+         (jg-dashboard-effect-interval 0.15)
+         (jg-dashboard-effect-height 5)
+         (jg-dashboard-effect-particles 24)
          (jg-dashboard-weather-location nil)
          (jg-dashboard-weather-units 'celsius)
          (jg-dashboard-weather-cache-seconds 1800)
@@ -354,5 +358,226 @@
             (should (eq initial-buffer-choice #'jg-dashboard-buffer))
             (should (buffer-live-p (funcall initial-buffer-choice))))
         (use-global-map original-map)))))
+
+(ert-deftest jg-dashboard-test-effects-off-by-default ()
+  (jg-dashboard-test--with-dashboard
+    (with-current-buffer (jg-dashboard-buffer)
+      (should-not jg-dashboard-effect)
+      (should-not jg-dashboard--effect-timer)
+      (should-not jg-dashboard--effect-overlays)
+      (should-not jg-dashboard--effect-rows)
+      (should (string-match-p "Effects: off" (buffer-string)))
+      (should (eq (lookup-key jg-dashboard-mode-map (kbd "s")) #'jg-dashboard-toggle-snow))
+      (should (eq (lookup-key jg-dashboard-mode-map (kbd "e")) #'jg-dashboard-select-effect)))))
+
+(ert-deftest jg-dashboard-test-snow-animates-without-editing-or-fetching ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (jg-dashboard-toggle-snow)
+      (should (eq jg-dashboard-effect 'snow))
+      (should (timerp jg-dashboard--effect-timer))
+      (should (= 5 (length jg-dashboard--effect-overlays)))
+      (should (string-match-p "Effects: snow" (buffer-string)))
+      (let ((text (buffer-string))
+            (position (point))
+            (window (selected-window))
+            (pictures (mapcar (lambda (overlay) (overlay-get overlay 'display))
+                              jg-dashboard--effect-overlays)))
+        (jg-dashboard--effect-tick (current-buffer))
+        (should (equal text (buffer-string)))
+        (should (= position (point)))
+        (should (eq window (selected-window)))
+        (should buffer-read-only)
+        (should-not (buffer-modified-p))
+        (should-not (equal pictures
+                           (mapcar (lambda (overlay) (overlay-get overlay 'display))
+                                   jg-dashboard--effect-overlays)))
+        (should-not jobs)))))
+
+(ert-deftest jg-dashboard-test-snow-toggle-removes-owned-effects ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (let ((other-overlay (make-overlay (point-min) (1+ (point-min)))))
+        (unwind-protect
+            (progn
+              (jg-dashboard-toggle-snow)
+              (let ((timer jg-dashboard--effect-timer)
+                    (overlays jg-dashboard--effect-overlays))
+                (jg-dashboard-toggle-snow)
+                (should-not jg-dashboard-effect)
+                (should-not jg-dashboard--effect-timer)
+                (should-not (memq timer timer-list))
+                (should-not jg-dashboard--effect-rows)
+                (should-not jg-dashboard--effect-overlays)
+                (should (cl-every (lambda (overlay) (null (overlay-buffer overlay))) overlays))
+                (should (overlay-buffer other-overlay))
+                (should (string-match-p "Weekly menu" (buffer-string)))))
+          (delete-overlay other-overlay))))))
+
+(ert-deftest jg-dashboard-test-select-rain-stars-and-off ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (dolist (effect '(rain stars snow))
+        (jg-dashboard-select-effect effect)
+        (should (eq jg-dashboard-effect effect))
+        (should (timerp jg-dashboard--effect-timer))
+        (should (= 5 (length jg-dashboard--effect-overlays)))
+        (jg-dashboard--effect-tick (current-buffer)))
+      (jg-dashboard-select-effect nil)
+      (should-not jg-dashboard--effect-overlays)
+      (should-not jg-dashboard--effect-timer)
+      (should-error (jg-dashboard-select-effect 'unknown) :type 'user-error)
+      (should-not jg-dashboard-effect))))
+
+(ert-deftest jg-dashboard-test-effect-picker-and-button ()
+  (jg-dashboard-test--with-dashboard
+    (with-current-buffer (jg-dashboard-buffer)
+      (cl-letf (((symbol-function 'completing-read) (lambda (&rest _) "snow")))
+        (goto-char (point-min))
+        (search-forward "Effects: off")
+        (button-activate (button-at (1- (point)))))
+      (should (eq jg-dashboard-effect 'snow))
+      (cl-letf (((symbol-function 'completing-read) (lambda (&rest _) "off")))
+        (call-interactively #'jg-dashboard-select-effect))
+      (should-not jg-dashboard-effect))))
+
+(ert-deftest jg-dashboard-test-effect-default-and-local-choice ()
+  (jg-dashboard-test--with-dashboard
+    (setq jg-dashboard-effect 'rain)
+    (with-current-buffer (jg-dashboard-buffer)
+      (should (eq jg-dashboard-effect 'rain))
+      (should-not jg-dashboard--effect-timer)
+      (jg-dashboard-toggle-snow)
+      (should (eq jg-dashboard-effect 'snow))
+      (should (local-variable-p 'jg-dashboard-effect)))
+    (should (eq jg-dashboard-effect 'rain))
+    (kill-buffer (get-buffer jg-dashboard--buffer-name))
+    (with-current-buffer (jg-dashboard-buffer)
+      (should (eq jg-dashboard-effect 'rain)))))
+
+(ert-deftest jg-dashboard-test-hidden-effects-pause-and-resume ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (let ((dashboard (jg-dashboard-buffer))
+            (editor (current-buffer)))
+        (switch-to-buffer dashboard)
+        (jg-dashboard-toggle-snow)
+        (let ((timer jg-dashboard--effect-timer)
+              (frame jg-dashboard--effect-frame))
+          (switch-to-buffer editor)
+          (jg-dashboard--effect-tick dashboard)
+          (with-current-buffer dashboard
+            (should-not jg-dashboard--effect-timer)
+            (should-not (memq timer timer-list))
+            (should-not jg-dashboard--effect-overlays)
+            (should (= frame jg-dashboard--effect-frame))
+            (should (eq jg-dashboard-effect 'snow)))
+          (switch-to-buffer dashboard)
+          ;; Batch Emacs has no redisplay loop to dispatch the window hook.
+          (run-hook-with-args 'window-buffer-change-functions (selected-window))
+          (should (timerp jg-dashboard--effect-timer))
+          (should (= 5 (length jg-dashboard--effect-overlays)))
+          (jg-dashboard--effect-tick dashboard)
+          (should (> jg-dashboard--effect-frame frame)))))))
+
+(ert-deftest jg-dashboard-test-effect-refresh-rebuilds-anchors-without-timer-leak ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (jg-dashboard-toggle-snow)
+      (let ((timer jg-dashboard--effect-timer)
+            (overlays jg-dashboard--effect-overlays))
+        (jg-dashboard-refresh)
+        (should (eq timer jg-dashboard--effect-timer))
+        (should (cl-every (lambda (overlay) (null (overlay-buffer overlay))) overlays))
+        (should (= 5 (length jg-dashboard--effect-overlays)))
+        (dolist (marker jg-dashboard--effect-rows)
+          (should (eq (char-after marker) ?\s)))
+        (should (string-match-p "To be confirmed" (buffer-string)))))))
+
+(ert-deftest jg-dashboard-test-effect-overlays-are-window-specific ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (let ((first (selected-window))
+            (second (split-window-right)))
+        (set-window-buffer second (current-buffer))
+        (jg-dashboard-toggle-snow)
+        (should (= 10 (length jg-dashboard--effect-overlays)))
+        (should (eq first (selected-window)))
+        (dolist (window (list first second))
+          (let ((overlays (cl-remove-if-not
+                           (lambda (overlay) (eq (overlay-get overlay 'window) window))
+                           jg-dashboard--effect-overlays)))
+            (should (= 5 (length overlays)))
+            (dolist (overlay overlays)
+              (should (= (string-width (overlay-get overlay 'display))
+                         (max 1 (min 86 (- (window-body-width window) 4))))))))))))
+
+(ert-deftest jg-dashboard-test-effect-kill-and-mode-change-cleanup ()
+  (jg-dashboard-test--with-dashboard
+    (save-window-excursion
+      (dolist (finish '(kill-buffer fundamental-mode))
+        (switch-to-buffer (jg-dashboard-buffer))
+        (jg-dashboard-toggle-snow)
+        (let ((timer jg-dashboard--effect-timer)
+              (overlays jg-dashboard--effect-overlays))
+          (funcall finish)
+          (should-not (memq timer timer-list))
+          (should (cl-every (lambda (overlay) (null (overlay-buffer overlay))) overlays)))))))
+
+(ert-deftest jg-dashboard-test-effect-settings-are-bounded ()
+  (jg-dashboard-test--with-dashboard
+    (setq jg-dashboard-effect-height 100
+          jg-dashboard-effect-particles 10000
+          jg-dashboard-effect-interval -1)
+    (save-window-excursion
+      (switch-to-buffer (jg-dashboard-buffer))
+      (jg-dashboard-toggle-snow)
+      (should (= 10 (length jg-dashboard--effect-rows)))
+      (should (= 0.05 jg-dashboard--effect-timer-interval))
+      (setq jg-dashboard-effect-particles 0)
+      (jg-dashboard--effect-tick (current-buffer))
+      (should (cl-every
+               (lambda (overlay) (string-match-p "\\` +\\'" (overlay-get overlay 'display)))
+               jg-dashboard--effect-overlays)))))
+
+(ert-deftest jg-dashboard-test-effect-commands-require-dashboard ()
+  (jg-dashboard-test--with-dashboard
+    (should-error (jg-dashboard-toggle-snow) :type 'user-error)
+    (should-not (get-buffer jg-dashboard--buffer-name))))
+
+(defun jg-dashboard-test--wait-for (predicate)
+  "Wait up to two seconds for PREDICATE while running real GUI redisplay."
+  (let ((deadline (+ (float-time) 2)))
+    (while (and (not (funcall predicate)) (< (float-time) deadline))
+      (redisplay t)
+      (sit-for 0.02))
+    (should (funcall predicate))))
+
+(ert-deftest jg-dashboard-test-live-animation-and-window-hooks ()
+  (skip-unless (display-graphic-p))
+  (jg-dashboard-test--with-dashboard
+    (let ((noninteractive nil)
+          (jg-dashboard-effect-interval 0.05))
+      (save-window-excursion
+        (let ((dashboard (jg-dashboard-buffer))
+              (editor (current-buffer)))
+          (switch-to-buffer dashboard)
+          (jg-dashboard-toggle-snow)
+          (jg-dashboard-test--wait-for (lambda () (> jg-dashboard--effect-frame 1)))
+          (should (= 5 (length jg-dashboard--effect-overlays)))
+          (switch-to-buffer editor)
+          (jg-dashboard-test--wait-for
+           (lambda () (null (buffer-local-value 'jg-dashboard--effect-timer dashboard))))
+          (let ((frame (buffer-local-value 'jg-dashboard--effect-frame dashboard)))
+            (switch-to-buffer dashboard)
+            ;; Resumption must come from real redisplay hooks, not a manual sync.
+            (jg-dashboard-test--wait-for (lambda () (> jg-dashboard--effect-frame frame)))
+            (should (timerp jg-dashboard--effect-timer))
+            (should (= 5 (length jg-dashboard--effect-overlays)))))))))
 
 ;;; jg-dashboard-tests.el ends here
