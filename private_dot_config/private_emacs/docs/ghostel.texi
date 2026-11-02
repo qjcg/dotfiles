@@ -170,6 +170,35 @@ remains available outside char mode.
 
 GPTel remains on @kbd{C-c SPC SPC}; its old @kbd{C-`} binding is removed.
 
+@section Opening Files and Directories From Bash
+@cindex shell aliases
+@cindex find-file from Bash
+@cindex dired from Bash
+
+In Ghostel Bash sessions, @command{f} opens a file in Emacs and @command{d}
+opens Dired.  Quote paths as usual:
+
+@example
+f "notes file.txt"
+d "path/to/directory"
+@end example
+
+The aliases use Ghostel's whitelisted shell-command bridge.  Normal
+startup auto-injects @code{ghostel_cmd} after loading Bash configuration.
+Nested or restarted Bash shells may inherit the Ghostel environment
+without that function; the aliases then load the bundled integration from
+@env{EMACS_GHOSTEL_PATH} on first use.  This preserves normal startup's
+prompt-hook ordering and uses upstream argument escaping rather than a
+second implementation of its protocol.  Vterm keeps its own bridge;
+other shells are unchanged.
+
+After applying an updated alias module, refresh an existing Ghostel shell
+without restarting Emacs:
+
+@example
+source ~/.bash_profile.d/99-emacs-ghostel.sh
+@end example
+
 @node Tests
 @chapter Tests
 @cindex tests
@@ -193,7 +222,19 @@ and keymaps.  Multi-frame tests are skipped in headless batch mode.
 tests in an isolated Xvfb display, including multiple frames and native
 line-mode entry.  It requires @command{xvfb-run}, @command{xauth}, and a
 working installed Ghostel native module.  Neither task loads or changes
-the running Emacs configuration.
+the running Emacs configuration.  The native tests also open real files
+and Dired through @command{f} and @command{d} after restarting Bash.
+
+For shell-module tests with Ghostel's actual installed integration:
+
+@example
+task -d ../../_tests test-shell-bridge
+@end example
+
+These tests cover lazy loading, both module load orders, argument escaping,
+and preservation of vterm and unrelated shells.  Set @env{GHOSTEL_DIR} to
+a Ghostel resource directory when it is not installed in the usual Emacs
+package directory.
 
 @code{test-info} exercises the real chezmoi installer in a temporary source
 and destination, including unchanged applies, source changes, deleted output,

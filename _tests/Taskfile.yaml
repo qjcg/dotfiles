@@ -3,4 +3,9 @@ version: '3'
 tasks:
   default: [{task: build}]
 
+  test-shell-bridge:
+    desc: Test Ghostel and vterm Bash aliases with installed shell integration
+    cmds:
+      - python3 "{{.TASKFILE_DIR}}/test_emacs_shell_bridge.py"
+
   build: docker build -f Dockerfile.alpine -t qjcg/dotfiles-alpine:latest .
