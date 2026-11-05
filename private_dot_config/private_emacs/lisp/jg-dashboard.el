@@ -15,6 +15,7 @@
 (require 'subr-x)
 (require 'url)
 (require 'url-http)
+(require 'jg-dashboard-panels)
 
 ;; url-http creates these buffer-local variables dynamically in responses.
 (defvar url-http-response-status)
@@ -61,7 +62,7 @@ No quote service is contacted.  Add your own quotes here."
 
 (defcustom jg-dashboard-effect nil
   "Default decorative animation: nil, snow, rain, or stars.
-Effects occupy a strip above the widgets, leaving their content readable.
+Effects occupy their own movable panel, leaving widget content readable.
 Press s to toggle snow or e to choose an effect.  Interactive choices are
 buffer-local and last until the dashboard is killed; Customize saves the
 default for future dashboard buffers.  Hidden dashboards pause animation."
@@ -109,6 +110,7 @@ Larger values make animations slower and reduce redisplay work."
 (defvar-local jg-dashboard--effect-rows nil
   "Markers for the single-space anchors in the decorative strip.")
 (defvar-local jg-dashboard--effect-overlays nil)
+(defvar-local jg-dashboard--effect-width nil)
 (cl-defstruct (jg-dashboard--request (:constructor jg-dashboard--make-request))
   key buffer timer)
 
@@ -155,10 +157,6 @@ Larger values make animations slower and reduce redisplay work."
       (fill-region (point-min) (point-max)))
     (split-string (buffer-string) "\n")))
 
-(defun jg-dashboard--heading (text)
-  "Insert a section heading containing TEXT."
-  (insert (propertize text 'face 'jg-dashboard-heading) "\n\n"))
-
 (defun jg-dashboard--insert-menu (today width)
   "Insert the week containing TODAY, fitting approximately WIDTH columns."
   (let* ((week (jg-dashboard--week today))
@@ -185,7 +183,7 @@ Larger values make animations slower and reduce redisplay work."
                        (insert
                         (if (= row 0)
                             (propertize (format "%-12s" label)
-                                        'face (if (equal date today) 'jg-dashboard-today 'default))
+                                        'face (when (equal date today) 'jg-dashboard-today))
                           (make-string 12 ?\s))
                         (format (format "  %%-%ds  %%s\n" column-width)
                                 (or (nth row breakfast) "") (or (nth row lunch) "")))))))
@@ -270,16 +268,14 @@ Larger values make animations slower and reduce redisplay work."
         jg-dashboard--effect-timer-interval nil)
   (jg-dashboard--clear-effect-overlays))
 
-(defun jg-dashboard--insert-effect ()
-  "Insert fixed-height animation anchors when an effect is enabled."
+(defun jg-dashboard--bind-effect-panel ()
+  "Bind animation overlays to the rendered atmosphere panel's interior."
   (mapc (lambda (marker) (set-marker marker nil)) jg-dashboard--effect-rows)
-  (setq jg-dashboard--effect-rows nil)
-  (when (memq jg-dashboard-effect '(snow rain stars))
-    (dotimes (_ (max 1 (min 10 jg-dashboard-effect-height)))
-      (push (copy-marker (point)) jg-dashboard--effect-rows)
-      (insert " \n"))
-    (setq jg-dashboard--effect-rows (nreverse jg-dashboard--effect-rows))
-    (insert "\n")))
+  (setq jg-dashboard--effect-rows nil
+        jg-dashboard--effect-width nil)
+  (when-let* ((content (jg-dashboard-panels-content 'effects)))
+    (setq jg-dashboard--effect-width (car content)
+          jg-dashboard--effect-rows (mapcar #'copy-marker (cdr content)))))
 
 (defun jg-dashboard--effect-windows ()
   "Return live dashboard windows on visible frames."
@@ -314,13 +310,13 @@ ASCII particles work in both terminal and graphical Emacs."
 No buffer text, buttons, point, or weather data are changed by animation."
   (jg-dashboard--clear-effect-overlays)
   (dolist (window windows)
-    (let* ((width (max 1 (min 86 (- (window-body-width window) 4))))
+    (let* ((width jg-dashboard--effect-width)
            (picture (jg-dashboard--effect-picture width)))
       (cl-mapc
        (lambda (marker row)
-         (let ((overlay (make-overlay marker (1+ (marker-position marker)))))
+         (let ((overlay (make-overlay marker (+ width (marker-position marker)))))
            (overlay-put overlay 'window window)
-           (overlay-put overlay 'display (propertize row 'face 'jg-dashboard-effect))
+           (overlay-put overlay 'display (propertize row 'face '(jg-dashboard-effect fixed-pitch)))
            (push overlay jg-dashboard--effect-overlays)))
        jg-dashboard--effect-rows picture))))
 
@@ -370,42 +366,80 @@ No buffer text, buttons, point, or weather data are changed by animation."
   (interactive)
   (jg-dashboard-select-effect (unless (eq jg-dashboard-effect 'snow) 'snow)))
 
+(defun jg-dashboard--panel-text (kind today width)
+  "Return the widget of KIND for TODAY as text fitting WIDTH columns."
+  (with-temp-buffer
+    (pcase kind
+      ('weather (jg-dashboard--insert-weather))
+      ('menu (jg-dashboard--insert-menu today width))
+      ('quote (jg-dashboard--insert-quote today width))
+      ('effects (dotimes (_ (max 1 (min 10 jg-dashboard-effect-height))) (insert " \n"))))
+    (buffer-string)))
+
 (defun jg-dashboard--render ()
-  "Redraw the dashboard without changing the user's selected buffer/window."
+  "Redraw movable panels without fetching data or changing selected windows."
   (when-let* ((buffer (get-buffer jg-dashboard--buffer-name)))
     (with-current-buffer buffer
-      (let* ((inhibit-read-only t)
-             (old-point (point))
-             (today (jg-dashboard--today))
-             (window (or (get-buffer-window buffer t) (selected-window)))
-             (width (max 28 (min 86 (- (window-body-width window) 4)))))
-        (jg-dashboard--clear-effect-overlays)
-        (erase-buffer)
-        (insert (propertize "A little perspective" 'face 'jg-dashboard-title) "\n")
-        (insert (propertize (format-time-string "%A, %d %B %Y" (jg-dashboard--date-time today))
-                            'face 'shadow) "\n\n")
-        (jg-dashboard--insert-effect)
-        (jg-dashboard--heading "Today's weather")
-        (jg-dashboard--insert-weather)
-        (jg-dashboard--heading "Weekly menu")
-        (jg-dashboard--insert-menu today width)
-        (jg-dashboard--heading "A thought for today")
-        (jg-dashboard--insert-quote today width)
-        (dolist (action '(("Refresh" . jg-dashboard-refresh)
-                          ("Customize" . jg-dashboard-customize)
-                          ("Close" . quit-window)))
-          (insert-text-button (car action) 'follow-link t
-                              'action (lambda (_button) (call-interactively (cdr action))))
-          (insert "   "))
-        (insert-text-button (format "Effects: %s" (or jg-dashboard-effect 'off))
-                            'follow-link t
-                            'action (lambda (_button)
-                                      (call-interactively #'jg-dashboard-select-effect)))
-        (insert (propertize "\n\ng refresh · s snow · e effects · c customize · q close"
-                            'face 'shadow) "\n")
-        (goto-char (min old-point (point-max)))
-        (set-buffer-modified-p nil)
-        (jg-dashboard--sync-effect)))))
+      ;; A weather callback may update its cache while a mouse drag is active.
+      ;; Defer its redraw until the drop/cancel, keeping event positions stable.
+      (unless jg-dashboard-panels-dragging
+        (let* ((inhibit-read-only t)
+               (old-point (point))
+               (today (jg-dashboard--today))
+               (windows (or (jg-dashboard--effect-windows) (list (selected-window))))
+               (width (max 20 (- (apply #'min
+                                       (mapcar (lambda (window)
+                                                 (window-max-chars-per-line window 'fixed-pitch))
+                                               windows)) 4)))
+               (effect jg-dashboard-effect)
+               (specs
+                (mapcar
+                 (lambda (spec)
+                   (let ((kind (car spec)))
+                     (append (cdr spec)
+                             (list :id kind :render
+                                   (lambda (inner-width)
+                                     ;; Widget rendering occurs in temporary buffers.
+                                     (let ((jg-dashboard-effect effect))
+                                       (jg-dashboard--panel-text kind today inner-width)))))))
+                 (append (when (memq effect '(snow rain stars))
+                           '((effects :title "Atmosphere" :x 0 :y 0 :width 88)))
+                         '((weather :title "Today's weather" :x 0 :y 0 :width 60)
+                           (quote :title "A thought for today" :x 64 :y 0 :width 44)
+                           (menu :title "Weekly menu" :x 0 :y 10 :width 88))))))
+          (jg-dashboard--clear-effect-overlays)
+          (erase-buffer)
+          (insert (propertize "A little perspective" 'face 'jg-dashboard-title) "\n")
+          (insert (propertize (format-time-string "%A, %d %B %Y" (jg-dashboard--date-time today))
+                              'face 'shadow) "\n\n")
+          (jg-dashboard-panels-render specs width)
+          (jg-dashboard--bind-effect-panel)
+          (dolist (action '(("Refresh" . jg-dashboard-refresh)
+                            ("Customize" . jg-dashboard-customize)
+                            ("Close" . quit-window)
+                            ("Save layout" . jg-dashboard-panels-save)
+                            ("Reset layout" . jg-dashboard-panels-reset)))
+            (when (> (+ (current-column) (length (car action)) 3) width) (insert "\n"))
+            (insert-text-button (car action) 'follow-link t
+                                'action (lambda (_button) (call-interactively (cdr action))))
+            (insert "   "))
+          (when (> (+ (current-column) (length (format "Effects: %s" (or effect 'off)))) width)
+            (insert "\n"))
+          (insert-text-button (format "Effects: %s" (or effect 'off))
+                              'follow-link t
+                              'action (lambda (_button)
+                                        (call-interactively #'jg-dashboard-select-effect)))
+          (insert (propertize "\n\nDrag panel titles · M-arrows move\nS save layout · R reset\n"
+                              'face 'shadow))
+          (insert (propertize "g refresh · s snow · e effects\nc customize · q close"
+                              'face 'shadow) "\n")
+          (goto-char (min old-point (point-max)))
+          (set-buffer-modified-p nil)
+          (jg-dashboard--sync-effect))))))
+
+(defun jg-dashboard--window-change (&optional _window)
+  "Reflow panels and resume effects after dashboard window/size changes."
+  (when (derived-mode-p 'jg-dashboard-mode) (jg-dashboard--render)))
 
 (defun jg-dashboard--parse-weather (key)
   "Parse the current HTTP response buffer into weather for KEY.
@@ -535,19 +569,27 @@ never duplicates an in-flight request for the same location, units, and day."
     (define-key map (kbd "c") #'jg-dashboard-customize)
     (define-key map (kbd "s") #'jg-dashboard-toggle-snow)
     (define-key map (kbd "e") #'jg-dashboard-select-effect)
+    (define-key map (kbd "M-<left>") #'jg-dashboard-panels-left)
+    (define-key map (kbd "M-<right>") #'jg-dashboard-panels-right)
+    (define-key map (kbd "M-<up>") #'jg-dashboard-panels-up)
+    (define-key map (kbd "M-<down>") #'jg-dashboard-panels-down)
+    (define-key map (kbd "S") #'jg-dashboard-panels-save)
+    (define-key map (kbd "R") #'jg-dashboard-panels-reset)
     (define-key map (kbd "TAB") #'forward-button)
     (define-key map (kbd "<backtab>") #'backward-button)
     map))
 
 (define-derived-mode jg-dashboard-mode special-mode "Dashboard"
-  "Read-only dashboard.  Use g to refresh, s for snow, e for effects, q to close."
+  "Movable panels.  Drag titles or use M-arrows; S saves and R resets layout.
+Use g to refresh, s for snow, e for effects, and q to close."
   (setq-local cursor-type nil
-              truncate-lines nil
-              display-line-numbers nil)
+              truncate-lines t
+              display-line-numbers nil
+              jg-dashboard-panels-redraw-function #'jg-dashboard--render)
   (add-hook 'kill-buffer-hook #'jg-dashboard--cleanup nil t)
   (add-hook 'change-major-mode-hook #'jg-dashboard--cleanup nil t)
-  (add-hook 'window-buffer-change-functions #'jg-dashboard--sync-effect nil t)
-  (add-hook 'window-size-change-functions #'jg-dashboard--sync-effect nil t)
+  (add-hook 'window-buffer-change-functions #'jg-dashboard--window-change nil t)
+  (add-hook 'window-size-change-functions #'jg-dashboard--window-change nil t)
   (unless (timerp jg-dashboard--timer)
     (setq jg-dashboard--timer (run-at-time 60 60 #'jg-dashboard--tick))))
 

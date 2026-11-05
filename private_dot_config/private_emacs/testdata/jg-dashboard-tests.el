@@ -15,6 +15,8 @@
          (jg-dashboard--weather-request nil)
          (jg-dashboard--timer nil)
          (jg-dashboard-effect nil)
+         (jg-dashboard-panel-layout nil)
+         (jg-dashboard-panel-grid '(4 . 2))
          (jg-dashboard-effect-interval 0.15)
          (jg-dashboard-effect-height 5)
          (jg-dashboard-effect-particles 24)
@@ -104,12 +106,12 @@
     (setq jg-dashboard-menu-function
           (lambda (_)
             '(("2026-11-04" . (:breakfast "Fruit toast and a cup of tea with honey" :lunch "Soup")))))
-    (cl-letf (((symbol-function 'window-body-width) (lambda (&rest _) 44)))
+    (cl-letf (((symbol-function 'window-max-chars-per-line) (lambda (&rest _) 44)))
       (jg-dashboard-buffer)
       (let ((text (jg-dashboard-test--body)))
         (should (string-match-p "Wednesday 04 Nov" text))
         (should (string-match-p "Breakfast: Fruit toast and a cup" text))
-        (should (string-match-p "\n             tea with honey" text))
+        (should (string-match-p "of tea with honey" text))
         (should (string-match-p "Lunch: Soup" text))))))
 
 (ert-deftest jg-dashboard-test-buffer-is-read-only-and-does-not-steal-focus ()
@@ -126,7 +128,7 @@
         (should (eq (lookup-key jg-dashboard-mode-map (kbd "g")) #'jg-dashboard-refresh))
         (goto-char (point-min))
         (search-forward "Wed 04 Nov")
-        (should (eq (get-text-property (1- (point)) 'face) 'jg-dashboard-today))))))
+        (should (memq 'jg-dashboard-today (get-text-property (1- (point)) 'face)))))))
 
 (ert-deftest jg-dashboard-test-quote-stable-per-day-and-rotates ()
   (jg-dashboard-test--with-dashboard
@@ -515,7 +517,7 @@
             (should (= 5 (length overlays)))
             (dolist (overlay overlays)
               (should (= (string-width (overlay-get overlay 'display))
-                         (max 1 (min 86 (- (window-body-width window) 4))))))))))))
+                         jg-dashboard--effect-width)))))))))
 
 (ert-deftest jg-dashboard-test-effect-kill-and-mode-change-cleanup ()
   (jg-dashboard-test--with-dashboard

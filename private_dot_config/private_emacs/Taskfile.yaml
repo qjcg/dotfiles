@@ -13,15 +13,17 @@ tasks:
         {{.EMACS}} --batch -Q
         --directory "{{.TASKFILE_DIR}}/lisp"
         --load "{{.TASKFILE_DIR}}/testdata/jg-dashboard-tests.el"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-dashboard-panel-tests.el"
         --funcall ert-run-tests-batch-and-exit
 
   test-dashboard-gui:
     desc: Test dashboard overlays, live animation, and redisplay hooks in Xvfb
     cmds:
       - >
-        xvfb-run -a {{.EMACS}} -Q
+        JG_DASHBOARD_TEST_X11=1 xvfb-run -a {{.EMACS}} -Q
         --directory "{{.TASKFILE_DIR}}/lisp"
         --load "{{.TASKFILE_DIR}}/testdata/jg-dashboard-tests.el"
+        --load "{{.TASKFILE_DIR}}/testdata/jg-dashboard-panel-tests.el"
         --load "{{.TASKFILE_DIR}}/testdata/run-dashboard-gui-tests.el"
 
   test-info:
