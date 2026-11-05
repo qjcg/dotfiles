@@ -32,6 +32,7 @@
 (use-package slideboom-watch-mode :if (locate-library "slideboom-watch-mode"))
 (use-package slideboom-mode :if (locate-library "slideboom-mode"))
 
+(use-package emureader :ensure :pin gnu)
 (use-package todotxt-mode :ensure)
 (use-package pdf-tools :ensure :pin nongnu)
 (use-package life-calendar :ensure :pin melpa-stable)
