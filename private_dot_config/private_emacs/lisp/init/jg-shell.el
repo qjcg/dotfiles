@@ -50,5 +50,17 @@
   (require 'jg-ghostel)
   (add-to-list 'ghostel-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
 
+(use-package consult-ghostel
+  :ensure
+  :pin melpa-stable
+  :after (ghostel consult)
+  :demand t
+  :config (consult-ghostel-mode)
+  :bind (("C-x m" . consult-ghostel)
+         :map project-prefix-map
+         ("m" . consult-ghostel-project)
+         :map ghostel-semi-char-mode-map
+         ("C-c h" . consult-ghostel-history)))
+
 (provide 'jg-shell)
 ;;; jg-shell.el ends here
