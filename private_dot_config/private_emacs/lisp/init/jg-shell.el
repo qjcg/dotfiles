@@ -44,14 +44,6 @@
 
 (use-package transient :ensure :pin gnu)
 
-(use-package vterm
-  :ensure
-  :bind (:map vterm-mode-map
-	      ("C-l" . vterm-clear))
-  :config
-  (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
-  (add-to-list 'vterm-eval-cmds '("dired" dired)))
-
 (use-package ghostel
   :ensure :pin melpa-stable :demand t
   :config
