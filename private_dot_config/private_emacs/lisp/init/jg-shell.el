@@ -50,6 +50,21 @@
   (require 'jg-ghostel)
   (add-to-list 'ghostel-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
 
+(use-package ghostel-eshell
+  :hook (eshell-load . ghostel-eshell-visual-command-mode))
+
+(use-package ghostel-compile
+  :hook (after-init . ghostel-compile-global-mode))
+
+(use-package ghostel-shell-command
+  :hook (after-init . ghostel-shell-command-global-mode))
+
+(use-package ghostel-comint
+  :hook (after-init . ghostel-comint-global-mode))
+
+(use-package ghostel-org
+  :after org)
+
 (use-package consult-ghostel
   :ensure
   :pin melpa-stable
