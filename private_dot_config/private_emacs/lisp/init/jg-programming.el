@@ -55,6 +55,16 @@
     (when (and (fboundp #'treesit-ready-p) (treesit-ready-p 'dockerfile))
       (add-to-list 'major-mode-remap-alist '(dockerfile-mode . dockerfile-ts-mode)))))
 
+(use-package kele
+  :ensure
+  :pin melpa-stable
+  :config
+  (kele-mode 1))
+
+(use-package kubel
+  :ensure
+  :pin melpa-stable)
+
 (use-package eglot
   :hook ((go-mode go-ts-mode) . eglot-ensure)
   :config
