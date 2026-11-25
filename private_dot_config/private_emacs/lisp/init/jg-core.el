@@ -19,7 +19,7 @@
 				    (jg-ghostel-project "Ghostel" ?t)
 				    (magit "Magit" ?m)
 				    (magit-log-all-branches "Magit Log (all branches)" ?l)
-				    (agent-shell-anthropic-start-claude-code "Agent Shell (Claude)" ?c)
+				    (agent-shell-pi-start-agent "Agent Shell (Pi)" ?a)
 				    (project-any-command "Other")))
   (setopt custom-file (expand-file-name "var/custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
