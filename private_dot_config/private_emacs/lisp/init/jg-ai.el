@@ -167,7 +167,16 @@ house.")
   (mcp-server-socket-directory (expand-file-name "var/" user-emacs-directory))
   )
 
-(use-package agent-shell :ensure :pin melpa-stable)
+(use-package agent-shell
+  :ensure
+  :pin melpa-stable
+  :hook ((agent-shell-mode agent-shell-viewport-edit-mode)
+         . jg-agent-shell-use-consult-completion)
+  :init
+  (defun jg-agent-shell-use-consult-completion ()
+    (setq-local completion-in-region-function
+                #'consult-completion-in-region)))
+
 (use-package shell-maker :ensure :pin melpa-stable)
 (use-package acp :ensure :pin melpa-stable)
 
