@@ -167,15 +167,37 @@ house.")
   (mcp-server-socket-directory (expand-file-name "var/" user-emacs-directory))
   )
 
+(defvar agent-shell-preferred-agent-config)
+
 (use-package agent-shell
   :ensure
   :pin melpa-stable
+  :bind (("C-c a b" . agent-shell-switch-buffer)
+         ("C-c a n" . agent-shell-pi-start-agent)
+         ("C-c a N" . agent-shell-new-shell)
+         ("C-c a w" . jg-agent-shell-new-pi-worktree)
+         ("C-c a t" . jg-agent-shell-new-pi-temp))
   :hook ((agent-shell-mode agent-shell-viewport-edit-mode)
          . jg-agent-shell-use-consult-completion)
   :init
   (defun jg-agent-shell-use-consult-completion ()
     (setq-local completion-in-region-function
-                #'consult-completion-in-region)))
+                #'consult-completion-in-region))
+
+  (defun jg-agent-shell-new-pi-worktree ()
+    "Prompt for a new Git worktree and start a Pi shell in it."
+    (interactive)
+    (require 'agent-shell)
+    ;; The worktree command has no CONFIG argument.
+    (let ((agent-shell-preferred-agent-config
+           (agent-shell-pi-make-agent-config)))
+      (agent-shell-new-worktree-shell)))
+
+  (defun jg-agent-shell-new-pi-temp ()
+    "Start a Pi shell in a temporary directory."
+    (interactive)
+    (require 'agent-shell)
+    (agent-shell-new-temp-shell :config (agent-shell-pi-make-agent-config))))
 
 (use-package shell-maker :ensure :pin melpa-stable)
 (use-package acp :ensure :pin melpa-stable)
