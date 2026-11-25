@@ -2,6 +2,7 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/init" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/dashboard" user-emacs-directory))
 
 (require 'jg-package)
 (require 'jg-core)

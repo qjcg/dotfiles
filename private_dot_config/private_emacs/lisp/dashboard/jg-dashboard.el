@@ -1,13 +1,14 @@
 ;;; jg-dashboard.el --- A personal daily dashboard -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; A dependency-free home buffer: weekly meals, today's weather, a daily quote.
+;; A dependency-free home buffer: weekly meals, weather, quotes, and local art.
 ;; See `jg-dashboard-menu-function' for the future menu data-source contract.
 ;; Weather is opt-in: configuring a location sends it to https://wttr.in.
 ;; Network requests are asynchronous, bounded, and cached for this session.
 
 ;;; Code:
 
+(require 'ansi-color)
 (require 'button)
 (require 'calendar)
 (require 'cl-lib)
@@ -97,7 +98,16 @@ Larger values make animations slower and reduce redisplay work."
   '((t :inherit success :weight bold))
   "Face marking today in the weekly menu.")
 
+(defcustom jg-dashboard-scene-directory
+  (expand-file-name "scenes" (file-name-directory load-file-name))
+  "Local directory of saved ASCII art scenes (.ans or .txt), or nil to hide art.
+Scenes may use ANSI SGR colors.  One is chosen when opening the
+dashboard and retained through redraws."
+  :type '(choice (const :tag "Hide scenes" nil) directory))
+
 (defconst jg-dashboard--buffer-name "*Dashboard*")
+(defvar-local jg-dashboard--scene nil
+  "Current scene as (FILE . ROWS), with color faces already applied.")
 (defvar jg-dashboard--timer nil)
 (defvar jg-dashboard--weather-cache nil
   "Plist containing :key, :time, and normalized :data for the last success.")
@@ -366,6 +376,220 @@ No buffer text, buttons, point, or weather data are changed by animation."
   (interactive)
   (jg-dashboard-select-effect (unless (eq jg-dashboard-effect 'snow) 'snow)))
 
+(defun jg-dashboard--read-scene (file)
+  "Read FILE as ASCII rows with optional ANSI SGR faces, or return nil."
+  (condition-case nil
+      (with-temp-buffer
+        (set-buffer-multibyte nil)
+        ;; Keep the amount of synchronous startup I/O bounded per scene.
+        (insert-file-contents-literally file nil 0 262145)
+        (when (<= (buffer-size) 262144)
+          (let ((ansi-color-apply-face-function
+                 (lambda (start end face)
+                   (put-text-property start end 'face face))))
+            (ansi-color-apply-on-region (point-min) (point-max)))
+          (let ((rows (split-string (string-trim-right (buffer-string) "\n+") "\n")))
+            (when (and (not (null rows)) (<= (length rows) 80)
+                       (cl-every (lambda (row)
+                                   (and (<= (length row) 240)
+                                        (string-match-p "\\`[ -~]*\\'" row)))
+                                 rows)
+                       (cl-some (lambda (row) (> (length row) 0)) rows))
+              rows))))
+    (file-error nil)))
+
+(defun jg-dashboard--scene-files ()
+  "Return sorted paths of local saved scene files."
+  (when (and jg-dashboard-scene-directory
+             (not (file-remote-p jg-dashboard-scene-directory)))
+    (ignore-error file-error
+      (cl-remove-if-not #'file-regular-p
+                        (directory-files jg-dashboard-scene-directory t
+                                         "\\.\\(?:ans\\|txt\\)\\'")))))
+
+(defun jg-dashboard--pick-scene ()
+  "Choose a usable saved scene, preferring a different one when possible."
+  (let* ((previous (car jg-dashboard--scene))
+         (files (jg-dashboard--scene-files))
+         (retry-previous (member previous files))
+         scene)
+    (when retry-previous
+      (setq files (delete previous files)))
+    (while (and files (not scene))
+      (let ((file (nth (random (length files)) files)))
+        (setq files (delete file files))
+        (when-let* ((rows (jg-dashboard--read-scene file)))
+          (setq scene (cons file rows)))))
+    (setq jg-dashboard--scene
+          (or scene
+              (when retry-previous
+                (when-let* ((rows (jg-dashboard--read-scene previous)))
+                  (cons previous rows)))))))
+
+(defun jg-dashboard--scene-text (rows width)
+  "Center ROWS in WIDTH, sampling both axes when the scene is too wide."
+  (let* ((columns (apply #'max (mapcar #'length rows)))
+         (height (length rows))
+         (scale (min 1.0 (/ (float width) columns)))
+         (margin (make-string (/ (max 0 (- width columns)) 2) ?\s)))
+    (mapconcat
+     (lambda (row)
+       (if (= scale 1.0)
+           (concat margin row)
+         (let ((row (concat row (make-string (- columns (length row)) ?\s))))
+           (mapconcat (lambda (x)
+                        (let ((i (min (1- columns) (floor (/ (+ x 0.5) scale)))))
+                          (substring row i (1+ i))))
+                      (number-sequence 0 (1- width)) ""))))
+     (if (= scale 1.0) rows
+       (mapcar (lambda (y) (nth (min (1- height) (floor (/ (+ y 0.5) scale))) rows))
+               (number-sequence 0 (1- (max 1 (round (* height scale)))))))
+     "\n")))
+
+(defun jg-dashboard-next-scene ()
+  "Choose another saved scene and redraw the dashboard."
+  (interactive nil jg-dashboard-mode)
+  (jg-dashboard--pick-scene)
+  (jg-dashboard--render)
+  (unless jg-dashboard--scene (message "No saved dashboard scenes")))
+
+(defvar-local jg-dashboard-gallery--dashboard nil
+  "Dashboard buffer to update when selecting a scene.")
+(defvar-local jg-dashboard-gallery--scenes nil)
+(defvar-local jg-dashboard-gallery--current nil)
+(defvar-local jg-dashboard-gallery--layout nil)
+
+(defun jg-dashboard-gallery--choose (scene)
+  "Set SCENE on the dashboard and close the gallery."
+  (let ((dashboard jg-dashboard-gallery--dashboard))
+    (unless (buffer-live-p dashboard)
+      (user-error "The dashboard was closed; reopen it first"))
+    (quit-window t)
+    (unless (eq (window-buffer) dashboard)
+      (switch-to-buffer dashboard))
+    (setq jg-dashboard--scene scene)
+    (jg-dashboard--render)))
+
+(defun jg-dashboard-gallery-select ()
+  "Choose the scene at point."
+  (interactive)
+  (if-let* ((scene (get-text-property (point) 'jg-dashboard-gallery-scene)))
+      (jg-dashboard-gallery--choose scene)
+    (user-error "Move to a scene first")))
+
+(defun jg-dashboard-gallery-click (event)
+  "Select the scene under mouse EVENT."
+  (interactive "e")
+  (mouse-set-point event)
+  (jg-dashboard-gallery-select))
+
+(defvar jg-dashboard-gallery--art-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mouse-1] #'jg-dashboard-gallery-click)
+    map))
+
+(defvar jg-dashboard-gallery-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map special-mode-map)
+    (define-key map (kbd "RET") #'jg-dashboard-gallery-select)
+    (define-key map (kbd "TAB") #'forward-button)
+    (define-key map (kbd "<backtab>") #'backward-button)
+    map))
+
+(define-derived-mode jg-dashboard-gallery-mode special-mode "Art Gallery"
+  "Browse saved dashboard scenes.  RET selects; q returns without selecting."
+  (setq-local truncate-lines t display-line-numbers nil)
+  (add-hook 'window-size-change-functions #'jg-dashboard-gallery--render nil t)
+  (add-hook 'window-buffer-change-functions #'jg-dashboard-gallery--render nil t))
+
+(defun jg-dashboard-gallery--cell (text width)
+  "Insert TEXT padded to WIDTH fixed-pitch columns."
+  (let ((start (point)))
+    (insert text (make-string (- width (string-width text)) ?\s))
+    (add-face-text-property start (point) 'fixed-pitch t)))
+
+(defun jg-dashboard-gallery--render (&optional _window)
+  "Reflow cached gallery previews to fit the narrowest display window."
+  (when-let* ((scenes jg-dashboard-gallery--scenes)
+              (windows (get-buffer-window-list (current-buffer) nil t)))
+    (let* ((available (apply #'min (mapcar (lambda (w)
+                                            (window-max-chars-per-line w 'fixed-pitch))
+                                          windows)))
+           (gap 3)
+           (width (max 1 (min 46 (1- available))))
+           (cols (max 1 (/ (+ (1- available) gap) (+ width gap))))
+           (layout (cons width cols)))
+      (unless (equal layout jg-dashboard-gallery--layout)
+        (let ((focus (or (get-text-property (point) 'jg-dashboard-gallery-scene)
+                         (assoc jg-dashboard-gallery--current scenes)
+                         (car scenes)))
+              (inhibit-read-only t)
+              (gutter (make-string gap ?\s))
+              (remaining scenes)
+              focus-point)
+          (erase-buffer)
+          (insert (propertize "Dashboard Art Gallery" 'face 'jg-dashboard-title)
+                  (format "  ·  %d scenes\n" (length scenes))
+                  "TAB / S-TAB browse · RET or click a scene to select · q back\n\n")
+          (while remaining
+            (let ((row nil))
+              (dotimes (_ cols)
+                (when-let* ((scene (pop remaining)))
+                  (push (cons scene (split-string (jg-dashboard--scene-text (cdr scene) width) "\n")) row)))
+              (setq row (nreverse row))
+              (cl-loop for (scene . _) in row for first = t then nil do
+                       (unless first (jg-dashboard-gallery--cell gutter gap))
+                       (when (eq scene focus) (setq focus-point (point)))
+                       (let* ((file (car scene))
+                              (title (concat (file-name-base file)
+                                             (when (equal file jg-dashboard-gallery--current)
+                                               "  [current]")))
+                              (start (point)))
+                         (jg-dashboard-gallery--cell
+                          (truncate-string-to-width title width nil nil t) width)
+                         (make-text-button start (point) 'follow-link t
+                                           'action #'jg-dashboard-gallery--activate-button)
+                         (put-text-property start (point) 'jg-dashboard-gallery-scene scene)))
+              (insert "\n")
+              (dotimes (y (apply #'max (mapcar (lambda (card) (length (cdr card))) row)))
+                (cl-loop for (scene . lines) in row for first = t then nil do
+                         (unless first (jg-dashboard-gallery--cell gutter gap))
+                         (let ((start (point)))
+                           (jg-dashboard-gallery--cell (or (nth y lines) "") width)
+                           (when (nth y lines)
+                             (add-text-properties
+                              start (point)
+                              `(keymap ,jg-dashboard-gallery--art-map mouse-face (:underline t)
+                                help-echo "Select this scene for the dashboard"
+                                jg-dashboard-gallery-scene ,scene)))))
+                (insert "\n"))
+              (insert "\n")))
+          (setq jg-dashboard-gallery--layout layout)
+          (goto-char (or focus-point (point-min)))
+          (dolist (window windows) (set-window-point window (point)))
+          (set-buffer-modified-p nil))))))
+
+(defun jg-dashboard-gallery--activate-button (button)
+  "Select the scene associated with title BUTTON."
+  (jg-dashboard-gallery--choose (button-get button 'jg-dashboard-gallery-scene)))
+
+(defun jg-dashboard-gallery ()
+  "Show all saved scenes in a scrollable gallery."
+  (interactive nil jg-dashboard-mode)
+  (let* ((dashboard (current-buffer))
+         (current (car jg-dashboard--scene))
+         (scenes (delq nil (mapcar (lambda (file)
+                                   (when-let* ((rows (jg-dashboard--read-scene file)))
+                                     (cons file rows)))
+                                 (jg-dashboard--scene-files)))))
+    (unless scenes (user-error "No saved dashboard scenes"))
+    (pop-to-buffer-same-window (get-buffer-create "*Dashboard Art Gallery*"))
+    (jg-dashboard-gallery-mode)
+    (setq jg-dashboard-gallery--dashboard dashboard
+          jg-dashboard-gallery--scenes scenes
+          jg-dashboard-gallery--current current)
+    (jg-dashboard-gallery--render)))
+
 (defun jg-dashboard--panel-text (kind today width)
   "Return the widget of KIND for TODAY as text fitting WIDTH columns."
   (with-temp-buffer
@@ -406,7 +630,19 @@ No buffer text, buttons, point, or weather data are changed by animation."
                            '((effects :title "Atmosphere" :x 0 :y 0 :width 88)))
                          '((weather :title "Today's weather" :x 0 :y 0 :width 60)
                            (quote :title "A thought for today" :x 64 :y 0 :width 44)
-                           (menu :title "Weekly menu" :x 0 :y 10 :width 88))))))
+                           (menu :title "Weekly menu" :x 0 :y 10 :width 88)))))
+               (scene (and jg-dashboard-scene-directory jg-dashboard--scene)))
+          (when scene
+            (setq specs
+                  (append specs
+                          (list (list :id 'scene
+                                      :title (file-name-base (car scene))
+                                      :x (if (>= width 180) 112 0)
+                                      :y (if (>= width 180) 0 10)
+                                      :width 68
+                                      :render (lambda (inner-width)
+                                                (jg-dashboard--scene-text (cdr scene)
+                                                                          inner-width)))))))
           (jg-dashboard--clear-effect-overlays)
           (erase-buffer)
           (insert (propertize "A little perspective" 'face 'jg-dashboard-title) "\n")
@@ -415,6 +651,7 @@ No buffer text, buttons, point, or weather data are changed by animation."
           (jg-dashboard-panels-render specs width)
           (jg-dashboard--bind-effect-panel)
           (dolist (action '(("Refresh" . jg-dashboard-refresh)
+                            ("Art gallery" . jg-dashboard-gallery)
                             ("Customize" . jg-dashboard-customize)
                             ("Close" . quit-window)
                             ("Save layout" . jg-dashboard-panels-save)
@@ -431,7 +668,7 @@ No buffer text, buttons, point, or weather data are changed by animation."
                                         (call-interactively #'jg-dashboard-select-effect)))
           (insert (propertize "\n\nDrag panel titles · M-arrows move\nS save layout · R reset\n"
                               'face 'shadow))
-          (insert (propertize "g refresh · s snow · e effects\nc customize · q close"
+          (insert (propertize "g refresh · s snow · e effects\na shuffle art · A gallery · c customize · q close"
                               'face 'shadow) "\n")
           (goto-char (min old-point (point-max)))
           (set-buffer-modified-p nil)
@@ -579,9 +816,14 @@ never duplicates an in-flight request for the same location, units, and day."
     (define-key map (kbd "<backtab>") #'backward-button)
     map))
 
+;; Install new bindings even when reloading into an existing dashboard.
+(define-key jg-dashboard-mode-map (kbd "a") #'jg-dashboard-next-scene)
+(define-key jg-dashboard-mode-map (kbd "A") #'jg-dashboard-gallery)
+
 (define-derived-mode jg-dashboard-mode special-mode "Dashboard"
   "Movable panels.  Drag titles or use M-arrows; S saves and R resets layout.
-Use g to refresh, s for snow, e for effects, and q to close."
+Use g to refresh, a to shuffle art, A for the gallery, s for snow,
+e for effects, and q to close."
   (setq-local cursor-type nil
               truncate-lines t
               display-line-numbers nil
@@ -591,24 +833,30 @@ Use g to refresh, s for snow, e for effects, and q to close."
   (add-hook 'window-buffer-change-functions #'jg-dashboard--window-change nil t)
   (add-hook 'window-size-change-functions #'jg-dashboard--window-change nil t)
   (unless (timerp jg-dashboard--timer)
-    (setq jg-dashboard--timer (run-at-time 60 60 #'jg-dashboard--tick))))
+    (setq jg-dashboard--timer (run-at-time 60 60 #'jg-dashboard--tick)))
+  (jg-dashboard--pick-scene))
 
-(defun jg-dashboard-buffer ()
-  "Return the populated dashboard buffer, suitable for `initial-buffer-choice'."
+(defun jg-dashboard-buffer (&optional new-scene)
+  "Return the dashboard buffer, choosing another scene if NEW-SCENE is non-nil.
+With no arguments, this function is suitable for `initial-buffer-choice'."
   (let ((buffer (get-buffer-create jg-dashboard--buffer-name)))
     (with-current-buffer buffer
-      (unless (derived-mode-p 'jg-dashboard-mode) (jg-dashboard-mode)))
+      (if (derived-mode-p 'jg-dashboard-mode)
+          (when new-scene (jg-dashboard--pick-scene))
+        (jg-dashboard-mode)))
     (jg-dashboard-refresh)
     buffer))
 
 (defun jg-dashboard-open ()
   "Show the personal dashboard without deleting other windows."
   (interactive)
-  (pop-to-buffer (jg-dashboard-buffer))
+  (pop-to-buffer (jg-dashboard-buffer t))
   (jg-dashboard--render))
 
+(defalias 'jg-dashboard #'jg-dashboard-open)
+
 (defun jg-dashboard-customize ()
-  "Configure meals, weather, daily quotes, and default decorative effects."
+  "Configure meals, weather, quotes, saved scenes, and decorative effects."
   (interactive)
   (customize-group 'jg-dashboard))
 
